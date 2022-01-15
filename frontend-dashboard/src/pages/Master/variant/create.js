@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import {
   Card,
   CardBody,
@@ -41,7 +41,7 @@ const Create = () => {
                             placeholder="Enter variant Name"
                           />
                         </div>
-                        <div className="mb-3 ">
+                        {/* <div className="mb-3 ">
                           <Label htmlFor="formrow-firstname-Input">
                             Category
                           </Label>
@@ -50,7 +50,7 @@ const Create = () => {
                             <option>Category select</option>
                             <option>Category select</option>
                           </select>
-                        </div>
+                        </div> */}
                       </Form>
                     </Col>
 

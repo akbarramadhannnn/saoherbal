@@ -21,82 +21,12 @@ import { Link } from "react-router-dom";
 const products = [
   {
     id: 1,
-    name: "Pupuk Cair",
+    name: "Pertanian",
   },
 
   {
     id: 2,
-    name: "Pupuk Padat",
-  },
-
-  {
-    id: 3,
-    name: "Racun Rumput",
-  },
-
-  {
-    id: 4,
-    name: "Pupuk Buah",
-  },
-
-  {
-    id: 5,
-    name: "Pupuk Batang",
-  },
-
-  {
-    id: 6,
-    name: "Brielle Williamson",
-  },
-
-  {
-    id: 7,
-    name: "Bruno Nash",
-  },
-
-  {
-    id: 8,
-    name: "Caesar Vance",
-  },
-
-  {
-    id: 9,
-    name: "Cara Stevens",
-  },
-
-  {
-    id: 10,
-    name: "Cedric Kelly",
-  },
-
-  {
-    id: 11,
-    name: "Marshall",
-  },
-
-  {
-    id: 12,
-    name: "Hurst",
-  },
-
-  {
-    id: 13,
-    name: "Rios",
-  },
-
-  {
-    id: 14,
-    name: "Snider",
-  },
-
-  {
-    id: 15,
-    name: "Wilder",
-  },
-
-  {
-    id: 16,
-    name: "Camacho",
+    name: "Peternakan",
   },
 ];
 

@@ -34,3 +34,10 @@ exports.deleteDataCategoryById = (id, callback) => {
     callback(err, result);
   });
 };
+
+exports.getDetailDataCategory = (id, callback) => {
+  const sql = `SELECT * FROM category WHERE category_id = ${id}`;
+  mysqlConnection.query(sql, (err, result) => {
+    callback(err, result);
+  });
+};

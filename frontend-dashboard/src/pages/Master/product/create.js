@@ -104,8 +104,8 @@ const Create = () => {
                                 Jenis
                               </Label>
                               <select className="form-select">
-                                {jenisDataDummy.map((j, idx) => {
-                                  return <option key={idx}>{j.name}</option>;
+                                {satuanDataDummy.map((s, idx) => {
+                                  return <option key={idx}>{s.name}</option>;
                                 })}
                               </select>
                             </div>
@@ -115,11 +115,17 @@ const Create = () => {
                               <Label htmlFor="formrow-firstname-Input">
                                 Satuan
                               </Label>
-                              <select className="form-select">
-                                {satuanDataDummy.map((s, idx) => {
-                                  return <option key={idx}>{s.name}</option>;
+                              <Input
+                                type="number"
+                                className="form-control"
+                                id="formrow-firstname-Input"
+                                placeholder="Enter satuan"
+                              />
+                              {/* <select className="form-select">
+                                {jenisDataDummy.map((j, idx) => {
+                                  return <option key={idx}>{j.name}</option>;
                                 })}
-                              </select>
+                              </select> */}
                             </div>
                           </Col>
                           <Col className="mx-auto ">

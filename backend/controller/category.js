@@ -4,8 +4,10 @@ const {
   getDataCategoryById,
   updateDataCategoryById,
   deleteDataCategoryById,
+  getDetailDataCategory,
 } = require("../models/category");
 const Response = require("../helpers/response");
+const { ReplaceToStartUpperCase } = require("../utils/replace");
 
 exports.getCategoryList = (req, res) => {
   getDataCategoryAll((err, result) => {
@@ -18,7 +20,8 @@ exports.getCategoryList = (req, res) => {
 };
 
 exports.addCategoryList = (req, res) => {
-  const { name } = req.body;
+  let { name } = req.body;
+  name = ReplaceToStartUpperCase(name);
   addDataCategory(name, (err, result) => {
     if (err) {
       const error = JSON.stringify(err, undefined, 2);
@@ -29,14 +32,15 @@ exports.addCategoryList = (req, res) => {
 };
 
 exports.updateCategoryList = (req, res) => {
-  const { name } = req.body;
+  let { name } = req.body;
   const { id } = req.params;
+  name = ReplaceToStartUpperCase(name);
   getDataCategoryById(id, (errData, resultData) => {
     if (errData) {
       const error = JSON.stringify(errData, undefined, 2);
       return res.json(Response(false, 500, `Error`, JSON.parse(error)));
     } else if (!resultData.length > 0) {
-      return res.json(Response(true, 400, `Category Id not found`, {}));
+      return res.json(Response(false, 400, `Category Id not found`, {}));
     } else {
       updateDataCategoryById(id, name, (errUpdate, resultUpdate) => {
         if (errUpdate) {
@@ -58,7 +62,7 @@ exports.deleteCategoryList = (req, res) => {
       const error = JSON.stringify(errData, undefined, 2);
       return res.json(Response(false, 500, `Error`, JSON.parse(error)));
     } else if (!resultData.length > 0) {
-      return res.json(Response(true, 400, `Category Id Not Found`, {}));
+      return res.json(Response(false, 400, `Category Id Not Found`, {}));
     } else {
       deleteDataCategoryById(id, (errDelete, resultDelete) => {
         if (errDelete) {
@@ -69,6 +73,22 @@ exports.deleteCategoryList = (req, res) => {
           Response(true, 200, `Deleted Category Successfully`, {})
         );
       });
+    }
+  });
+};
+
+exports.detailCategory = (req, res) => {
+  const { id } = req.query;
+  getDetailDataCategory(id, (err, result) => {
+    if (err) {
+      const error = JSON.stringify(err, undefined, 2);
+      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+    } else if (!result.length > 0) {
+      return res.json(Response(true, 204, `Data Category Not Found`, {}));
+    } else {
+      return res.json(
+        Response(true, 200, `Get Category Successfully`, result[0])
+      );
     }
   });
 };
