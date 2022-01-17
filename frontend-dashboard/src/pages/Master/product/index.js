@@ -22,81 +22,145 @@ const products = [
   {
     id: 1,
     name: "Pupuk Cair",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 2,
     name: "Pupuk Padat",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 3,
     name: "Racun Rumput",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 4,
     name: "Pupuk Buah",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 5,
     name: "Pupuk Batang",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 6,
     name: "Brielle Williamson",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 7,
     name: "Bruno Nash",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 8,
     name: "Caesar Vance",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 9,
     name: "Cara Stevens",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 10,
     name: "Cedric Kelly",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 11,
     name: "Marshall",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 12,
     name: "Hurst",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 13,
     name: "Rios",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 14,
     name: "Snider",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 15,
     name: "Wilder",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 
   {
     id: 16,
     name: "Camacho",
+    product: "ada",
+    varian: "ada",
+    jenis: "1kg",
+    img: "Image",
   },
 ];
 

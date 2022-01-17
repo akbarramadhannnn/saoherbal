@@ -27,9 +27,16 @@ import Product from "../pages/Master/product";
 import CreateProduct from "../pages/Master/product/create";
 import UpdateProduct from "../pages/Master/product/update";
 
-//Konsumen
-import Distributor from "../pages/Konsumen/Distributor";
-import Toko from "../pages/Konsumen/Toko";
+//KONSUMEN
+//distributor
+import Distributor from "../pages/Konsumen/distributor";
+import CreateDistributor from "../pages/Konsumen/distributor/create";
+import UpdateDistributor from "../pages/Konsumen/distributor/update";
+
+//toko
+import Toko from "../pages/Konsumen/toko";
+import CreateToko from "../pages/Konsumen/toko/create";
+import UpdateToko from "../pages/Konsumen/toko/update";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: Dashboard },
@@ -52,8 +59,16 @@ const authProtectedRoutes = [
   { path: "/master/product/create", component: CreateProduct },
   { path: "/master/product/update", component: UpdateProduct },
 
+  //konsumen
+  //distributor
   { path: "/distributor", component: Distributor },
+  { path: "/distributor/create", component: CreateDistributor },
+  { path: "/distributor/update", component: UpdateDistributor },
+
+  //toko
   { path: "/toko", component: Toko },
+  { path: "/toko/create", component: CreateToko },
+  { path: "/toko/update", component: UpdateToko },
 
   // this route should be at the end of all other routes
   // eslint-disable-next-line react/display-name

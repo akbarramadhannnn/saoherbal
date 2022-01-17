@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardBody,
@@ -14,7 +14,18 @@ import { MetaTags } from "react-meta-tags";
 import { Link } from "react-router-dom";
 
 const Create = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [name, setName] = useState("");
+
+  const handleChange = e => {
+    setName(e.target.value);
+  };
+
+  const handleSave = () => {
+    const payload = {
+      name: name,
+    };
+    console.log(payload);
+  };
 
   return (
     <React.Fragment>
@@ -36,41 +47,25 @@ const Create = () => {
                           <Label htmlFor="formrow-firstname-Input">Name</Label>
                           <Input
                             type="text"
-                            className="form-control"
+                            className="form-control-lg"
                             id="formrow-firstname-Input"
                             placeholder="Enter variant Name"
+                            onChange={handleChange}
                           />
                         </div>
-                        {/* <div className="mb-3 ">
-                          <Label htmlFor="formrow-firstname-Input">
-                            Category
-                          </Label>
-                          <select className="form-select">
-                            <option>Select</option>
-                            <option>Category select</option>
-                            <option>Category select</option>
-                          </select>
-                        </div> */}
                       </Form>
                     </Col>
 
                     <Col sm="10">
                       <div className="text-sm-end">
-                        <Link to="/master/variant">
-                          <Button
-                            type="button"
-                            color="danger"
-                            className=" mb-2 me-2"
-                            // onClick={this.handleOrderClicks}
-                          >
-                            cancel
-                          </Button>
+                        <Link to="/master/variant" className="btn btn-danger">
+                          cancel
                         </Link>
                         <Button
                           type="button"
                           color="primary"
-                          className=" mb-2 me-2"
-                          // onClick={this.handleOrderClicks}
+                          className=" mx-2"
+                          onClick={handleSave}
                         >
                           save
                         </Button>
