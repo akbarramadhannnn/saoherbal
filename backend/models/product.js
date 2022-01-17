@@ -28,8 +28,21 @@ exports.getDataProductById = (id, callback) => {
   });
 };
 
-exports.updateDataVariantById = (id, name, callback) => {
-  const sql = `UPDATE variant SET name = '${name}' WHERE variant_id = ${id}`;
+exports.updateDataProductById = (
+  id,
+  name,
+  category_id,
+  variant_id,
+  description,
+  image,
+  callback
+) => {
+  let sql = "";
+  if (image) {
+    sql = `UPDATE product SET name = '${name}', category_id = ${category_id}, variant_id = ${variant_id}, description = '${description}', image = '${image}' WHERE product_id = ${id}`;
+  } else {
+    sql = `UPDATE product SET name = '${name}', category_id = ${category_id}, variant_id = ${variant_id}, description = '${description}' WHERE product_id = ${id}`;
+  }
   mysqlConnection.query(sql, (err, result) => {
     callback(err, result);
   });
@@ -41,7 +54,6 @@ exports.deleteDataProductById = (id, callback) => {
     callback(err, result);
   });
 };
-
 
 exports.getDetailDataProduct = (id, callback) => {
   const sql = `SELECT * FROM product WHERE product_id = ${id}`;

@@ -15,6 +15,10 @@ exports.getVariantList = (req, res) => {
       const error = JSON.stringify(err, undefined, 2);
       return res.json(Response(false, 500, `Error`, JSON.parse(error)));
     }
+
+    if (!result.length > 0) {
+      return res.json(Response(true, 204, `Get Variant Successfully`, result));
+    }
     return res.json(Response(true, 200, `Get Variant Successfully`, result));
   });
 };
@@ -40,7 +44,11 @@ exports.updateVariantList = (req, res) => {
       const error = JSON.stringify(errData, undefined, 2);
       return res.json(Response(false, 500, `Error`, JSON.parse(error)));
     } else if (!resultData.length > 0) {
-      return res.json(Response(false, 400, `Variant Id not found`, {}));
+      return res.json(
+        Response(false, 400, `Variant Id not found`, {
+          name: "variant_id",
+        })
+      );
     } else {
       updateDataVariantById(id, name, (errUpdate, resultUpdate) => {
         if (errUpdate) {
@@ -62,7 +70,11 @@ exports.deleteVariantList = (req, res) => {
       const error = JSON.stringify(errData, undefined, 2);
       return res.json(Response(false, 500, `Error`, JSON.parse(error)));
     } else if (!resultData.length > 0) {
-      return res.json(Response(false, 400, `Variant Id Not Found`, {}));
+      return res.json(
+        Response(false, 400, `Variant Id Not Found`, {
+          name: "variant_id",
+        })
+      );
     } else {
       deleteDataVariantById(id, (errDelete, resultDelete) => {
         if (errDelete) {

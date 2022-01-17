@@ -40,7 +40,11 @@ exports.updateCategoryList = (req, res) => {
       const error = JSON.stringify(errData, undefined, 2);
       return res.json(Response(false, 500, `Error`, JSON.parse(error)));
     } else if (!resultData.length > 0) {
-      return res.json(Response(false, 400, `Category Id not found`, {}));
+      return res.json(
+        Response(false, 400, `Category Id not found`, {
+          name: "category_id",
+        })
+      );
     } else {
       updateDataCategoryById(id, name, (errUpdate, resultUpdate) => {
         if (errUpdate) {
@@ -62,7 +66,11 @@ exports.deleteCategoryList = (req, res) => {
       const error = JSON.stringify(errData, undefined, 2);
       return res.json(Response(false, 500, `Error`, JSON.parse(error)));
     } else if (!resultData.length > 0) {
-      return res.json(Response(false, 400, `Category Id Not Found`, {}));
+      return res.json(
+        Response(false, 400, `Category Id Not Found`, {
+          name: "category_id",
+        })
+      );
     } else {
       deleteDataCategoryById(id, (errDelete, resultDelete) => {
         if (errDelete) {
