@@ -1,6 +1,7 @@
 const jenisData = [
-  { kode: "pdt", name: "Padat" },
-  { kode: "cr", name: "Cair" },
+  { kode: "KG", name: "Kilogram" },
+  { kode: "L", name: "Liter" },
+  { kode: "ML", name: "Mililiter" },
 ];
 
 export default jenisData;
