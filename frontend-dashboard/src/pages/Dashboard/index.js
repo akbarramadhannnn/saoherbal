@@ -11,7 +11,7 @@ class Dashboard extends Component {
             <title>Dashboard | Sao</title>
           </MetaTags>
           <Container fluid>
-            <h4>Dashboard Admin</h4>
+            <h4>Dashboard</h4>
           </Container>
         </div>
       </React.Fragment>

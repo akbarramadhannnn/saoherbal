@@ -116,7 +116,7 @@ class SidebarContent extends Component {
               </li>
               <li>
                 <Link to="/#" className="has-arrow">
-                  <i className="bx bx-store" />
+                  <i className="bx bx-data" />
                   <span>{this.props.t("Master")}</span>
                 </Link>
                 <ul className="sub-menu" aria-expanded="false">
@@ -136,15 +136,17 @@ class SidebarContent extends Component {
 
               <li>
                 <Link to="/#" className="has-arrow">
-                  <i className="bx bx-bitcoin" />
+                  <i className="bx bx-store" />
                   <span>{this.props.t("Konsumen")}</span>
                 </Link>
                 <ul className="sub-menu" aria-expanded="false">
                   <li>
-                    <Link to="/distributor">{this.props.t("Distributor")}</Link>
+                    <Link to="/konsumen/distributor">
+                      {this.props.t("Distributor")}
+                    </Link>
                   </li>
                   <li>
-                    <Link to="/toko">{this.props.t("Toko")}</Link>
+                    <Link to="/konsumen/toko">{this.props.t("Toko")}</Link>
                   </li>
                 </ul>
               </li>

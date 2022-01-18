@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const RunValidation = require("../../../middleware/validation/runValidation");
+const { getToken } = require("../../../middleware/auth");
 const {
   validationAddProduct,
   validationUpdateProduct,
@@ -12,10 +13,16 @@ const {
   detailProduct,
 } = require("../../../controller/product");
 
-router.get("/", getProductList);
-router.post("/", validationAddProduct, RunValidation, addProductList);
-router.put("/:id", validationUpdateProduct, RunValidation, updateProductList);
-router.delete("/:id", deleteProductList);
-router.get("/detail", detailProduct);
+router.get("/", getToken, getProductList);
+router.post("/", getToken, validationAddProduct, RunValidation, addProductList);
+router.put(
+  "/:id",
+  getToken,
+  validationUpdateProduct,
+  RunValidation,
+  updateProductList
+);
+router.delete("/:id", getToken, deleteProductList);
+router.get("/detail", getToken, detailProduct);
 
 module.exports = router;

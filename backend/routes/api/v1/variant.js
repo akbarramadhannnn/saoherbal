@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const RunValidation = require("../../../middleware/validation/runValidation");
+const { getToken } = require("../../../middleware/auth");
 const {
   validationAddVariant,
   validationUpdateVariant,
@@ -12,10 +13,16 @@ const {
   detailVariant,
 } = require("../../../controller/variant");
 
-router.get("/", getVariantList);
-router.post("/", validationAddVariant, RunValidation, addVariantList);
-router.put("/:id", validationUpdateVariant, RunValidation, updateVariantList);
-router.delete("/:id", deleteVariantList);
-router.get("/detail", detailVariant);
+router.get("/", getToken, getVariantList);
+router.post("/", getToken, validationAddVariant, RunValidation, addVariantList);
+router.put(
+  "/:id",
+  getToken,
+  validationUpdateVariant,
+  RunValidation,
+  updateVariantList
+);
+router.delete("/:id", getToken, deleteVariantList);
+router.get("/detail", getToken, detailVariant);
 
 module.exports = router;

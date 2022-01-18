@@ -6,8 +6,6 @@ import UserProfile from "../pages/Authentication/UserProfile";
 // Authentication related pages
 import Login from "../pages/Authentication/Login";
 import Logout from "../pages/Authentication/Logout";
-import Register from "../pages/Authentication/Register";
-import ForgetPwd from "../pages/Authentication/ForgetPassword";
 
 // Dashboard
 import Dashboard from "../pages/Dashboard/index";
@@ -29,14 +27,14 @@ import UpdateProduct from "../pages/Master/product/update";
 
 //KONSUMEN
 //distributor
-import Distributor from "../pages/Konsumen/distributor";
-import CreateDistributor from "../pages/Konsumen/distributor/create";
-import UpdateDistributor from "../pages/Konsumen/distributor/update";
+import Distributor from "../pages/Konsumen/Distributor";
+import CreateDistributor from "../pages/Konsumen/Distributor/create";
+import UpdateDistributor from "../pages/Konsumen/Distributor/update";
 
 //toko
-import Toko from "../pages/Konsumen/toko";
-import CreateToko from "../pages/Konsumen/toko/create";
-import UpdateToko from "../pages/Konsumen/toko/update";
+import Toko from "../pages/Konsumen/Toko";
+import CreateToko from "../pages/Konsumen/Toko/create";
+import UpdateToko from "../pages/Konsumen/Toko/update";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: Dashboard },
@@ -61,25 +59,20 @@ const authProtectedRoutes = [
 
   //konsumen
   //distributor
-  { path: "/distributor", component: Distributor },
-  { path: "/distributor/create", component: CreateDistributor },
-  { path: "/distributor/update", component: UpdateDistributor },
+  { path: "/konsumen/distributor", exact: true, component: Distributor },
+  { path: "/konsumen/distributor/create", component: CreateDistributor },
+  { path: "/konsumen/distributor/update", component: UpdateDistributor },
 
   //toko
-  { path: "/toko", component: Toko },
-  { path: "/toko/create", component: CreateToko },
-  { path: "/toko/update", component: UpdateToko },
+  { path: "/konsumen/toko", exact: true, component: Toko },
+  { path: "/konsumen/toko/create", component: CreateToko },
+  { path: "/konsumen/toko/update", component: UpdateToko },
 
   // this route should be at the end of all other routes
   // eslint-disable-next-line react/display-name
   { path: "/", exact: true, component: () => <Redirect to="/dashboard" /> },
 ];
 
-const publicRoutes = [
-  { path: "/logout", component: Logout },
-  { path: "/login", component: Login },
-  { path: "/forgot-password", component: ForgetPwd },
-  { path: "/register", component: Register },
-];
+const publicRoutes = [{ path: "/login", component: Login }];
 
 export { authProtectedRoutes, publicRoutes };

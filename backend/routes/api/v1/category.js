@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const RunValidation = require("../../../middleware/validation/runValidation");
+const { getToken } = require("../../../middleware/auth");
 const {
   validationAddCategory,
   validationUpdateCategory,
@@ -12,10 +13,22 @@ const {
   detailCategory,
 } = require("../../../controller/category");
 
-router.get("/", getCategoryList);
-router.post("/", validationAddCategory, RunValidation, addCategoryList);
-router.put("/:id", validationUpdateCategory, RunValidation, updateCategoryList);
-router.delete("/:id", deleteCategoryList);
-router.get("/detail", detailCategory);
+router.get("/", getToken, getCategoryList);
+router.post(
+  "/",
+  getToken,
+  validationAddCategory,
+  RunValidation,
+  addCategoryList
+);
+router.put(
+  "/:id",
+  getToken,
+  validationUpdateCategory,
+  RunValidation,
+  updateCategoryList
+);
+router.delete("/:id", getToken, deleteCategoryList);
+router.get("/detail", getToken, detailCategory);
 
 module.exports = router;

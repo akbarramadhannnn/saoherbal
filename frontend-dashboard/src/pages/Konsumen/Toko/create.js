@@ -143,7 +143,7 @@ const Create = () => {
                         </div>
                         <Col>
                           <div className="text-sm-end">
-                            <Link to="/toko" className="btn btn-danger">
+                            <Link to="/konsumen/toko" className="btn btn-danger">
                               cancel
                             </Link>
                             <Button

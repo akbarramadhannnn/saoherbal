@@ -144,7 +144,7 @@ const Create = () => {
                         </div>
                         <Col>
                           <div className="text-sm-end">
-                            <Link to="/distributor" className="btn btn-danger">
+                            <Link to="/konsumen/distributor" className="btn btn-danger">
                               cancel
                             </Link>
                             <Button
