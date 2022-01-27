@@ -13,8 +13,6 @@ import store from "./store";
 // Import scss
 import "./assets/scss/theme.scss";
 
-import "./lib/axios";
-
 const Index = () => {
   useEffect(() => {
     HandleLoadUser().then(response => {

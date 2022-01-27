@@ -20,388 +20,228 @@ const {
 const Response = require("../helpers/response");
 const { ReplaceToStartUpperCase } = require("../utils/replace");
 
-exports.getStoreList = (req, res) => {
-  getDataStoreAll((err, result) => {
-    if (err) {
-      const error = JSON.stringify(err, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    }
-
+exports.getStoreList = async (req, res) => {
+  try {
+    const result = await getDataStoreAll();
     if (!result.length > 0) {
       return res.json(Response(true, 204, `Get Store Successfully`, result));
     }
     return res.json(Response(true, 200, `Get Store Successfully`, result));
-  });
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.addStoreList = (req, res) => {
+exports.addStoreList = async (req, res) => {
   let { provinsi_id, kabupaten_id, name, email, no_tlp, address } = req.body;
   name = ReplaceToStartUpperCase(name);
-  getDataProvinsiById(provinsi_id, (errProvinsi, resultProvinsi) => {
-    if (errProvinsi) {
-      const error = JSON.stringify(errProvinsi, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!resultProvinsi.length > 0) {
+
+  try {
+    const resultProvinsiById = await getDataProvinsiById(provinsi_id);
+    if (!resultProvinsiById.length > 0) {
       return res.json(
         Response(false, 400, `Provinsi Id Not Found`, {
           name: "provinsi_id",
         })
       );
-    } else {
-      getDataKabupatenById(kabupaten_id, (errKabupaten, resultKabupaten) => {
-        if (errKabupaten) {
-          const error = JSON.stringify(errKabupaten, undefined, 2);
-          return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-        } else if (!resultKabupaten.length > 0) {
-          return res.json(
-            Response(false, 400, `Kabupaten Id Not Found`, {
-              name: "kabupaten_id",
-            })
-          );
-        } else {
-          getDataKabupatenAndProvinsiById(
-            kabupaten_id,
-            provinsi_id,
-            (errKabProv, resultKabProv) => {
-              if (errKabProv) {
-                const error = JSON.stringify(errKabProv, undefined, 2);
-                return res.json(
-                  Response(false, 500, `Error`, JSON.parse(error))
-                );
-              } else if (!resultKabProv.length > 0) {
-                return res.json(
-                  Response(
-                    false,
-                    400,
-                    `Kabupaten Id And Provinsi Id No Match`,
-                    {
-                      name: "kabupaten_id",
-                    }
-                  )
-                );
-              } else {
-                getDataStoreByName(name, (errName, resultName) => {
-                  if (errName) {
-                    const error = JSON.stringify(errName, undefined, 2);
-                    return res.json(
-                      Response(false, 500, `Error`, JSON.parse(error))
-                    );
-                  } else if (resultName.length > 0) {
-                    return res.json(
-                      Response(false, 400, `Name Has Already`, {
-                        name: "name",
-                      })
-                    );
-                  } else {
-                    getDataStoreByEmail(email, (errEmail, resultEmail) => {
-                      if (errEmail) {
-                        const error = JSON.stringify(errEmail, undefined, 2);
-                        return res.json(
-                          Response(false, 500, `Error`, JSON.parse(error))
-                        );
-                      } else if (resultEmail.length > 0) {
-                        return res.json(
-                          Response(false, 400, `Email Has Already`, {
-                            name: "email",
-                          })
-                        );
-                      } else {
-                        getDataStoreByNoTlp(no_tlp, (errNoTlp, resultNoTlp) => {
-                          if (errNoTlp) {
-                            const error = JSON.stringify(
-                              errNoTlp,
-                              undefined,
-                              2
-                            );
-                            return res.json(
-                              Response(false, 500, `Error`, JSON.parse(error))
-                            );
-                          } else if (resultNoTlp.length > 0) {
-                            return res.json(
-                              Response(false, 400, `No Tlp Has Already`, {
-                                name: "no_tlp",
-                              })
-                            );
-                          } else {
-                            addDataStore(
-                              provinsi_id,
-                              kabupaten_id,
-                              name,
-                              email,
-                              no_tlp,
-                              address,
-                              (errAdd, resultAdd) => {
-                                if (errAdd) {
-                                  const error = JSON.stringify(
-                                    errAdd,
-                                    undefined,
-                                    2
-                                  );
-                                  return res.json(
-                                    Response(
-                                      false,
-                                      500,
-                                      `Error`,
-                                      JSON.parse(error)
-                                    )
-                                  );
-                                }
-                                return res.json(
-                                  Response(
-                                    true,
-                                    201,
-                                    `Added Store Successfully`,
-                                    {}
-                                  )
-                                );
-                              }
-                            );
-                          }
-                        });
-                      }
-                    });
-                  }
-                });
-              }
-            }
-          );
-        }
-      });
     }
-  });
+
+    const resultKabupatenById = await getDataKabupatenById(kabupaten_id);
+    if (!resultKabupatenById.length > 0) {
+      return res.json(
+        Response(false, 400, `Kabupaten Id Not Found`, {
+          name: "kabupaten_id",
+        })
+      );
+    }
+
+    const resultKabProvById = await getDataKabupatenAndProvinsiById(
+      kabupaten_id,
+      provinsi_id
+    );
+    if (!resultKabProvById.length > 0) {
+      return res.json(
+        Response(false, 400, `Kabupaten Id And Provinsi Id No Match`, {
+          name: "kabupaten_id",
+        })
+      );
+    }
+
+    const resultStoreByName = await getDataStoreByName(name);
+    if (resultStoreByName.length > 0) {
+      return res.json(
+        Response(false, 400, `Name Has Already`, {
+          name: "name",
+        })
+      );
+    }
+
+    const resultStoreByEmail = await getDataStoreByEmail(email);
+    if (resultStoreByEmail.length > 0) {
+      return res.json(
+        Response(false, 400, `Email Has Already`, {
+          name: "email",
+        })
+      );
+    }
+
+    const resultStoreByNoTlp = await getDataStoreByNoTlp(no_tlp);
+    if (resultStoreByNoTlp.length > 0) {
+      return res.json(
+        Response(false, 400, `No Tlp Has Already`, {
+          name: "no_tlp",
+        })
+      );
+    }
+
+    await addDataStore(provinsi_id, kabupaten_id, name, email, no_tlp, address);
+    return res.json(Response(true, 201, `Added Store Successfully`, {}));
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.updateStoreList = (req, res) => {
+exports.updateStoreList = async (req, res) => {
   const { id } = req.params;
   let { provinsi_id, kabupaten_id, name, email, no_tlp, address } = req.body;
   name = ReplaceToStartUpperCase(name);
-  getDataStoreById(id, (errGetStore, resultGetStore) => {
-    if (errGetStore) {
-      const error = JSON.stringify(errGetStore, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!resultGetStore.length > 0) {
+
+  try {
+    const resultStoreById = await getDataStoreById(id);
+    if (!resultStoreById.length > 0) {
       return res.json(
         Response(false, 400, `Store Id Not Found`, {
           name: "store_id",
         })
       );
-    } else {
-      getDataProvinsiById(provinsi_id, (errProvinsi, resultProvinsi) => {
-        if (errProvinsi) {
-          const error = JSON.stringify(errProvinsi, undefined, 2);
-          return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-        } else if (!resultProvinsi.length > 0) {
-          return res.json(
-            Response(false, 400, `Provinsi Id Not Found`, {
-              name: "provinsi_id",
-            })
-          );
-        } else {
-          getDataKabupatenById(
-            kabupaten_id,
-            (errKabupaten, resultKabupaten) => {
-              if (errKabupaten) {
-                const error = JSON.stringify(errKabupaten, undefined, 2);
-                return res.json(
-                  Response(false, 500, `Error`, JSON.parse(error))
-                );
-              } else if (!resultKabupaten.length > 0) {
-                return res.json(
-                  Response(false, 400, `Kabupaten Id Not Found`, {
-                    name: "kabupaten_id",
-                  })
-                );
-              } else {
-                getDataKabupatenAndProvinsiById(
-                  kabupaten_id,
-                  provinsi_id,
-                  (errKabProv, resultKabProv) => {
-                    if (errKabProv) {
-                      const error = JSON.stringify(errKabProv, undefined, 2);
-                      return res.json(
-                        Response(false, 500, `Error`, JSON.parse(error))
-                      );
-                    } else if (!resultKabProv.length > 0) {
-                      return res.json(
-                        Response(
-                          false,
-                          400,
-                          `Kabupaten Id And Provinsi Id No Match`,
-                          {
-                            name: "kabupaten_id",
-                          }
-                        )
-                      );
-                    } else {
-                      getDataStoreByNameNotById(
-                        name,
-                        id,
-                        (errName, resultName) => {
-                          if (errName) {
-                            const error = JSON.stringify(errName, undefined, 2);
-                            return res.json(
-                              Response(false, 500, `Error`, JSON.parse(error))
-                            );
-                          } else if (resultName.length > 0) {
-                            return res.json(
-                              Response(false, 400, `Name Has Already`, {
-                                name: "name",
-                              })
-                            );
-                          } else {
-                            getDataStoreByEmailNotById(
-                              email,
-                              id,
-                              (errEmail, resultEmail) => {
-                                if (errEmail) {
-                                  const error = JSON.stringify(
-                                    errEmail,
-                                    undefined,
-                                    2
-                                  );
-                                  return res.json(
-                                    Response(
-                                      false,
-                                      500,
-                                      `Error`,
-                                      JSON.parse(error)
-                                    )
-                                  );
-                                } else if (resultEmail.length > 0) {
-                                  return res.json(
-                                    Response(false, 400, `Email Has Already`, {
-                                      name: "email",
-                                    })
-                                  );
-                                } else {
-                                  getDataStoreByNoTlpNotById(
-                                    no_tlp,
-                                    id,
-                                    (errNoTlp, resultNoTlp) => {
-                                      if (errNoTlp) {
-                                        const error = JSON.stringify(
-                                          errNoTlp,
-                                          undefined,
-                                          2
-                                        );
-                                        return res.json(
-                                          Response(
-                                            false,
-                                            500,
-                                            `Error`,
-                                            JSON.parse(error)
-                                          )
-                                        );
-                                      } else if (resultNoTlp.length > 0) {
-                                        return res.json(
-                                          Response(
-                                            false,
-                                            400,
-                                            `No Tlp Has Already`,
-                                            {
-                                              name: "no_tlp",
-                                            }
-                                          )
-                                        );
-                                      } else {
-                                        updateDataStoreById(
-                                          id,
-                                          provinsi_id,
-                                          kabupaten_id,
-                                          name,
-                                          email,
-                                          no_tlp,
-                                          address,
-                                          (errAdd, resultAdd) => {
-                                            if (errAdd) {
-                                              const error = JSON.stringify(
-                                                errAdd,
-                                                undefined,
-                                                2
-                                              );
-                                              return res.json(
-                                                Response(
-                                                  false,
-                                                  500,
-                                                  `Error`,
-                                                  JSON.parse(error)
-                                                )
-                                              );
-                                            }
-                                            return res.json(
-                                              Response(
-                                                true,
-                                                201,
-                                                `Updated Store Successfully`,
-                                                {}
-                                              )
-                                            );
-                                          }
-                                        );
-                                      }
-                                    }
-                                  );
-                                }
-                              }
-                            );
-                          }
-                        }
-                      );
-                    }
-                  }
-                );
-              }
-            }
-          );
-        }
-      });
     }
-  });
+
+    const resultProvinsiById = await getDataProvinsiById(provinsi_id);
+    if (!resultProvinsiById.length > 0) {
+      return res.json(
+        Response(false, 400, `Provinsi Id Not Found`, {
+          name: "provinsi_id",
+        })
+      );
+    }
+
+    const resultKabupatenById = await getDataKabupatenById(kabupaten_id);
+    if (!resultKabupatenById.length > 0) {
+      return res.json(
+        Response(false, 400, `Kabupaten Id Not Found`, {
+          name: "kabupaten_id",
+        })
+      );
+    }
+
+    const resultKabProvById = await getDataKabupatenAndProvinsiById(
+      kabupaten_id,
+      provinsi_id
+    );
+    if (!resultKabProvById.length > 0) {
+      return res.json(
+        Response(false, 400, `Kabupaten Id And Provinsi Id No Match`, {
+          name: "kabupaten_id",
+        })
+      );
+    }
+
+    const resultStoreByNameNotById = await getDataStoreByNameNotById(name, id);
+    if (resultStoreByNameNotById.length > 0) {
+      return res.json(
+        Response(false, 400, `Name Has Already`, {
+          name: "name",
+        })
+      );
+    }
+
+    const resultStoreByEmailNotById = await getDataStoreByEmailNotById(
+      email,
+      id
+    );
+    if (resultStoreByEmailNotById.length > 0) {
+      return res.json(
+        Response(false, 400, `Email Has Already`, {
+          name: "email",
+        })
+      );
+    }
+
+    const resultSotreByNoTlpNotById = await getDataStoreByNoTlpNotById(
+      no_tlp,
+      id
+    );
+    if (resultSotreByNoTlpNotById.length > 0) {
+      return res.json(
+        Response(false, 400, `No Tlp Has Already`, {
+          name: "no_tlp",
+        })
+      );
+    }
+
+    await updateDataStoreById(
+      id,
+      provinsi_id,
+      kabupaten_id,
+      name,
+      email,
+      no_tlp,
+      address
+    );
+    return res.json(Response(true, 201, `Updated Store Successfully`, {}));
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.deleteStoreList = (req, res) => {
+exports.deleteStoreList = async (req, res) => {
   const { id } = req.params;
-  getDataStoreById(id, (errData, resultData) => {
-    if (errData) {
-      const error = JSON.stringify(errData, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!resultData.length > 0) {
+
+  try {
+    const resultStoreById = await getDataStoreById(id);
+    if (!resultStoreById.length > 0) {
       return res.json(
         Response(false, 400, `Store Id Not Found`, {
           name: "store_id",
         })
       );
-    } else {
-      deleteDataStoreById(id, (errDelete, resultDelete) => {
-        if (errDelete) {
-          const error = JSON.stringify(errDelete, undefined, 2);
-          return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-        }
-        return res.json(Response(true, 200, `Deleted Store Successfully`, {}));
-      });
     }
-  });
+
+    await deleteDataStoreById(id);
+    return res.json(Response(true, 200, `Deleted Store Successfully`, {}));
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.detailStore = (req, res) => {
+exports.detailStore = async (req, res) => {
   const { id } = req.query;
 
-  getDataStoreById(id, (errGetStore, resultGetStore) => {
-    if (errGetStore) {
-      const error = JSON.stringify(errGetStore, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!resultGetStore.length > 0) {
-      return res.json(Response(false, 400, `Store Id Not Found`, {}));
-    } else {
-      getDetailDataStore(id, (err, result) => {
-        if (err) {
-          const error = JSON.stringify(err, undefined, 2);
-          return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-        }
-        return res.json(
-          Response(true, 200, `Get Store Successfully`, result[0])
-        );
-      });
+  try {
+    const resultStoreById = await getDataStoreById(id);
+    if (!resultStoreById.length > 0) {
+      return res.json(
+        Response(false, 400, `Store Id Not Found`, {
+          name: "store_id",
+        })
+      );
     }
-  });
+
+    const resultDataStore = await getDetailDataStore(id);
+    return res.json(
+      Response(true, 200, `Get Store Successfully`, resultDataStore[0])
+    );
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };

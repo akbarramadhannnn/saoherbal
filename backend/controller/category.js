@@ -5,98 +5,119 @@ const {
   updateDataCategoryById,
   deleteDataCategoryById,
   getDetailDataCategory,
+  getDataCategoryByName,
+  getDataCategoryByNameNotById,
 } = require("../models/category");
 const Response = require("../helpers/response");
 const { ReplaceToStartUpperCase } = require("../utils/replace");
 
-exports.getCategoryList = (req, res) => {
-  getDataCategoryAll((err, result) => {
-    if (err) {
-      const error = JSON.stringify(err, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+exports.getCategoryList = async (req, res) => {
+  try {
+    const result = await getDataCategoryAll();
+    if (!result.length > 0) {
+      return res.json(Response(true, 204, `Get Category Successfully`, result));
     }
     return res.json(Response(true, 200, `Get Category Successfully`, result));
-  });
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.addCategoryList = (req, res) => {
+exports.addCategoryList = async (req, res) => {
   let { name } = req.body;
   name = ReplaceToStartUpperCase(name);
-  addDataCategory(name, (err, result) => {
-    if (err) {
-      const error = JSON.stringify(err, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  try {
+    const resultCategoryname = await getDataCategoryByName(name);
+    if (resultCategoryname.length > 0) {
+      return res.json(
+        Response(false, 400, `Category Name has Already`, {
+          name: "name",
+        })
+      );
     }
+    await addDataCategory(name);
     return res.json(Response(true, 201, `Added Category Successfully`, {}));
-  });
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.updateCategoryList = (req, res) => {
+exports.updateCategoryList = async (req, res) => {
   let { name } = req.body;
   const { id } = req.params;
   name = ReplaceToStartUpperCase(name);
-  getDataCategoryById(id, (errData, resultData) => {
-    if (errData) {
-      const error = JSON.stringify(errData, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!resultData.length > 0) {
+
+  try {
+    const resultCategoryId = await getDataCategoryById(id);
+    if (!resultCategoryId.length > 0) {
       return res.json(
         Response(false, 400, `Category Id not found`, {
           name: "category_id",
         })
       );
-    } else {
-      updateDataCategoryById(id, name, (errUpdate, resultUpdate) => {
-        if (errUpdate) {
-          const error = JSON.stringify(errUpdate, undefined, 2);
-          return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-        }
-        return res.json(
-          Response(true, 201, `Updated Category Successfully`, {})
-        );
-      });
     }
-  });
+
+    const resultCategoryNameNotById = await getDataCategoryByNameNotById(
+      name,
+      id
+    );
+    if (resultCategoryNameNotById.length > 0) {
+      return res.json(
+        Response(false, 400, `Category Name has Already`, {
+          name: "name",
+        })
+      );
+    }
+
+    await updateDataCategoryById(id, name);
+    return res.json(Response(true, 201, `Updated Category Successfully`, {}));
+  } catch (err) {
+    console.log("err", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.deleteCategoryList = (req, res) => {
+exports.deleteCategoryList = async (req, res) => {
   const { id } = req.params;
-  getDataCategoryById(id, (errData, resultData) => {
-    if (errData) {
-      const error = JSON.stringify(errData, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!resultData.length > 0) {
+
+  try {
+    const resultCategoryId = await getDataCategoryById(id);
+    if (!resultCategoryId.length > 0) {
       return res.json(
         Response(false, 400, `Category Id Not Found`, {
           name: "category_id",
         })
       );
-    } else {
-      deleteDataCategoryById(id, (errDelete, resultDelete) => {
-        if (errDelete) {
-          const error = JSON.stringify(errDelete, undefined, 2);
-          return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-        }
-        return res.json(
-          Response(true, 200, `Deleted Category Successfully`, {})
-        );
-      });
     }
-  });
+
+    await deleteDataCategoryById(id);
+    return res.json(Response(true, 200, `Deleted Category Successfully`, {}));
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.detailCategory = (req, res) => {
+exports.detailCategory = async (req, res) => {
   const { id } = req.query;
-  getDetailDataCategory(id, (err, result) => {
-    if (err) {
-      const error = JSON.stringify(err, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!result.length > 0) {
+
+  try {
+    const result = await getDetailDataCategory(id);
+    if (!result.length > 0) {
       return res.json(Response(true, 204, `Data Category Not Found`, {}));
-    } else {
-      return res.json(
-        Response(true, 200, `Get Category Successfully`, result[0])
-      );
     }
-  });
+    return res.json(
+      Response(true, 200, `Get Category Successfully`, result[0])
+    );
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };

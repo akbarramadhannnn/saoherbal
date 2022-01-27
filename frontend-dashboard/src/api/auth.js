@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from '../lib/axiosDefault';
 
 export const HandleLogin = async payload => {
   const response = axios.post(`/auth/signin`, payload);
@@ -6,10 +6,6 @@ export const HandleLogin = async payload => {
 };
 
 export const HandleLoadUser = async () => {
-  const response = axios.get(`/auth`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
+  const response = axios.get(`/auth`);
   return response;
 };

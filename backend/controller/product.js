@@ -1,6 +1,9 @@
 const axios = require("axios").default;
 const { getDataCategoryById } = require("../models/category");
-const { getDataVariantById } = require("../models/variant");
+const {
+  getDataVariantById,
+  getDataMatchCategoryAndVariantById,
+} = require("../models/variant");
 const {
   getDataProductAll,
   addDataProduct,
@@ -8,6 +11,7 @@ const {
   deleteDataProductById,
   getDetailDataProduct,
   updateDataProductById,
+  getDataProductByNameNotById,
 } = require("../models/product");
 const {
   addMultipleDataPrice,
@@ -19,281 +23,243 @@ const Response = require("../helpers/response");
 const { ReplaceToStartUpperCase } = require("../utils/replace");
 const config = require("../config/env.json");
 
-exports.getProductList = (req, res) => {
-  getDataProductAll((err, result) => {
-    if (err) {
-      const error = JSON.stringify(err, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+exports.getProductList = async (req, res) => {
+  try {
+    const result = await getDataProductAll();
+    if (!result.length > 0) {
+      return res.json(Response(true, 204, `Product Not Found`, result));
     }
+    // for (let i = 0; i < resultProduct.length; i++) {
+    //   resultProduct[i].category = JSON.parse(resultProduct[i].category);
+    //   resultProduct[i].variant = JSON.parse(resultProduct[i].variant);
+    //   resultProduct[i].price_list = JSON.parse(resultProduct[i].price_list);
+    // }
     return res.json(Response(true, 200, `Get Product Successfully`, result));
-  });
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.addProductList = (req, res) => {
+exports.addProductList = async (req, res) => {
   let { name, category_id, variant_id, description, priceList, image } =
     req.body;
   name = ReplaceToStartUpperCase(name);
-  getDataCategoryById(category_id, (errCategory, resultCategory) => {
-    if (errCategory) {
-      const error = JSON.stringify(errData, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!resultCategory.length > 0) {
+
+  try {
+    const reusltCategoryById = await getDataCategoryById(category_id);
+    if (!reusltCategoryById.length > 0) {
       return res.json(
         Response(false, 400, `Category Id Not Found`, {
           name: "category_id",
         })
       );
-    } else {
-      getDataVariantById(variant_id, (errVariant, resultVariant) => {
-        if (errVariant) {
-          const error = JSON.stringify(errVariant, undefined, 2);
-          return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-        } else if (!resultVariant.length > 0) {
-          return res.json(
-            Response(false, 400, `Variant Id Not Found`, {
-              name: "variant_id",
-            })
-          );
-        } else {
-          addDataProduct(
-            name,
-            category_id,
-            variant_id,
-            description,
-            image,
-            (errProduct, resultProduct) => {
-              if (errProduct) {
-                const error = JSON.stringify(errProduct, undefined, 2);
-                return res.json(
-                  Response(false, 500, `Error`, JSON.parse(error))
-                );
-              } else {
-                const priceArr = [];
-                for (let i = 0; i < priceList.length; i++) {
-                  priceArr.push([
-                    resultProduct.insertId,
-                    priceList[i].weight,
-                    priceList[i].price,
-                    priceList[i].unit,
-                  ]);
-                }
-                addMultipleDataPrice(priceArr, (errPrice, resultPrice) => {
-                  if (errPrice) {
-                    const error = JSON.stringify(errPrice, undefined, 2);
-                    return res.json(
-                      Response(false, 500, `Error`, JSON.parse(error))
-                    );
-                  } else {
-                    return res.json(
-                      Response(true, 200, `Added Product Successfully`, {})
-                    );
-                  }
-                });
-              }
-            }
-          );
-        }
-      });
     }
-  });
+
+    const resultVariantById = await getDataVariantById(variant_id);
+    if (!resultVariantById.length > 0) {
+      return res.json(
+        Response(false, 400, `Variant Id Not Found`, {
+          name: "variant_id",
+        })
+      );
+    }
+
+    const resultVariantByCategoryId = await getDataMatchCategoryAndVariantById(
+      variant_id,
+      category_id
+    );
+    if (!resultVariantByCategoryId.length > 0) {
+      return res.json(
+        Response(false, 400, `Variant Id Not Match With Category Id`, {
+          name: "variant_id",
+        })
+      );
+    }
+
+    const resultAddProduct = await addDataProduct(
+      name,
+      category_id,
+      variant_id,
+      description,
+      image
+    );
+
+    const priceArr = [];
+    for (let i = 0; i < priceList.length; i++) {
+      priceArr.push([
+        resultAddProduct.insertId,
+        priceList[i].weight,
+        priceList[i].price,
+        priceList[i].unit,
+      ]);
+    }
+    await addMultipleDataPrice(priceArr);
+    return res.json(Response(true, 201, `Added Product Successfully`, {}));
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.updateProductList = (req, res) => {
+exports.updateProductList = async (req, res) => {
   let { id } = req.params;
   let { name, category_id, variant_id, description, priceList, image } =
     req.body;
   name = ReplaceToStartUpperCase(name);
-  getDataProductById(id, (errGetProduct, resultGetProduk) => {
-    if (errGetProduct) {
-      const error = JSON.stringify(errGetProduct, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!resultGetProduk.length > 0) {
+
+  try {
+    const resultProductById = await getDataProductById(id);
+    if (!resultProductById.length > 0) {
       return res.json(
         Response(false, 400, `Product Id Not Found`, {
           name: "product_id",
         })
       );
-    } else {
-      getDataCategoryById(category_id, (errCategory, resultCategory) => {
-        if (errCategory) {
-          const error = JSON.stringify(errCategory, undefined, 2);
-          return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-        } else if (!resultCategory.length > 0) {
-          return res.json(
-            Response(false, 400, `Category Id Not Found`, {
-              name: "category_id",
-            })
-          );
-        } else {
-          getDataVariantById(variant_id, (errVariant, resultVariant) => {
-            if (errVariant) {
-              const error = JSON.stringify(errVariant, undefined, 2);
-              return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-            } else if (!resultVariant.length > 0) {
-              return res.json(
-                Response(false, 400, `Variant Id Not Found`, {
-                  name: "variant_id",
-                })
-              );
-            } else {
-              updateDataProductById(
-                id,
-                name,
-                category_id,
-                variant_id,
-                description,
-                image,
-                (errProduct, resultProduct) => {
-                  if (errProduct) {
-                    const error = JSON.stringify(errProduct, undefined, 2);
-                    return res.json(
-                      Response(false, 500, `Error`, JSON.parse(error))
-                    );
-                  } else {
-                    const addDataArr = [];
-                    for (let i = 0; i < priceList.length; i++) {
-                      if (priceList[i].price_id === undefined) {
-                        addDataArr.push([
-                          resultGetProduk[0].product_id,
-                          priceList[i].weight,
-                          priceList[i].price,
-                          priceList[i].unit,
-                        ]);
-                      } else {
-                        updateMultipleDataPrice(
-                          [
-                            priceList[i].weight,
-                            priceList[i].price,
-                            priceList[i].unit,
-                            priceList[i].price_id,
-                          ],
-                          (errPrice, resultPrice) => {
-                            if (errPrice) {
-                              const error = JSON.stringify(
-                                errPrice,
-                                undefined,
-                                2
-                              );
-                              return res.json(
-                                Response(false, 500, `Error`, JSON.parse(error))
-                              );
-                            }
-                          }
-                        );
-                      }
-                    }
-
-                    getPriceByProductId(id, (errPrice, resultPrice) => {
-                      const idPriceArr = [];
-                      for (var i = 0; i < resultPrice.length; i++) {
-                        if (priceList[i] === undefined) {
-                          idPriceArr.push([resultPrice[i].price_id]);
-                        }
-                      }
-
-                      if (idPriceArr.length > 0) {
-                        deleteMultipleDataPriceById(
-                          idPriceArr,
-                          (errDeletePrice, resultDeletePrice) => {
-                            if (errDeletePrice) {
-                              const error = JSON.stringify(
-                                errDeletePrice,
-                                undefined,
-                                2
-                              );
-                              return res.json(
-                                Response(false, 500, `Error`, JSON.parse(error))
-                              );
-                            }
-                          }
-                        );
-                      }
-                    });
-
-                    if (addDataArr.length > 0) {
-                      addMultipleDataPrice(
-                        addDataArr,
-                        (errAddPrice, resultAddPrice) => {
-                          if (errAddPrice) {
-                            const error = JSON.stringify(
-                              errAddPrice,
-                              undefined,
-                              2
-                            );
-                            return res.json(
-                              Response(false, 500, `Error`, JSON.parse(error))
-                            );
-                          }
-                        }
-                      );
-                    }
-
-                    return res.json(
-                      Response(true, 200, `Updated Product Successfully`, {})
-                    );
-                  }
-                }
-              );
-            }
-          });
-        }
-      });
     }
-  });
+
+    const reusltCategoryById = await getDataCategoryById(category_id);
+    if (!reusltCategoryById.length > 0) {
+      return res.json(
+        Response(false, 400, `Category Id Not Found`, {
+          name: "category_id",
+        })
+      );
+    }
+
+    const resultVariantById = await getDataVariantById(variant_id);
+    if (!resultVariantById.length > 0) {
+      return res.json(
+        Response(false, 400, `Variant Id Not Found`, {
+          name: "variant_id",
+        })
+      );
+    }
+
+    const resultVariantByCategoryId = await getDataMatchCategoryAndVariantById(
+      variant_id,
+      category_id
+    );
+    if (!resultVariantByCategoryId.length > 0) {
+      return res.json(
+        Response(false, 400, `Variant Id Not Match With Category Id`, {
+          name: "variant_id",
+        })
+      );
+    }
+
+    const resultProductByNameNotById = await getDataProductByNameNotById(
+      name,
+      id
+    );
+    if (resultProductByNameNotById.length > 0) {
+      return res.json(
+        Response(false, 400, `Name Has Already`, {
+          name: "name",
+        })
+      );
+    }
+
+    await updateDataProductById(
+      id,
+      name,
+      category_id,
+      variant_id,
+      description,
+      image
+    );
+
+    const addDataArr = [];
+    for (let i = 0; i < priceList.length; i++) {
+      if (priceList[i].price_id === undefined) {
+        addDataArr.push([
+          resultGetProduk[0].product_id,
+          priceList[i].weight,
+          priceList[i].price,
+          priceList[i].unit,
+        ]);
+      } else {
+        await updateMultipleDataPrice([
+          priceList[i].weight,
+          priceList[i].price,
+          priceList[i].unit,
+          priceList[i].price_id,
+        ]);
+      }
+    }
+
+    const resultPriceByProductId = await getPriceByProductId(id);
+    const idPriceArr = [];
+    for (var i = 0; i < resultPriceByProductId.length; i++) {
+      if (priceList[i] === undefined) {
+        idPriceArr.push([resultPriceByProductId[i].price_id]);
+      }
+    }
+
+    if (idPriceArr.length > 0) {
+      await deleteMultipleDataPriceById(idPriceArr);
+    }
+
+    if (addDataArr.length > 0) {
+      await addMultipleDataPrice(addDataArr);
+    }
+
+    return res.json(Response(true, 201, `Updated Product Successfully`, {}));
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.deleteProductList = (req, res) => {
+exports.deleteProductList = async (req, res) => {
   const { id } = req.params;
-  getDataProductById(id, (errData, resultData) => {
-    if (errData) {
-      const error = JSON.stringify(errData, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!resultData.length > 0) {
+
+  try {
+    const resultProductById = await getDataProductById(id);
+    if (!resultProductById.length > 0) {
       return res.json(
         Response(false, 400, `Product Id Not Found`, {
           name: "product_id",
         })
       );
-    } else {
-      axios
-        .delete(
-          `${config.api_image.url_api_v1}/product/delete-single-image/${resultData[0].image}`
-        )
-        .then((responseDeleteImage) => {
-          deleteDataProductById(id, (errorDelete, resultDelete) => {
-            if (errorDelete) {
-              const error = JSON.stringify(errorDelete, undefined, 2);
-              return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-            } else {
-              return res.json(
-                Response(true, 200, `Deleted Product Successfully`, {})
-              );
-            }
-          });
-        });
     }
-  });
+
+    await axios.delete(
+      `${config.api_image.url_api_v1}/product/delete-single-image/${resultProductById[0].image}`
+    );
+
+    await deleteDataProductById(id);
+
+    return res.json(Response(true, 200, `Deleted Product Successfully`, {}));
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.detailProduct = (req, res) => {
+exports.detailProduct = async (req, res) => {
   const { id } = req.query;
-  getDetailDataProduct(id, (err, result) => {
-    if (err) {
-      const error = JSON.stringify(err, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!result.length > 0) {
+
+  try {
+    const resultDetailProduct = await getDetailDataProduct(id);
+    console.log("resultDetailProduct", resultDetailProduct);
+
+    if (!resultDetailProduct.length > 0) {
       return res.json(Response(true, 204, `Data Product Not Found`, {}));
-    } else {
-      getPriceByProductId(id, (errPrice, resultPrice) => {
-        if (errPrice) {
-          const error = JSON.stringify(errPrice, undefined, 2);
-          return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-        }
-        result[0].priceList = resultPrice;
-        return res.json(
-          Response(true, 200, `Get Product Successfully`, result[0])
-        );
-      });
     }
-  });
+
+    const resultPrice = await getPriceByProductId(id);
+    resultDetailProduct[0].priceList = resultPrice;
+    return res.json(
+      Response(true, 200, `Get Product Successfully`, resultDetailProduct[0])
+    );
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };

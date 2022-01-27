@@ -1,4 +1,4 @@
-const mysqlConnection = require("../connection/mysql");
+const poolConnection = require("../connection/mysql2");
 
 // exports.addMultipleDataProvinsi = (data, callback) => {
 //   var sql = "INSERT INTO kabupaten (provinsi_id, name) VALUES ?";
@@ -7,41 +7,32 @@ const mysqlConnection = require("../connection/mysql");
 //   });
 // };
 
-exports.getDataProvinsi = (callback) => {
+exports.getDataProvinsi = async () => {
   var sql = `SELECT * FROM provinsi`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.getDataKabupatenByProvinsiId = (id, callback) => {
+exports.getDataKabupatenByProvinsiId = async (id) => {
   var sql = `SELECT * FROM kabupaten WHERE provinsi_id = ${id}`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.getDataProvinsiById = (id, callback) => {
+exports.getDataProvinsiById = async (id) => {
   var sql = `SELECT * FROM provinsi WHERE provinsi_id = ${id}`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.getDataKabupatenById = (id, callback) => {
+exports.getDataKabupatenById = async (id) => {
   var sql = `SELECT * FROM kabupaten WHERE kabupaten_id = ${id}`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.getDataKabupatenAndProvinsiById = (
-  kabupaten_id,
-  provinsi_id,
-  callback
-) => {
+exports.getDataKabupatenAndProvinsiById = async (kabupaten_id, provinsi_id) => {
   var sql = `SELECT * FROM kabupaten WHERE kabupaten_id = ${kabupaten_id} AND provinsi_id = ${provinsi_id}`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };

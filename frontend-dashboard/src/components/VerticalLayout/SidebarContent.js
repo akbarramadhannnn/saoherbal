@@ -150,6 +150,13 @@ class SidebarContent extends Component {
                   </li>
                 </ul>
               </li>
+
+              <li>
+                <Link to="/transaction">
+                  <i className="bx bx-money" />
+                  <span>{this.props.t("Transaksi")}</span>
+                </Link>
+              </li>
             </ul>
           </div>
         </SimpleBar>

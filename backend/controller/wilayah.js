@@ -5,43 +5,47 @@ const {
 } = require("../models/wilayah");
 const Response = require("../helpers/response");
 
-exports.getProvinsi = (req, res) => {
-  getDataProvinsi((err, result) => {
-    if (err) {
-      const error = JSON.stringify(err, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    }
-
-    if(!result.length > 0) {
+exports.getProvinsi = async (req, res) => {
+  try {
+    const result = await getDataProvinsi();
+    if (!result.length > 0) {
       return res.json(Response(true, 204, `Get Provinsi Successfully`, result));
     }
     return res.json(Response(true, 200, `Get Provinsi Successfully`, result));
-  });
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.getKabupaten = (req, res) => {
-  const { provinsi_id } = req.query;
-  if (!provinsi_id) {
-    return res.json(
-      Response(
-        false,
-        404,
-        `method ${req.method} url ${req.originalUrl} not found!`,
-        {}
-      )
-    );
-  }
-  getDataKabupatenByProvinsiId(provinsi_id, (err, result) => {
-    if (err) {
-      const error = JSON.stringify(err, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+exports.getKabupaten = async (req, res) => {
+  const { provinsiId } = req.query;
+
+  try {
+    if (!provinsiId) {
+      return res.json(
+        Response(
+          false,
+          404,
+          `method ${req.method} url ${req.originalUrl} not found!`,
+          {}
+        )
+      );
     }
 
-    if(!result.length > 0) {
-      return res.json(Response(true, 204, `Get Kabupaten Successfully`, result));
+    const result = await getDataKabupatenByProvinsiId(provinsiId);
+    if (!result.length > 0) {
+      return res.json(
+        Response(true, 204, `Get Kabupaten Successfully`, result)
+      );
     }
     return res.json(Response(true, 200, `Get Kabupaten Successfully`, result));
-  });
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
 // exports.addProvinsi = () => {

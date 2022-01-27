@@ -1,4 +1,4 @@
-const mysqlConnection = require("../connection/mysql");
+const poolConnection = require("../connection/mysql2");
 
 // exports.getDataCategoryAll = (callback) => {
 //   const sql = `SELECT * FROM category`;
@@ -7,25 +7,22 @@ const mysqlConnection = require("../connection/mysql");
 //   });
 // };
 
-exports.addDataPengguna = (name, username, password, role, callback) => {
+exports.addDataPengguna = async (name, username, password, role) => {
   const sql = `INSERT INTO pengguna (name,username,password,role) values ('${name}','${username}','${password}','${role}')`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.getDataPenggunaByUsername = (username, callback) => {
+exports.getDataPenggunaByUsername = async (username) => {
   const sql = `SELECT * FROM pengguna WHERE username = '${username}'`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.getDataPenggunaById = (id, callback) => {
+exports.getDataPenggunaById = async (id) => {
   const sql = `SELECT pengguna_id, name, username, role FROM pengguna WHERE pengguna_id = ${id}`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
 // exports.updateDataCategoryById = (id, name, callback) => {

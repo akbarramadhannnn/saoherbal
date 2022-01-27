@@ -36,6 +36,10 @@ import Toko from "../pages/Konsumen/Toko";
 import CreateToko from "../pages/Konsumen/Toko/create";
 import UpdateToko from "../pages/Konsumen/Toko/update";
 
+//transaksi
+import Transaksi from "../pages/Transaksi";
+import CreateTransaksi from "../pages/Transaksi/Create";
+
 const authProtectedRoutes = [
   { path: "/dashboard", component: Dashboard },
 
@@ -45,29 +49,32 @@ const authProtectedRoutes = [
   //category
   { path: "/master/category", exact: true, component: Category },
   { path: "/master/category/create", component: CreateCategory },
-  { path: "/master/category/update", component: UpdateCategory },
+  { path: "/master/category/update/:id", component: UpdateCategory },
 
   //variant
   { path: "/master/variant", exact: true, component: Variant },
   { path: "/master/variant/create", component: CreateVariant },
-  { path: "/master/variant/update", component: UpdateVariant },
+  { path: "/master/variant/update/:id", component: UpdateVariant },
 
   //product
   { path: "/master/product", exact: true, component: Product },
   { path: "/master/product/create", component: CreateProduct },
-  { path: "/master/product/update", component: UpdateProduct },
+  { path: "/master/product/update/:id", component: UpdateProduct },
 
   //konsumen
   //distributor
   { path: "/konsumen/distributor", exact: true, component: Distributor },
   { path: "/konsumen/distributor/create", component: CreateDistributor },
-  { path: "/konsumen/distributor/update", component: UpdateDistributor },
+  { path: "/konsumen/distributor/update/:id", component: UpdateDistributor },
 
   //toko
   { path: "/konsumen/toko", exact: true, component: Toko },
   { path: "/konsumen/toko/create", component: CreateToko },
-  { path: "/konsumen/toko/update", component: UpdateToko },
+  { path: "/konsumen/toko/update/:id", component: UpdateToko },
 
+  //toko
+  { path: "/transaction", exact: true, component: Transaksi },
+  { path: "/transaction/create", component: CreateTransaksi },
   // this route should be at the end of all other routes
   // eslint-disable-next-line react/display-name
   { path: "/", exact: true, component: () => <Redirect to="/dashboard" /> },

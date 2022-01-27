@@ -1,12 +1,128 @@
-import React from "react";
-import { Row, Col, Card, CardBody, Table } from "reactstrap";
+import React, { useState, useEffect, useCallback } from "react";
+import PropTypes from "prop-types";
+import { Row, Col, Card, CardBody } from "reactstrap";
 import MetaTags from "react-meta-tags";
 
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb";
+import Modal from "../../../components/Modal";
+import Alert from "./../../../components/Alert";
+import Table from "./../../../components/Table";
 import { Link } from "react-router-dom";
 
-const Index = () => {
+import { ApiGetListVariant, ApiDeleteListVariant } from "../../../api/variant";
+
+const Index = ({ history }) => {
+  const [dataVariant, setDataVariant] = useState([]);
+  const [variantId, setVariantId] = useState([]);
+  const [modal, setModal] = useState({
+    isOpen: false,
+    title: "",
+    description: "",
+  });
+  const [alert, setAlert] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    handleGetData();
+  }, []);
+
+  const handleClickDelete = useCallback(id => {
+    setModal(oldState => ({
+      ...oldState,
+      isOpen: true,
+      title: "Confirmation",
+      description: "Apakah anda yakin ingin menghapus data ini ?",
+    }));
+    setVariantId(id);
+  }, []);
+
+  const handleClickUpdate = useCallback(
+    id => {
+      history.push(`/master/variant/update/${id}`);
+    },
+    [history]
+  );
+
+  const handleGetData = useCallback(() => {
+    setIsLoading(true);
+    ApiGetListVariant().then(response => {
+      if (response) {
+        const dataArr = [];
+        if (response.status === 200) {
+          for (let i = 0; i < response.result.length; i++) {
+            dataArr.push({
+              category: response.result[i].category.name,
+              name: response.result[i].name,
+              actions: [
+                {
+                  iconClassName: "mdi mdi-pencil font-size-18",
+                  actClassName: "text-warning",
+                  text: "",
+                  onClick: () => {
+                    handleClickUpdate(response.result[i].variant_id);
+                  },
+                },
+                {
+                  iconClassName: "mdi mdi-delete font-size-18",
+                  actClassName: "text-danger",
+                  text: "",
+                  onClick: () => {
+                    handleClickDelete(response.result[i].variant_id);
+                  },
+                },
+              ],
+            });
+          }
+          setDataVariant(dataArr);
+        } else if (response.status === 204) {
+          setDataVariant(dataArr);
+        }
+      }
+      setIsLoading(false);
+    });
+  }, [handleClickUpdate, handleClickDelete]);
+
+  const handleCloseModal = useCallback(() => {
+    setModal(oldState => ({
+      ...oldState,
+      isOpen: false,
+      title: "",
+      description: "",
+    }));
+    setVariantId("");
+  }, []);
+
+  const handleCloseAlert = useCallback(() => {
+    setAlert(oldState => ({
+      ...oldState,
+      isOpen: false,
+      title: "",
+      message: "",
+    }));
+  }, []);
+
+  const handleSubmitDelete = useCallback(() => {
+    ApiDeleteListVariant(variantId).then(response => {
+      if (response) {
+        if (response.status === 200) {
+          handleCloseModal();
+          setAlert(oldState => ({
+            ...oldState,
+            isOpen: true,
+            title: "Success",
+            message: response.message,
+          }));
+          handleGetData();
+        }
+      }
+    });
+  }, [variantId, handleCloseModal, handleGetData]);
+
   return (
     <div className="page-content">
       <MetaTags>
@@ -32,45 +148,18 @@ const Index = () => {
 
                 <Row>
                   <Col xl="12">
-                    <Table responsive>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Table heading</th>
-                          <th>Table heading</th>
-                          <th>Table heading</th>
-                          <th>Table heading</th>
-                          <th>Table heading</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <th scope="row">1</th>
-                          <td>Table cell</td>
-                          <td>Table cell</td>
-                          <td>Table cell</td>
-                          <td>Table cell</td>
-                          <td>Table cell</td>
-                          <td>
-                            <div className="d-flex gap-3">
-                              <Link to="#" className="text-success">
-                                <i
-                                  className="mdi mdi-pencil font-size-18"
-                                  id="edittooltip"
-                                />
-                              </Link>
-                              <Link to="#" className="text-danger">
-                                <i
-                                  className="mdi mdi-delete font-size-18"
-                                  id="deletetooltip"
-                                />
-                              </Link>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </Table>
+                    <Alert
+                      isOpen={alert.isOpen}
+                      title={alert.title}
+                      message={alert.message}
+                      color="success"
+                      toggle={handleCloseAlert}
+                    />
+                    <Table
+                      column={["Category Name", "Variant Name", "Actions"]}
+                      row={dataVariant}
+                      isLoading={isLoading}
+                    />
                   </Col>
                 </Row>
               </CardBody>
@@ -78,8 +167,22 @@ const Index = () => {
           </Col>
         </Row>
       </div>
+
+      <Modal
+        isOpen={modal.isOpen}
+        title={modal.title}
+        description={modal.description}
+        onClose={handleCloseModal}
+        tetxButtonLeft="Cancel"
+        tetxButtonRight="Ya, Hapus"
+        onSubmit={handleSubmitDelete}
+      />
     </div>
   );
+};
+
+Index.propTypes = {
+  history: PropTypes.object,
 };
 
 export default Index;

@@ -1,43 +1,49 @@
-const mysqlConnection = require("../connection/mysql");
+const poolConnection = require("../connection/mysql2");
 
-exports.getDataCategoryAll = (callback) => {
+exports.getDataCategoryAll = async () => {
   const sql = `SELECT * FROM category`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.addDataCategory = (name, callback) => {
+exports.addDataCategory = async (name) => {
   const sql = `INSERT INTO category (name) values ('${name}')`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.getDataCategoryById = (id, callback) => {
+exports.getDataCategoryByName = async (name) => {
+  const sql = `SELECT * FROM category WHERE name = '${name}'`;
+  const result = await poolConnection.query(sql);
+  return result[0];
+};
+
+exports.getDataCategoryByNameNotById = async (name, id) => {
+  const sql = `SELECT * FROM category WHERE name = '${name}' AND NOT category_id = ${id}`;
+  const result = await poolConnection.query(sql);
+  return result[0];
+};
+
+exports.getDataCategoryById = async (id) => {
   const sql = `SELECT * FROM category WHERE category_id = ${id}`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.updateDataCategoryById = (id, name, callback) => {
+exports.updateDataCategoryById = async (id, name) => {
   const sql = `UPDATE category SET name = '${name}' WHERE category_id = ${id}`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.deleteDataCategoryById = (id, callback) => {
+exports.deleteDataCategoryById = async (id) => {
   const sql = `DELETE FROM category WHERE category_id = ${id}`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.getDetailDataCategory = (id, callback) => {
+exports.getDetailDataCategory = async (id) => {
   const sql = `SELECT * FROM category WHERE category_id = ${id}`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };

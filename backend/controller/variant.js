@@ -5,102 +5,140 @@ const {
   updateDataVariantById,
   deleteDataVariantById,
   getDetailDataVariant,
+  getDataVariantByName,
+  getDataVariantByNameNotById,
 } = require("../models/variant");
+const { getDataCategoryById } = require("../models/category");
 const Response = require("../helpers/response");
 const { ReplaceToStartUpperCase } = require("../utils/replace");
 
-exports.getVariantList = (req, res) => {
-  getDataVariantAll((err, result) => {
-    if (err) {
-      const error = JSON.stringify(err, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    }
-
+exports.getVariantList = async (req, res) => {
+  const categoryId = req.query.categoryId || "";
+  try {
+    const result = await getDataVariantAll(categoryId);
     if (!result.length > 0) {
       return res.json(Response(true, 204, `Get Variant Successfully`, result));
     }
     return res.json(Response(true, 200, `Get Variant Successfully`, result));
-  });
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.addVariantList = (req, res) => {
-  let { name } = req.body;
+exports.addVariantList = async (req, res) => {
+  let { category_id, name } = req.body;
   name = ReplaceToStartUpperCase(name);
-  addDataVariant(name, (err, result) => {
-    if (err) {
-      const error = JSON.stringify(err, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+
+  try {
+    const resultCategoryById = await getDataCategoryById(category_id);
+    if (!resultCategoryById.length > 0) {
+      return res.json(
+        Response(false, 400, `Category Not Found`, {
+          name: "category_id",
+        })
+      );
     }
+
+    const resultVariantByName = await getDataVariantByName(name);
+    if (resultVariantByName.length > 0) {
+      return res.json(
+        Response(false, 400, `Variant Name has Already`, {
+          name: "name",
+        })
+      );
+    }
+
+    await addDataVariant(category_id, name);
     return res.json(Response(true, 201, `Added Variant Successfully`, {}));
-  });
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.updateVariantList = (req, res) => {
-  let { name } = req.body;
+exports.updateVariantList = async (req, res) => {
+  let { category_id, name } = req.body;
   const { id } = req.params;
   name = ReplaceToStartUpperCase(name);
-  getDataVariantById(id, (errData, resultData) => {
-    if (errData) {
-      const error = JSON.stringify(errData, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!resultData.length > 0) {
+
+  try {
+    const resultVariantById = await getDataVariantById(id);
+    if (!resultVariantById.length > 0) {
       return res.json(
         Response(false, 400, `Variant Id not found`, {
           name: "variant_id",
         })
       );
-    } else {
-      updateDataVariantById(id, name, (errUpdate, resultUpdate) => {
-        if (errUpdate) {
-          const error = JSON.stringify(errUpdate, undefined, 2);
-          return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-        }
-        return res.json(
-          Response(true, 201, `Updated Variant Successfully`, {})
-        );
-      });
     }
-  });
+
+    const resultCategoryById = await getDataCategoryById(category_id);
+    if (!resultCategoryById.length > 0) {
+      return res.json(
+        Response(false, 400, `Category Not Found`, {
+          name: "category_id",
+        })
+      );
+    }
+
+    const resultVariantByNameNotById = await getDataVariantByNameNotById(
+      name,
+      id
+    );
+    if (resultVariantByNameNotById.length > 0) {
+      return res.json(
+        Response(false, 400, `Variant Name has Already`, {
+          name: "name",
+        })
+      );
+    }
+
+    await updateDataVariantById(id, category_id, name);
+    return res.json(Response(true, 201, `Updated Variant Successfully`, {}));
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.deleteVariantList = (req, res) => {
+exports.deleteVariantList = async (req, res) => {
   const { id } = req.params;
-  getDataVariantById(id, (errData, resultData) => {
-    if (errData) {
-      const error = JSON.stringify(errData, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!resultData.length > 0) {
+
+  try {
+    const resultVariantById = await getDataVariantById(id);
+    if (!resultVariantById.length > 0) {
       return res.json(
         Response(false, 400, `Variant Id Not Found`, {
           name: "variant_id",
         })
       );
-    } else {
-      deleteDataVariantById(id, (errDelete, resultDelete) => {
-        if (errDelete) {
-          const error = JSON.stringify(errDelete, undefined, 2);
-          return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-        }
-        return res.json(
-          Response(true, 200, `Deleted Variant Successfully`, {})
-        );
-      });
     }
-  });
+
+    await deleteDataVariantById(id);
+    return res.json(Response(true, 200, `Deleted Variant Successfully`, {}));
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };
 
-exports.detailVariant = (req, res) => {
+exports.detailVariant = async (req, res) => {
   const { id } = req.query;
-  getDetailDataVariant(id, (err, result) => {
-    if (err) {
-      const error = JSON.stringify(err, undefined, 2);
-      return res.json(Response(false, 500, `Error`, JSON.parse(error)));
-    } else if (!result.length > 0) {
+
+  try {
+    const result = await getDetailDataVariant(id);
+    if (!result.length > 0) {
       return res.json(Response(true, 204, `Data Variant Not Found`, {}));
-    } else {
-      return res.json(
-        Response(true, 200, `Get Variant Successfully`, result[0])
-      );
     }
-  });
+
+    return res.json(Response(true, 200, `Get Variant Successfully`, result[0]));
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
 };

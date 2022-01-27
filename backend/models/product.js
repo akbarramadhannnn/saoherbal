@@ -1,41 +1,43 @@
-const mysqlConnection = require("../connection/mysql");
+const poolConnection = require("../connection/mysql2");
 
-exports.getDataProductAll = (callback) => {
-  const sql = `SELECT product_id, description, image, product.name AS product_name, category.name AS category_name, variant.name AS variant_name FROM product JOIN category ON product.category_id = category.category_id JOIN variant ON product.variant_id = variant.variant_id`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+exports.getDataProductAll = async () => {
+  // const sql = `SELECT product.product_id, description, image, product.name AS product_name, category.name AS category_name, variant.name AS variant_name FROM product JOIN category ON product.category_id = category.category_id JOIN variant ON product.variant_id = variant.variant_id`;
+  const sql = `SELECT product.product_id, description, image, product.name AS product_name, JSON_OBJECT('category_id', category.category_id, 'name', category.name) AS category, JSON_OBJECT('variant_id', variant.variant_id, 'name', variant.name) AS variant, JSON_ARRAYAGG(JSON_OBJECT('prices', price.prices, 'unit', price.unit, 'weight', price.weight, 'price_id', price.price_id, 'product_id', price.product_id)) AS price_list FROM product JOIN category ON product.category_id = category.category_id JOIN variant ON product.variant_id = variant.variant_id LEFT JOIN price ON price.product_id = product.product_id GROUP BY product.product_id`;
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.addDataProduct = (
+exports.addDataProduct = async (
   name,
   category_id,
   variant_id,
   description,
-  image,
-  callback
+  image
 ) => {
   const sql = `INSERT INTO product (name, category_id, variant_id, description, image) values ('${name}', '${category_id}', '${variant_id}', '${description}', '${image}')`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.getDataProductById = (id, callback) => {
+exports.getDataProductById = async (id) => {
   const sql = `SELECT * FROM product WHERE product_id = ${id}`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.updateDataProductById = (
+exports.getDataProductByNameNotById = async (name, id) => {
+  const sql = `SELECT * FROM product WHERE name = '${name}' AND NOT product_id = ${id}`;
+  const result = await poolConnection.query(sql);
+  return result[0];
+};
+
+exports.updateDataProductById = async (
   id,
   name,
   category_id,
   variant_id,
   description,
-  image,
-  callback
+  image
 ) => {
   let sql = "";
   if (image) {
@@ -43,21 +45,18 @@ exports.updateDataProductById = (
   } else {
     sql = `UPDATE product SET name = '${name}', category_id = ${category_id}, variant_id = ${variant_id}, description = '${description}' WHERE product_id = ${id}`;
   }
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.deleteDataProductById = (id, callback) => {
+exports.deleteDataProductById = async (id) => {
   const sql = `DELETE FROM product WHERE product_id = ${id}`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
 
-exports.getDetailDataProduct = (id, callback) => {
+exports.getDetailDataProduct = async (id) => {
   const sql = `SELECT * FROM product WHERE product_id = ${id}`;
-  mysqlConnection.query(sql, (err, result) => {
-    callback(err, result);
-  });
+  const result = await poolConnection.query(sql);
+  return result[0];
 };
