@@ -12,12 +12,13 @@ import {
   Button,
 } from "reactstrap";
 import Breadcrumbs from "./../../components/Common/Breadcrumb";
-// import Alert from "./../../../components/Alert";
+import Alert from "./../../components/Alert";
 import { MetaTags } from "react-meta-tags";
 
 import { ApiGetListStore } from "../../api/store";
 import { ApiGetListDistributor } from "../../api/distributor";
 import { ApiGetListProduct } from "../../api/product";
+import { ApiAddLisTransaction } from "../../api/transaction";
 import { ConvertToRupiah } from "../../utils/convert";
 
 const Create = () => {
@@ -38,15 +39,15 @@ const Create = () => {
   const [valuePrice, setValuePrice] = useState(0);
   const [errorValuePriceId, setErrorValuePriceId] = useState("");
   const [valueQty, setValueQty] = useState(0);
-  const [errorValueQty, setErrorQty] = useState("");
+  const [errorValueQty, setErrorValueQty] = useState("");
   const [valueTotalPrice, setTotalPrice] = useState(0);
 
-  //   const [isDisabledButton, setIsDisabledButton] = useState(false);
-  //   const [alert, setAlert] = useState({
-  //     isOpen: false,
-  //     title: "",
-  //     message: "",
-  //   });
+  const [isDisabledButton, setIsDisabledButton] = useState(false);
+  const [alert, setAlert] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+  });
 
   useEffect(() => {
     ApiGetListStore().then(response => {
@@ -173,49 +174,66 @@ const Create = () => {
     const { value } = e.target;
     if (isNaN(value)) return false;
     setValueQty(Number(value));
-    setErrorQty("");
+    setErrorValueQty("");
   }, []);
 
-  //   const handleCloseAlert = useCallback(() => {
-  //     setAlert(oldState => ({
-  //       ...oldState,
-  //       isOpen: false,
-  //       title: "",
-  //       message: "",
-  //     }));
-  //   }, []);
+  const handleCloseAlert = useCallback(() => {
+    setAlert(oldState => ({
+      ...oldState,
+      isOpen: false,
+      title: "",
+      message: "",
+    }));
+  }, []);
 
   const handleSave = useCallback(() => {
-    const payload = {
-      consumer_type: valueTypeKonsumen,
-      store_id: valueTypeKonsumen === "Store" ? valueKonsumenId : "",
-      distributor_id:
-        valueTypeKonsumen === "Distributor" ? valueKonsumenId : "",
-      product_id: valueProductId,
-      price_id: valuePriceId,
-      qty: valueQty,
-      sub_total: valueTotalPrice,
-    };
-    console.log("payload", payload);
-    //   setIsDisabledButton(true);
-    //   ApiAddListCategory(payload).then(response => {
-    //     if (response) {
-    //       if (response.status === 400) {
-    //         if (response.result.name === "name") {
-    //           setErrorName(response.message);
-    //         }
-    //       } else if (response.status === 201) {
-    //         setName("");
-    //         setAlert(oldState => ({
-    //           ...oldState,
-    //           isOpen: true,
-    //           title: "Success",
-    //           message: response.message,
-    //         }));
-    //       }
-    //     }
-    //     setIsDisabledButton(false);
-    //   });
+    if (valueTypeKonsumen === "") {
+      setErrorValueTypeKonsumen("Please select tipe konsumen");
+    } else if (valueKonsumenId === "") {
+      setErrorValueKonsumenId("Please select nama toko/distributor");
+    } else if (valueProductId === "") {
+      setErrorValueProductId("Please select nama produk");
+    } else if (valuePriceId === "") {
+      setErrorValuePriceId("Please select berat produk");
+    } else if (valueQty === 0) {
+      setErrorValueQty("jumlah pembelian tidak boleh 0");
+    } else {
+      const payload = {
+        consumer_type: valueTypeKonsumen,
+        store_id: valueTypeKonsumen === "Store" ? valueKonsumenId : "",
+        distributor_id:
+          valueTypeKonsumen === "Distributor" ? valueKonsumenId : "",
+        product_id: valueProductId,
+        price_id: valuePriceId,
+        qty: valueQty,
+        sub_total: valueTotalPrice,
+      };
+      setIsDisabledButton(true);
+      ApiAddLisTransaction(payload).then(response => {
+        if (response) {
+          if (response.status === 400) {
+            if (response.result.name === "name") {
+              setErrorName(response.message);
+            }
+          } else if (response.status === 201) {
+            setValueTypeKonsumen("");
+            setValueKonsumenId("");
+            setValueProductId("");
+            setValuePriceId("");
+            setValuePrice(0);
+            setValueQty(0);
+            setTotalPrice(0);
+            setAlert(oldState => ({
+              ...oldState,
+              isOpen: true,
+              title: "Success",
+              message: response.message,
+            }));
+          }
+        }
+        setIsDisabledButton(false);
+      });
+    }
   }, [
     valueTypeKonsumen,
     valueKonsumenId,
@@ -239,13 +257,13 @@ const Create = () => {
               <CardBody>
                 <Row>
                   <Col className="mx-auto col-10">
-                    {/* <Alert
+                    <Alert
                       isOpen={alert.isOpen}
                       title={alert.title}
                       message={alert.message}
                       color="success"
                       toggle={handleCloseAlert}
-                    /> */}
+                    />
 
                     <Form>
                       <div className="mb-3 ">
@@ -417,7 +435,7 @@ const Create = () => {
                         color="primary"
                         className="mb-2"
                         onClick={handleSave}
-                        // disabled={isDisabledButton}
+                        disabled={isDisabledButton}
                       >
                         save
                       </Button>

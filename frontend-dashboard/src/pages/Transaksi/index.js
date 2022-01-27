@@ -7,6 +7,8 @@ import { ConvertToRupiah } from "./../../utils/convert";
 
 import { ApiGetListTransaction } from "../../api/transaction";
 
+import moment from '../../lib/moment';
+
 const Index = () => {
   const [dataTransaction, setDataTransaction] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,6 +33,7 @@ const Index = () => {
               prices: `Rp ${ConvertToRupiah(response.result[i].price.prices)}`,
               qty: response.result[i].qty,
               subtotal: `Rp ${ConvertToRupiah(response.result[i].subtotal)}`,
+              transactionDate: moment(response.result[i].date_transaction).format('DD-MM-YYYY H:mm:ss'),
             });
           }
           setDataTransaction(dataArr);
@@ -75,6 +78,7 @@ const Index = () => {
                         "Harga Satuan",
                         "Qty",
                         "Subtotal",
+                        "Tanggal Transaksi"
                         // "Actions",
                       ]}
                       row={dataTransaction}

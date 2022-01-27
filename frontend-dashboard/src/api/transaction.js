@@ -1,14 +1,14 @@
-import axios from '../lib/axiosDefault';
+import axios from "../lib/axiosDefault";
 
 export const ApiGetListTransaction = async => {
   const response = axios.get(`/transaction`);
   return response;
 };
 
-// export const ApiAddListCategory = async payload => {
-//   const response = axios.post(`/category`, payload);
-//   return response;
-// };
+export const ApiAddLisTransaction = async payload => {
+  const response = axios.post(`/transaction`, payload);
+  return response;
+};
 
 // export const ApiDetailListCategory = async id => {
 //   const response = axios.get(`/category/detail?id=${id}`);
