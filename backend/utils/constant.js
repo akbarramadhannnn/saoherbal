@@ -1,0 +1,1 @@
+exports.potonganHarga = 100;

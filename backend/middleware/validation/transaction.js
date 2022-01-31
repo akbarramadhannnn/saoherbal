@@ -21,9 +21,4 @@ exports.validationAddTransaction = [
       throw new Error("Qty is Required");
     }
   }),
-  check("sub_total").custom(async (value) => {
-    if (!value) {
-      throw new Error("Subtotal is Required");
-    }
-  }),
 ];

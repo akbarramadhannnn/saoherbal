@@ -40,6 +40,10 @@ import UpdateToko from "../pages/Konsumen/Toko/update";
 import Transaksi from "../pages/Transaksi";
 import CreateTransaksi from "../pages/Transaksi/Create";
 
+//tagihan
+import Tagihan from "../pages/Tagihan";
+import DetailTagihan from "../pages/Tagihan/detail";
+
 const authProtectedRoutes = [
   { path: "/dashboard", component: Dashboard },
 
@@ -75,6 +79,10 @@ const authProtectedRoutes = [
   //toko
   { path: "/transaction", exact: true, component: Transaksi },
   { path: "/transaction/create", component: CreateTransaksi },
+
+  // tagihan
+  { path: "/tagihan", exact: true, component: Tagihan },
+  { path: "/tagihan/detail/:billNumber", component: DetailTagihan },
   // this route should be at the end of all other routes
   // eslint-disable-next-line react/display-name
   { path: "/", exact: true, component: () => <Redirect to="/dashboard" /> },

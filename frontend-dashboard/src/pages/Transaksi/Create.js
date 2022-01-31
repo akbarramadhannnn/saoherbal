@@ -206,7 +206,6 @@ const Create = () => {
         product_id: valueProductId,
         price_id: valuePriceId,
         qty: valueQty,
-        sub_total: valueTotalPrice,
       };
       setIsDisabledButton(true);
       ApiAddLisTransaction(payload).then(response => {
@@ -240,7 +239,6 @@ const Create = () => {
     valueProductId,
     valuePriceId,
     valueQty,
-    valueTotalPrice,
   ]);
 
   return (

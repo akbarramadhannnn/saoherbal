@@ -21,7 +21,7 @@ const {
 } = require("../models/price");
 const Response = require("../helpers/response");
 const { ReplaceToStartUpperCase } = require("../utils/replace");
-const config = require("../config/env.json");
+const config = require("../config/env");
 
 exports.getProductList = async (req, res) => {
   try {
@@ -246,8 +246,6 @@ exports.detailProduct = async (req, res) => {
 
   try {
     const resultDetailProduct = await getDetailDataProduct(id);
-    console.log("resultDetailProduct", resultDetailProduct);
-
     if (!resultDetailProduct.length > 0) {
       return res.json(Response(true, 204, `Data Product Not Found`, {}));
     }

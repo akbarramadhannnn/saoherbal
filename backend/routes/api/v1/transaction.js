@@ -7,6 +7,7 @@ const {
 const {
   getTransaction,
   addTransaction,
+  getDetailTransaction,
 } = require("../../../controller/transaction");
 
 router.get("/", getToken, getTransaction);
@@ -19,6 +20,6 @@ router.post(
 );
 // router.put("/:id", updateCategoryList);
 // router.delete("/:id", deleteCategoryList);
-// router.get("/detail", detailCategory);
+router.get("/detail", getToken, getDetailTransaction);
 
 module.exports = router;

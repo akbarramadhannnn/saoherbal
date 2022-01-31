@@ -1,5 +1,5 @@
 const mysql2 = require("mysql2/promise");
-const config = require("../config/env.json");
+const config = require("../config/env");
 
 const pool = mysql2.createPool({
   host: config.database_sql.host,

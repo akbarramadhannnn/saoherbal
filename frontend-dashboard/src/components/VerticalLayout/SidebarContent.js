@@ -157,6 +157,13 @@ class SidebarContent extends Component {
                   <span>{this.props.t("Transaksi")}</span>
                 </Link>
               </li>
+
+              <li>
+                <Link to="/tagihan">
+                  <i className="bx bx-receipt" />
+                  <span>{this.props.t("Tagihan")}</span>
+                </Link>
+              </li>
             </ul>
           </div>
         </SimpleBar>

@@ -18,7 +18,7 @@ import { MetaTags } from "react-meta-tags";
 import { Link } from "react-router-dom";
 import { ApiGetListCategory } from "../../../api/category";
 import { ApiGetListVariant } from "../../../api/variant";
-import { ApiUploadSingleImage } from "../../../api/image";
+import { ApiUploadSingleImage } from "../../../api/file";
 import DataJenis from "./../../../data/jenis";
 import { ConvertToRupiah } from "../../../utils/convert";
 import { RegexAllowNumberWithDot } from "../../../utils/regex";

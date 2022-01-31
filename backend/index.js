@@ -1,6 +1,6 @@
 require("./connection/mysql");
 const express = require("express");
-const config = require("./config/env.json");
+const config = require("./config/env");
 const cors = require("cors");
 const routes = require("./routes");
 const bodyParser = require("body-parser");

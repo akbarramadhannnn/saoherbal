@@ -8,6 +8,7 @@ const wilayah = require('./wilayah');
 const store = require('./store');
 const distributor = require('./distributor');
 const transaction = require('./transaction');
+const bill = require('./bill');
 
 router.use("/category", category);
 router.use("/variant", variant);
@@ -18,5 +19,6 @@ router.use("/wilayah", wilayah);
 router.use("/store", store);
 router.use("/distributor", distributor);
 router.use("/transaction", transaction);
+router.use("/bill", bill);
 
 module.exports = router;
