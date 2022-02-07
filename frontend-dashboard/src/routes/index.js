@@ -39,6 +39,7 @@ import UpdateToko from "../pages/Konsumen/Toko/update";
 //transaksi
 import Transaksi from "../pages/Transaksi";
 import CreateTransaksi from "../pages/Transaksi/Create";
+import DetailTransaksi from "../pages/Transaksi/Detail";
 
 //tagihan
 import Tagihan from "../pages/Tagihan";
@@ -76,9 +77,10 @@ const authProtectedRoutes = [
   { path: "/konsumen/toko/create", component: CreateToko },
   { path: "/konsumen/toko/update/:id", component: UpdateToko },
 
-  //toko
+  //transaction
   { path: "/transaction", exact: true, component: Transaksi },
   { path: "/transaction/create", component: CreateTransaksi },
+  { path: "/transaction/detail/:code", component: DetailTransaksi },
 
   // tagihan
   { path: "/tagihan", exact: true, component: Tagihan },

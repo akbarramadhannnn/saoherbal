@@ -9,6 +9,7 @@ const store = require('./store');
 const distributor = require('./distributor');
 const transaction = require('./transaction');
 const bill = require('./bill');
+const employee = require('./employee');
 
 router.use("/category", category);
 router.use("/variant", variant);
@@ -20,5 +21,6 @@ router.use("/store", store);
 router.use("/distributor", distributor);
 router.use("/transaction", transaction);
 router.use("/bill", bill);
+router.use("/employee", employee);
 
 module.exports = router;

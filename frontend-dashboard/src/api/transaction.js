@@ -5,13 +5,28 @@ export const ApiGetListTransaction = async () => {
   return response;
 };
 
-export const ApiAddLisTransaction = async (payload) => {
+export const ApiAddLisTransaction = async payload => {
   const response = await axios.post(`/transaction`, payload);
   return response;
 };
 
-export const ApiDetailListTransaction = async (code) => {
+export const ApiDetailListTransaction = async code => {
   const response = await axios.get(`/transaction/detail?code=${code}`);
+  return response;
+};
+
+export const ApiUpdateDueDateTransaction = async (id, payload) => {
+  const response = await axios.put(`/transaction/due-date/${id}`, payload);
+  return response;
+};
+
+export const ApiAddTransactionDueDate = async payload => {
+  const response = await axios.post(`/transaction/due-date`, payload);
+  return response;
+};
+
+export const ApiUpdateStatusTransactionDueDate = async (id, payload) => {
+  const response = await axios.put(`/transaction/update-status/${id}`, payload);
   return response;
 };
 

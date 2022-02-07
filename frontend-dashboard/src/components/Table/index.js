@@ -7,10 +7,10 @@ const Index = ({ column = [], row = [], isLoading = false, col = [] }) => {
   return (
     <Fragment>
       <div className="table-responsive">
-        <Table className="text-center">
+        <Table className="text-center align-middle table-nowrap">
           <thead>
             <tr className={col.length > 0 ? "d-flex" : ""}>
-              <th className={col.length > 0 ? "col-2" : ""}>No</th>
+              <th className={col.length > 0 ? "col-1" : ""}>No</th>
               {column.length > 0 &&
                 column.map((c, i) => {
                   return (
@@ -28,7 +28,7 @@ const Index = ({ column = [], row = [], isLoading = false, col = [] }) => {
             row.map((r, i) => (
               <tbody key={i}>
                 <tr className={col.length > 0 ? "d-flex" : ""}>
-                  <td className={col.length > 0 ? "col-2" : ""}>{i + 1}</td>
+                  <td className={col.length > 0 ? "col-1" : ""}>{i + 1}</td>
                   {Object.keys(r).length > 0 &&
                     Object.keys(r).map((obj, id) => {
                       // !Array.isArray(r[obj])
