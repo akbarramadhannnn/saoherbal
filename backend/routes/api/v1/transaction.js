@@ -3,17 +3,19 @@ const RunValidation = require("../../../middleware/validation/runValidation");
 const { getToken } = require("../../../middleware/auth");
 const {
   validationAddTransaction,
-  validationUpdateDueDateTransaction,
+  validationUpdateTempoTransaction,
   validationAddDueDateTransaction,
   validationUpdateStatusTransaction,
+  validationAddTitipTransaction,
 } = require("../../../middleware/validation/transaction");
 const {
   getTransaction,
   addTransaction,
   getDetailTransaction,
-  updateDueDateTransaction,
+  updateTempoTransaction,
   addDueDateTransaction,
   updateStatusTransaction,
+  addTitipTransaction,
 } = require("../../../controller/transaction");
 
 router.get("/", getToken, getTransaction);
@@ -32,11 +34,11 @@ router.post(
   addDueDateTransaction
 );
 router.put(
-  "/due-date/:id",
+  "/tempo/:id",
   getToken,
-  validationUpdateDueDateTransaction,
+  validationUpdateTempoTransaction,
   RunValidation,
-  updateDueDateTransaction
+  updateTempoTransaction
 );
 router.put(
   "/update-status/:id",
@@ -47,5 +49,12 @@ router.put(
 );
 // router.delete("/:id", deleteCategoryList);
 router.get("/detail", getToken, getDetailTransaction);
+router.post(
+  "/titip",
+  getToken,
+  validationAddTitipTransaction,
+  RunValidation,
+  addTitipTransaction
+);
 
 module.exports = router;

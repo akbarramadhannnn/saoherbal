@@ -58,12 +58,7 @@ exports.validationAddTransaction = [
   }),
 ];
 
-exports.validationUpdateDueDateTransaction = [
-  check("type").custom(async (value, { req }) => {
-    if (!value) {
-      throw new Error("Type is Required");
-    }
-  }),
+exports.validationUpdateTempoTransaction = [
   check("description").custom(async (value, { req }) => {
     if (!value) {
       throw new Error("Description is Required");
@@ -72,6 +67,11 @@ exports.validationUpdateDueDateTransaction = [
   check("paid").custom(async (value, { req }) => {
     if (value === "") {
       throw new Error("Paid is Required");
+    }
+  }),
+  check("dueDateStatus").custom(async (value, { req }) => {
+    if (value === "") {
+      throw new Error("Due Date Status is Required");
     }
   }),
 ];
@@ -103,6 +103,19 @@ exports.validationUpdateStatusTransaction = [
   check("status").custom(async (value, { req }) => {
     if (!value) {
       throw new Error("Status is Required");
+    }
+  }),
+];
+
+exports.validationAddTitipTransaction = [
+  check("transactionId").custom(async (value, { req }) => {
+    if (!value) {
+      throw new Error("Transaction Id is Required");
+    }
+  }),
+  check("dueDateId").custom(async (value, { req }) => {
+    if (!value) {
+      throw new Error("Due Date Id Id is Required");
     }
   }),
 ];

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import PropTypes from "prop-types";
 import { Modal, Spinner } from "reactstrap";
 
@@ -31,4 +31,4 @@ ModalLoading.propTypes = {
   isOpen: PropTypes.bool,
 };
 
-export default ModalLoading;
+export default memo(ModalLoading);

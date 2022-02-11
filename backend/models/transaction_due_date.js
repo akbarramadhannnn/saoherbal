@@ -1,7 +1,7 @@
 const poolConnection = require("../connection/mysql2");
 
 exports.getDataDueDateTransactionByTransactionId = async (transactionId) => {
-  const sql = `SELECT * FROM transaction_due_date WHERE transaction_id_transaction_due_date = ${transactionId}`;
+  const sql = `SELECT * FROM transaction_due_date WHERE id_transaction_transaction_due_date = ${transactionId}`;
   const result = await poolConnection.query(sql);
   return result[0];
 };
@@ -11,7 +11,7 @@ exports.addDueDateDataTransactionIdStartDateEndDate = async (
   startDate,
   endDate
 ) => {
-  const sql = `INSERT INTO transaction_due_date (transaction_id_transaction_due_date, start_date, end_date) values (${transactionId}, '${startDate}', '${endDate}')`;
+  const sql = `INSERT INTO transaction_due_date (id_transaction_transaction_due_date, start_date, end_date) values (${transactionId}, '${startDate}', '${endDate}')`;
   const result = await poolConnection.query(sql);
   return result[0];
 };
@@ -34,8 +34,19 @@ exports.getDataDueDateById = async (id) => {
 //   return result[0];
 // };
 
-exports.updateDataDueDateById = async (id, description, paid) => {
-  const sql = `UPDATE transaction_due_date SET description = '${description}', paid = ${paid} WHERE transaction_due_date_id = ${id}`;
+exports.updateDataDueDateById = async (id, description, paid, status) => {
+  let sql;
+  if (description === "" || paid === "") {
+    sql = `UPDATE transaction_due_date SET status_transaction_due_date = '${status}' WHERE transaction_due_date_id = ${id}`;
+  } else {
+    sql = `UPDATE transaction_due_date SET description = '${description}', paid = ${paid}, status_transaction_due_date = '${status}' WHERE transaction_due_date_id = ${id}`;
+  }
+  const result = await poolConnection.query(sql);
+  return result[0];
+};
+
+exports.updateDataDueDateStatusById = async (id, status) => {
+  const sql = `UPDATE transaction_due_date SET status_transaction_due_date = '${status}' WHERE transaction_due_date_id = ${id}`;
   const result = await poolConnection.query(sql);
   return result[0];
 };

@@ -24,14 +24,15 @@ import {
 import Breadcrumbs from "./../../components/Common/Breadcrumb";
 import Modal from "./../../components/Modal";
 import ModalMessage from "./../../components/Modal/ModalMessage";
-import Alert from "./../../components/Alert";
 import { MetaTags } from "react-meta-tags";
+import TableComponents from "./../../components/Table";
 
 import {
   ApiDetailListTransaction,
-  ApiUpdateDueDateTransaction,
+  ApiUpdateTempoTransaction,
   ApiAddTransactionDueDate,
   ApiUpdateStatusTransactionDueDate,
+  ApiAddTransactionTitipDetail,
 } from "../../api/transaction";
 
 import moment from "../../lib/moment";
@@ -42,7 +43,7 @@ import { RegexAllowNumberWithDot } from "../../utils/regex";
 const DetailTransaction = props => {
   const transactionCode = props.match.params.code;
   const [dataDetail, setDataDetail] = useState({});
-  const [dataTempo, setDataTempo] = useState([]);
+  const [dataDueDate, setDataDueDate] = useState([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isDisabledButtonModal, setIsDisabledButtonModal] = useState(false);
   const [modal, setModal] = useState({
@@ -60,7 +61,14 @@ const DetailTransaction = props => {
   });
   const [formEditModal, setFormEditModal] = useState({});
   const [formAddModal, setFormAddModal] = useState({});
-  const [isShowAddButtonTempo, setIsShowAddButtonTempo] = useState(false);
+  const [modalEditTitip, setModalEditTitip] = useState({
+    isOpen: false,
+    title: "",
+  });
+  const [listInputEditTitip, setListInputEditTitip] = useState([]);
+  const [subTotalTitipPrice, setSubtotalTitipPrice] = useState(0);
+  const [idDueDate, setIdDueDate] = useState(0);
+  const [isShowAddButtonDueDate, setIsShowAddButtonDueDate] = useState(false);
   const [isDisabledButtonTransactionDone, setIsDisabledButtonTransactionDone] =
     useState(true);
 
@@ -70,7 +78,32 @@ const DetailTransaction = props => {
       if (response) {
         setDataDetail(response.result);
         if (response.result.transaction_type === "tempo") {
-          setDataTempo(response.result.dueDate);
+          setDataDueDate(response.result.dueDate);
+        } else if (response.result.transaction_type === "titip") {
+          let resultDueDate = response.result.dueDate;
+          for (let i = 0; i < resultDueDate.length; i++) {
+            if (resultDueDate[i].product.length > 0) {
+              const arrProductList = [];
+              for (let j = 0; j < resultDueDate[i].product.length; j++) {
+                arrProductList.push({
+                  name: resultDueDate[i].product[j].name,
+                  sellPrice: `Rp${ConvertToRupiah(
+                    resultDueDate[i].product[j].sell_price
+                  )}`,
+                  totalLeft: resultDueDate[i].product[j].total_left,
+                  totalSell: resultDueDate[i].product[j].total_sell,
+                  total:
+                    resultDueDate[i].product[j].total_price === 0
+                      ? "Rp0"
+                      : `Rp${ConvertToRupiah(
+                          resultDueDate[i].product[j].total_price
+                        )}`,
+                });
+              }
+              resultDueDate[i].product = arrProductList;
+            }
+          }
+          setDataDueDate(response.result.dueDate);
         }
         setIsLoadingData(false);
         console.log("response", response);
@@ -79,27 +112,55 @@ const DetailTransaction = props => {
   }, [transactionCode]);
 
   useEffect(() => {
-    if (dataTempo.length > 0) {
-      const filterTempo = dataTempo.filter(
-        d => d.description === null && d.paid === null
-      );
-      if (filterTempo.length > 0 || dataDetail.bill_total === 0) {
-        setIsShowAddButtonTempo(false);
-      } else {
-        setIsShowAddButtonTempo(true);
-      }
+    if (dataDetail.transaction_type === "tempo") {
+      if (dataDueDate.length > 0) {
+        const filterTempo = dataDueDate.filter(
+          d => d.description === null && d.paidPrice === null
+        );
+        if (filterTempo.length > 0 || dataDetail.total_bill_price === 0) {
+          setIsShowAddButtonDueDate(false);
+        } else {
+          setIsShowAddButtonDueDate(true);
+        }
 
-      if (dataDetail.bill_total !== 0 || dataDetail.bill_total === null) {
-        setIsDisabledButtonTransactionDone(true);
-      } else {
-        setIsDisabledButtonTransactionDone(false);
+        if (
+          dataDetail.total_bill_price !== 0 ||
+          dataDetail.total_bill_price === null
+        ) {
+          setIsDisabledButtonTransactionDone(true);
+        } else {
+          setIsDisabledButtonTransactionDone(false);
+        }
       }
+    } else if (dataDetail.transaction_type === "titip") {
+      if (dataDueDate.length > 0) {
+        const dueDateStatusDua = dataDueDate.filter(
+          d => d.status_transaction_due_date === "2"
+        );
+        const dueDateStatusKosong = dataDueDate.filter(
+          d => d.status_transaction_due_date === "0"
+        );
+        const dueDateStatusSatu = dataDueDate.filter(
+          d => d.status_transaction_due_date === "1"
+        );
+        if (
+          dueDateStatusDua.length > 0 &&
+          !dueDateStatusKosong.length &&
+          !dueDateStatusSatu.length &&
+          dataDetail.total_paid_price !== dataDetail.subtotal_price
+        ) {
+          setIsShowAddButtonDueDate(true);
+        } else {
+          setIsShowAddButtonDueDate(false);
+        }
+      }
+      setIsDisabledButtonTransactionDone(false);
     }
-  }, [dataTempo, dataDetail]);
+  }, [dataDueDate, dataDetail]);
 
   const handleShowModalEditTempo = useCallback(
     id => {
-      const findTempo = dataTempo.find(d => d.transaction_due_date_id === id);
+      const findTempo = dataDueDate.find(d => d.transaction_due_date_id === id);
       setFormEditModal({
         description: {
           value: "",
@@ -113,7 +174,7 @@ const DetailTransaction = props => {
         startDate: findTempo.start_date,
         status_transaction_due_date: findTempo.status_transaction_due_date,
         tempo: findTempo.tempo,
-        dueDateid: findTempo.transaction_due_date_id,
+        tempoDetailId: findTempo.tempoDetailId,
         transactionId: findTempo.transaction_id_transaction_due_date,
       });
       setModal(oldState => ({
@@ -122,7 +183,7 @@ const DetailTransaction = props => {
         title: `Edit Tempo  ${findTempo.tempo}`,
       }));
     },
-    [dataTempo]
+    [dataDueDate]
   );
 
   const handleCloseModalEditTempo = useCallback(() => {
@@ -194,14 +255,14 @@ const DetailTransaction = props => {
         },
       }));
     } else {
-      const dueDateId = formEditModal.dueDateid;
+      const tempoDetailId = formEditModal.tempoDetailId;
       setIsDisabledButtonModal(true);
       const payload = {
-        type: "tempo",
         description: description.value,
         paid: Number(ReplaceDot(diBayarkan.value)),
+        dueDateStatus: "2",
       };
-      ApiUpdateDueDateTransaction(dueDateId, payload).then(response => {
+      ApiUpdateTempoTransaction(tempoDetailId, payload).then(response => {
         if (response) {
           if (response.status === 201) {
             setModalMessage({
@@ -212,24 +273,27 @@ const DetailTransaction = props => {
             setIsDisabledButtonModal(false);
             setDataDetail(oldState => ({
               ...oldState,
-              paid_total: response.result.sumTotalPaid,
-              bill_total: response.result.sumTotalBill,
+              total_paid_price: response.result.sumTotalPaid,
+              total_bill_price: response.result.sumTotalBill,
             }));
-            const findIndex = dataTempo
-              .map(d => d.transaction_due_date_id)
-              .indexOf(dueDateId);
-            const state = [...dataTempo];
+            const findIndex = dataDueDate
+              .map(d => d.tempoDetailId)
+              .indexOf(tempoDetailId);
+            const state = [...dataDueDate];
             state[findIndex].description = description.value;
-            state[findIndex].paid = Number(ReplaceDot(diBayarkan.value));
-            setDataTempo(state);
+            state[findIndex].paidPrice = Number(ReplaceDot(diBayarkan.value));
+            state[findIndex].status_transaction_due_date =
+              response.result.dueDateStatus;
+            state[findIndex].created_at = response.result.dateTime;
+            setDataDueDate(state);
             handleCloseModalEditTempo();
           }
         }
       });
     }
-  }, [dataDetail, dataTempo, formEditModal, handleCloseModalEditTempo]);
+  }, [dataDetail, dataDueDate, formEditModal, handleCloseModalEditTempo]);
 
-  const handleShowModalAddTempo = useCallback(() => {
+  const handleShowModalAddDueDate = useCallback(() => {
     setFormAddModal({
       description: null,
       paid: null,
@@ -246,9 +310,11 @@ const DetailTransaction = props => {
     setModalAddTempo(oldState => ({
       ...oldState,
       isOpen: true,
-      title: `Tambah Tempo`,
+      title: `Tambah Waktu ${
+        dataDetail.transaction_type === "titip" ? "Titip" : " Tempo"
+      }`,
     }));
-  }, []);
+  }, [dataDetail]);
 
   const handleCloseModalAddTempo = useCallback(() => {
     setModalAddTempo(oldState => ({
@@ -283,7 +349,8 @@ const DetailTransaction = props => {
     }
   }, []);
 
-  const handleSubmitAddTempo = useCallback(() => {
+  const handleSubmitAddDueDate = useCallback(() => {
+    const transactionType = dataDetail.transaction_type;
     const startDateValue = formAddModal.startDate.value;
     const endDateValue = formAddModal.endDate.value;
     if (startDateValue === "") {
@@ -305,7 +372,7 @@ const DetailTransaction = props => {
     } else {
       setIsDisabledButtonModal(true);
       const payload = {
-        type: "tempo",
+        type: transactionType === "tempo" ? "tempo" : "titip",
         transactionId: dataDetail.transaction_id,
         startDate: startDateValue,
         endDate: endDateValue,
@@ -315,11 +382,12 @@ const DetailTransaction = props => {
           if (response.status === 201) {
             setModalMessage({
               isOpen: true,
-              message: "Added Tempo Successfully",
+              message: "Added Due Date Successfully",
               params: "success",
             });
-            setDataTempo(oldState => [...oldState, response.result]);
+            setDataDueDate(oldState => [...oldState, response.result]);
             handleCloseModalAddTempo();
+            setIsDisabledButtonModal(false);
           }
         }
       });
@@ -350,6 +418,146 @@ const DetailTransaction = props => {
       }
     );
   }, [dataDetail]);
+
+  const handleShowModalEditTitip = useCallback(
+    index => {
+      setModalEditTitip({
+        isOpen: true,
+        title: "Edit Titip",
+      });
+      setIdDueDate(dataDueDate[index].transaction_due_date_id);
+
+      let dataProduct = [];
+      if (dataDueDate.length === 1) {
+        dataProduct = dataDetail.product;
+      } else {
+        const list = dataDueDate[dataDueDate.length - 2].product;
+        const arrList = [];
+        for (let i = 0; i < list.length; i++) {
+          arrList.push({
+            name: list[i].name,
+            total: list[i].total,
+            totalLeft: list[i].totalLeft,
+            totalSell: list[i].totalSell,
+            sellPrice: Number(ReplaceDot(list[i].sellPrice.replace(/Rp/g, ""))),
+          });
+        }
+        dataProduct = arrList;
+      }
+
+      const arrList = [];
+      for (let i = 0; i < dataProduct.length; i++) {
+        arrList.push({
+          transactionDetailProductId: dataDetail.product[i].transactionDetailId,
+          name: dataProduct[i].name,
+          qty: dataProduct[i].qty || dataProduct[i].totalLeft,
+          sellPrice: dataProduct[i].sellPrice,
+          totalSell: {
+            value: "",
+            error: "",
+          },
+          totalLeft: dataProduct[i].qty || dataProduct[i].totalLeft,
+          total: 0,
+        });
+      }
+      setListInputEditTitip(arrList);
+    },
+    [dataDueDate, dataDetail]
+  );
+
+  const handleCloseModalEditTitip = useCallback(() => {
+    setModalEditTitip({
+      isOpen: false,
+      title: "",
+    });
+    setListInputEditTitip([]);
+    setSubtotalTitipPrice(0);
+    setIdDueDate(0);
+  }, [dataDueDate]);
+
+  const handleChangeInputEditTitip = useCallback(
+    (e, index) => {
+      let { name, value } = e.target;
+      let state = [...listInputEditTitip];
+
+      if (isNaN(value)) return false;
+
+      value = Number(value);
+
+      if (name === "totalSell") {
+        if (value > state[index].qty) return false;
+        const totalQty = state[index].qty - value;
+        const totalPrice = state[index].sellPrice * value;
+        state[index].totalSell = {
+          ...state[index].totalSell,
+          value: value,
+          error: "",
+        };
+        state[index].totalLeft = totalQty;
+        state[index].total = totalPrice;
+
+        const subTotal = listInputEditTitip.reduce((a, b) => {
+          return a + b.total;
+        }, 0);
+
+        setSubtotalTitipPrice(subTotal);
+      }
+
+      setListInputEditTitip(state);
+    },
+    [listInputEditTitip]
+  );
+
+  const handleSubmitEditTitip = useCallback(() => {
+    setIsDisabledButtonModal(true);
+    const arrListSell = [];
+    const arrListDueDateProduct = [];
+    for (let i = 0; i < listInputEditTitip.length; i++) {
+      arrListSell.push({
+        transactionDetailProductId:
+          listInputEditTitip[i].transactionDetailProductId,
+        totalSell: listInputEditTitip[i].totalSell.value,
+      });
+
+      arrListDueDateProduct.push({
+        name: listInputEditTitip[i].name,
+        sellPrice: `Rp${ConvertToRupiah(listInputEditTitip[i].sellPrice)}`,
+        totalLeft: listInputEditTitip[i].totalLeft,
+        totalSell: listInputEditTitip[i].totalSell.value,
+        total: `Rp${ConvertToRupiah(listInputEditTitip[i].total)}`,
+      });
+    }
+    const payload = {
+      transactionId: dataDetail.transaction_id,
+      dueDateId: idDueDate,
+      listSell: arrListSell,
+    };
+    ApiAddTransactionTitipDetail(payload).then(response => {
+      if (response) {
+        if (response.status === 201) {
+          const stateDueDate = [...dataDueDate];
+          const indexDataDueDate = dataDueDate
+            .map(d => d.transaction_due_date_id)
+            .indexOf(idDueDate);
+          stateDueDate[indexDataDueDate].product = arrListDueDateProduct;
+          stateDueDate[indexDataDueDate].status_transaction_due_date = "2";
+          setDataDueDate(stateDueDate);
+          setDataDetail(oldState => ({
+            ...oldState,
+            total_paid_price: response.result.totalPaidPrice,
+          }));
+          handleCloseModalEditTitip();
+          setIsDisabledButtonModal(false);
+        }
+      }
+    });
+  }, [
+    listInputEditTitip,
+    dataDetail,
+    idDueDate,
+    dataDueDate,
+    handleCloseModalEditTitip,
+  ]);
 
   return (
     <div className="page-content">
@@ -564,7 +772,8 @@ const DetailTransaction = props => {
                                 </td>
                                 <td className="text-end">
                                   <h4 className="m-0">
-                                    Rp{ConvertToRupiah(dataDetail.subtotal)}
+                                    Rp
+                                    {ConvertToRupiah(dataDetail.subtotal_price)}
                                   </h4>
                                 </td>
                               </tr>
@@ -574,7 +783,8 @@ const DetailTransaction = props => {
                       </Row>
                     </Col>
 
-                    {dataDetail.transaction_type === "tempo" && (
+                    {(dataDetail.transaction_type === "tempo" ||
+                      dataDetail.transaction_type === "titip") && (
                       <Col md="12" className="mt-4">
                         <div className="d-flex align-items-center">
                           {/* <div style={{ marginRight: 5 }}>
@@ -582,111 +792,257 @@ const DetailTransaction = props => {
                           </div> */}
 
                           <div>
-                            <h4 className="m-0 font-size-18">Riwayat Tempo</h4>
+                            <h4 className="m-0 font-size-18">
+                              {dataDetail.transaction_type === "tempo" &&
+                                "Riwayat Tempo"}
+                              {dataDetail.transaction_type === "titip" &&
+                                "Riwayat Waktu Titip"}
+                            </h4>
                           </div>
                         </div>
+
                         <Row className="mt-2">
-                          <div className="table-responsive">
-                            <Table className="table-nowrap">
-                              <thead>
-                                <tr>
-                                  <th className="text-center">Keterangan</th>
-                                  <th className="text-center">Waktu Tempo</th>
-                                  <th className="text-center">Status Tempo</th>
-                                  <th className="text-center">Deskripsi</th>
-                                  <th className="text-center">Dibayar</th>
-                                  <th className="text-center">Action</th>
-                                  {/* <th className="text-center">Qty</th>
+                          {dataDetail.transaction_type === "tempo" && (
+                            <div className="table-responsive">
+                              <Table className="table-nowrap">
+                                <thead>
+                                  <tr>
+                                    <th className="text-center">Keterangan</th>
+                                    <th className="text-center">Waktu Tempo</th>
+                                    <th className="text-center">
+                                      Status Tempo
+                                    </th>
+                                    <th className="text-center">Deskripsi</th>
+                                    <th className="text-center">Dibayar</th>
+                                    <th className="text-center">Waktu Bayar</th>
+                                    <th className="text-center">Action</th>
+                                    {/* <th className="text-center">Qty</th>
                                   <th className="text-center">Harga</th>
                                   <th className="text-end">Total</th> */}
-                                </tr>
-                              </thead>
-
-                              <tbody>
-                                {dataTempo.map((d, i) => (
-                                  <tr key={i}>
-                                    <td className="text-center">
-                                      Tempo {d.tempo}
-                                    </td>
-                                    <td className="text-center">
-                                      {moment(d.start_date).format(
-                                        "Do MMMM YYYY"
-                                      )}{" "}
-                                      s.d.{" "}
-                                      {moment(d.end_date).format(
-                                        "Do MMMM YYYY"
-                                      )}
-                                    </td>
-                                    <td className="text-center">
-                                      {d.status_transaction_due_date ===
-                                        "0" && (
-                                        <span
-                                          className={`badge badge-soft-warning font-size-12 p-1`}
-                                        >
-                                          Sedang Berlangsung
-                                        </span>
-                                      )}
-
-                                      {d.status_transaction_due_date ===
-                                        "1" && (
-                                        <span
-                                          className={`badge badge-soft-danger font-size-12 p-1`}
-                                        >
-                                          Lewat Waktu Tempo
-                                        </span>
-                                      )}
-                                    </td>
-                                    <td className="text-center">
-                                      {d.description === null
-                                        ? "-"
-                                        : d.description}
-                                    </td>
-                                    <td className="text-center">
-                                      {d.paid === null
-                                        ? "-"
-                                        : d.paid === 0
-                                        ? "Rp0"
-                                        : `Rp${ConvertToRupiah(d.paid)}`}
-                                    </td>
-                                    <td className="text-center">
-                                      {d.status_transaction_due_date === "1" &&
-                                      d.description === null ? (
-                                        <Link
-                                          to="#"
-                                          className="text-warning"
-                                          onClick={() =>
-                                            handleShowModalEditTempo(
-                                              d.transaction_due_date_id
-                                            )
-                                          }
-                                        >
-                                          Edit
-                                        </Link>
-                                      ) : (
-                                        "-"
-                                      )}
-                                    </td>
                                   </tr>
-                                ))}
-                              </tbody>
-                            </Table>
-                          </div>
+                                </thead>
 
-                          {isShowAddButtonTempo && (
-                            <Col md="12" style={{ marginTop: 5 }}>
-                              <Button
-                                size="sm"
-                                color="primary"
-                                onClick={handleShowModalAddTempo}
-                              >
-                                <i className="fas fa-plus" /> Tambah Tempo
-                              </Button>
-                            </Col>
+                                <tbody>
+                                  {dataDueDate.map((d, i) => (
+                                    <tr key={i}>
+                                      <td className="text-center">
+                                        Tempo {d.tempo}
+                                      </td>
+                                      <td className="text-center">
+                                        {moment(d.start_date).format(
+                                          "Do MMMM YYYY"
+                                        )}{" "}
+                                        s.d.{" "}
+                                        {moment(d.end_date).format(
+                                          "Do MMMM YYYY"
+                                        )}
+                                      </td>
+                                      <td className="text-center">
+                                        {d.status_transaction_due_date ===
+                                          "0" && (
+                                          <span
+                                            className={`badge badge-soft-warning font-size-12 p-1`}
+                                          >
+                                            Sedang Berlangsung
+                                          </span>
+                                        )}
+
+                                        {d.status_transaction_due_date ===
+                                          "1" && (
+                                          <span
+                                            className={`badge badge-soft-danger font-size-12 p-1`}
+                                          >
+                                            Lewat Waktu Tempo
+                                          </span>
+                                        )}
+
+                                        {d.status_transaction_due_date ===
+                                          "2" && (
+                                          <span
+                                            className={`badge badge-soft-success font-size-12 p-1`}
+                                          >
+                                            Sudah Selesai
+                                          </span>
+                                        )}
+                                      </td>
+                                      <td className="text-center">
+                                        {d.description === null
+                                          ? "-"
+                                          : d.description}
+                                      </td>
+                                      <td className="text-center">
+                                        {d.paidPrice === null
+                                          ? "-"
+                                          : d.paidPrice === 0
+                                          ? "Rp0"
+                                          : `Rp${ConvertToRupiah(d.paidPrice)}`}
+                                      </td>
+                                      <td className="text-center">
+                                        {d.created_at === null
+                                          ? "-"
+                                          : `${moment(d.created_at).format(
+                                              "Do MMMM YYYY"
+                                            )} Pkl ${moment(
+                                              d.created_at
+                                            ).format("H:mm:ss")}`}
+                                      </td>
+                                      <td className="text-center">
+                                        {d.status_transaction_due_date ===
+                                          "1" && d.description === null ? (
+                                          <Link
+                                            to="#"
+                                            className="text-warning"
+                                            onClick={() =>
+                                              handleShowModalEditTempo(
+                                                d.transaction_due_date_id
+                                              )
+                                            }
+                                          >
+                                            Edit
+                                          </Link>
+                                        ) : (
+                                          "-"
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </Table>
+                            </div>
                           )}
+
+                          {dataDetail.transaction_type === "titip" && (
+                            <Fragment>
+                              {dataDueDate.map((d, i) => {
+                                return (
+                                  <Col md="12" className="mt-1" key={i}>
+                                    <Card className="border shadow-none">
+                                      <CardBody>
+                                        <Row className="mb-4 align-items-center">
+                                          <div className="col-6 col-md-6">
+                                            <h4 className="m-0 font-size-18">
+                                              Waktu Titip Ke {d.titip}
+                                            </h4>
+                                          </div>
+                                          <div className="col-6 col-md-6 text-end">
+                                            {d.status_transaction_due_date ===
+                                              "1" && (
+                                              <Button
+                                                color="warning"
+                                                // className="text-warning"
+                                                onClick={() =>
+                                                  handleShowModalEditTitip(i)
+                                                }
+                                              >
+                                                Edit
+                                              </Button>
+                                            )}
+                                          </div>
+                                        </Row>
+
+                                        <Row className="mb-2">
+                                          <Col md="4" className="mb-2">
+                                            <Row>
+                                              <Col md="12">Masa Tenggang</Col>
+                                              <Col md="12">
+                                                <div className="text-muted">
+                                                  {moment(d.start_date).format(
+                                                    "Do MMMM YYYY"
+                                                  )}{" "}
+                                                  s.d.{" "}
+                                                  {moment(d.end_date).format(
+                                                    "Do MMMM YYYY"
+                                                  )}
+                                                </div>
+                                              </Col>
+                                            </Row>
+                                          </Col>
+                                          <Col md="3" className="mb-2">
+                                            <Row>
+                                              <Col md="12">Status</Col>
+                                              <Col md="12">
+                                                {d.status_transaction_due_date ===
+                                                  "0" && (
+                                                  <span
+                                                    className={`badge badge-soft-warning font-size-12 p-1`}
+                                                  >
+                                                    Sedang Berlangsung
+                                                  </span>
+                                                )}
+
+                                                {d.status_transaction_due_date ===
+                                                  "1" && (
+                                                  <span
+                                                    className={`badge badge-soft-danger font-size-12 p-1`}
+                                                  >
+                                                    Lewat Masa Tenggang
+                                                  </span>
+                                                )}
+
+                                                {d.status_transaction_due_date ===
+                                                  "2" && (
+                                                  <span
+                                                    className={`badge badge-soft-success font-size-12 p-1`}
+                                                  >
+                                                    Sudah Selesai
+                                                  </span>
+                                                )}
+                                              </Col>
+                                            </Row>
+                                          </Col>
+                                        </Row>
+
+                                        <Row>
+                                          <TableComponents
+                                            column={[
+                                              "Produk",
+                                              "Harga Jual",
+                                              "Jumlah Tersedia",
+                                              "Jumlah Terjual",
+                                              "Total Dibayar",
+                                            ]}
+                                            row={d.product}
+                                          />
+                                        </Row>
+                                      </CardBody>
+                                    </Card>
+                                  </Col>
+                                );
+                              })}
+                            </Fragment>
+                          )}
+
+                          {isShowAddButtonDueDate &&
+                            dataDetail.transaction_type === "tempo" && (
+                              <Col md="12" style={{ marginTop: 5 }}>
+                                <Button
+                                  size="sm"
+                                  color="primary"
+                                  onClick={handleShowModalAddDueDate}
+                                >
+                                  <i className="fas fa-plus" /> Tambah Waktu
+                                  Tempo
+                                </Button>
+                              </Col>
+                            )}
+
+                          {isShowAddButtonDueDate &&
+                            dataDetail.transaction_type === "titip" &&
+                            dataDetail.transactionStatus === "0" && (
+                              <Col md="12" style={{ marginTop: 5 }}>
+                                <Button
+                                  size="sm"
+                                  color="primary"
+                                  onClick={handleShowModalAddDueDate}
+                                >
+                                  <i className="fas fa-plus" /> Tambah Waktu
+                                  Titip
+                                </Button>
+                              </Col>
+                            )}
                         </Row>
                       </Col>
                     )}
-
                     <Col md="12" className="mt-4">
                       {/* <div className="d-flex align-items-center">
                         <div style={{ marginRight: 5 }}>
@@ -702,7 +1058,8 @@ const DetailTransaction = props => {
                       <Row className="mt-2">
                         <div className="col-12 col-md-12">
                           <div className="offset-md-6 offset-12 badge-soft-primary p-1">
-                            {dataDetail.transaction_type === "tempo" && (
+                            {(dataDetail.transaction_type === "tempo" ||
+                              dataDetail.transaction_type === "titip") && (
                               <Fragment>
                                 <Row>
                                   <div className="col-6 col-md-6">
@@ -713,33 +1070,36 @@ const DetailTransaction = props => {
                                   <div className="col-6 col-md-6 text-end">
                                     <h4 className="font-size-16 m-0 p-1 text-primary">
                                       Rp
-                                      {dataDetail.paid_total === null ||
-                                      dataDetail.paid_total === 0
+                                      {dataDetail.total_paid_price === null ||
+                                      dataDetail.total_paid_price === 0
                                         ? "0"
                                         : ConvertToRupiah(
-                                            dataDetail.paid_total
+                                            dataDetail.total_paid_price
                                           )}
                                     </h4>
                                   </div>
                                 </Row>
-                                <Row>
-                                  <div className="col-6 col-md-6">
-                                    <h4 className="font-size-16 m-0 p-1 text-primary">
-                                      Sisa Tagihan
-                                    </h4>
-                                  </div>
-                                  <div className="col-6 col-md-6 text-end">
-                                    <h4 className="font-size-16 m-0 p-1 text-primary">
-                                      Rp
-                                      {dataDetail.bill_total === null ||
-                                      dataDetail.bill_total === 0
-                                        ? "0"
-                                        : ConvertToRupiah(
-                                            dataDetail.bill_total
-                                          )}
-                                    </h4>
-                                  </div>
-                                </Row>
+
+                                {dataDetail.transaction_type === "tempo" && (
+                                  <Row>
+                                    <div className="col-6 col-md-6">
+                                      <h4 className="font-size-16 m-0 p-1 text-primary">
+                                        Sisa Tagihan
+                                      </h4>
+                                    </div>
+                                    <div className="col-6 col-md-6 text-end">
+                                      <h4 className="font-size-16 m-0 p-1 text-primary">
+                                        Rp
+                                        {dataDetail.total_bill_price === null ||
+                                        dataDetail.total_bill_price === 0
+                                          ? "0"
+                                          : ConvertToRupiah(
+                                              dataDetail.total_bill_price
+                                            )}
+                                      </h4>
+                                    </div>
+                                  </Row>
+                                )}
                               </Fragment>
                             )}
 
@@ -751,7 +1111,7 @@ const DetailTransaction = props => {
                               </div>
                               <div className="col-6 col-md-6 text-end">
                                 <h4 className="font-size-16 m-0 p-1 text-primary">
-                                  Rp{ConvertToRupiah(dataDetail.subtotal)}
+                                  Rp{ConvertToRupiah(dataDetail.subtotal_price)}
                                 </h4>
                               </div>
                             </Row>
@@ -770,6 +1130,19 @@ const DetailTransaction = props => {
                         </Link>
 
                         {dataDetail.transaction_type === "tempo" &&
+                          dataDetail.transactionStatus === "0" && (
+                            <Button
+                              type="button"
+                              color="primary"
+                              className="mb-2"
+                              onClick={handleSubmitTransactionDone}
+                              disabled={isDisabledButtonTransactionDone}
+                            >
+                              Transaksi Selesai
+                            </Button>
+                          )}
+
+                        {dataDetail.transaction_type === "titip" &&
                           dataDetail.transactionStatus === "0" && (
                             <Button
                               type="button"
@@ -845,7 +1218,7 @@ const DetailTransaction = props => {
           onClose={handleCloseModalAddTempo}
           tetxButtonLeft="Batal"
           tetxButtonRight="Simpan"
-          onSubmit={handleSubmitAddTempo}
+          onSubmit={handleSubmitAddDueDate}
           isDisabledButtonLeft={isDisabledButtonModal}
           isDisabledButtonRight={isDisabledButtonModal}
         >
@@ -885,6 +1258,80 @@ const DetailTransaction = props => {
                 </Col>
               </Row>
             </div>
+          </Form>
+        </Modal>
+      )}
+
+      {modalEditTitip.isOpen && (
+        <Modal
+          isOpen={modalEditTitip.isOpen}
+          title={modalEditTitip.title}
+          onClose={handleCloseModalEditTitip}
+          tetxButtonLeft="Batal"
+          tetxButtonRight="Simpan"
+          onSubmit={handleSubmitEditTitip}
+          isDisabledButtonLeft={isDisabledButtonModal}
+          isDisabledButtonRight={isDisabledButtonModal}
+          size="lg"
+        >
+          <Form>
+            {listInputEditTitip.map((d, i) => {
+              return (
+                <div className="mb-3" key={i}>
+                  <Row>
+                    <div className="col-6 col-md-3 mb-3">
+                      <span>Produk</span> <br />
+                      <span className="text-muted">{d.name}</span>
+                    </div>
+                    <div className="col-6 col-md-3 mb-3">
+                      <span>Jumlah Tersedia</span> <br />
+                      <span className="text-muted">{d.totalLeft}</span>
+                    </div>
+                    <div className="col-6 col-md-2 mb-3">
+                      <span>Harga Jual</span> <br />
+                      <span className="text-muted">
+                        Rp
+                        {ConvertToRupiah(d.sellPrice)}
+                      </span>
+                    </div>
+                    <div className="col-6 col-md-2 mb-3">
+                      <span>Jumlah Terjual</span> <br />
+                      <Input
+                        value={d.totalSell.value}
+                        name="totalSell"
+                        type="text"
+                        className="form-control"
+                        onChange={e => handleChangeInputEditTitip(e, i)}
+                        placeholder="Jumlah"
+                      />
+                      {d.totalSell.error && (
+                        <p className="text-danger">{d.totalSell.error}</p>
+                      )}
+                    </div>
+                    <div className="col-md-2 text-end">
+                      <span>Total </span> <br />
+                      <span className="text-muted">
+                        {d.total ? `Rp${ConvertToRupiah(d.total)}` : "Rp0"}
+                      </span>
+                    </div>
+                  </Row>
+                  <hr />
+                </div>
+              );
+            })}
+
+            <Row>
+              <div className="col-6 col-md-6">
+                <h4 className="font-size-16 m-0 p-1">Subtotal</h4>
+              </div>
+              <div className="col-6 col-md-6 text-end">
+                <h4 className="font-size-16 m-0 p-1">
+                  {subTotalTitipPrice
+                    ? `Rp${ConvertToRupiah(subTotalTitipPrice)}`
+                    : "Rp0"}
+                </h4>
+              </div>
+            </Row>
           </Form>
         </Modal>
       )}

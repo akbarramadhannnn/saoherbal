@@ -13,9 +13,10 @@ const Index = ({
   tetxButtonRight = "",
   isDisabledButtonLeft = false,
   isDisabledButtonRight = false,
+  size,
 }) => {
   return (
-    <Modal isOpen={isOpen}>
+    <Modal isOpen={isOpen} size={size}>
       <ModalHeader>{title}</ModalHeader>
       <ModalBody>
         {description && description}
@@ -48,6 +49,7 @@ Index.propTypes = {
   children: PropTypes.node,
   isDisabledButtonLeft: PropTypes.bool,
   isDisabledButtonRight: PropTypes.bool,
+  size: PropTypes.string,
 };
 
 export default memo(Index);

@@ -105,13 +105,15 @@ const Index = ({ history }) => {
                         : response.result[i].dueDate
                             .status_transaction_due_date === "1"
                         ? "danger"
-                        : ""
+                        : "success"
                     } font-size-12 p-1`}
                   >
                     {response.result[i].dueDate.status_transaction_due_date ===
                       "0" && "Sedang Berlangsung"}
                     {response.result[i].dueDate.status_transaction_due_date ===
-                      "1" && "Lewat Masa Titip"}
+                      "1" && "Lewat Masa Tenggang"}
+                    {response.result[i].dueDate.status_transaction_due_date ===
+                      "2" && "Sudah Selesai"}
                   </span>
                 ),
                 transactionDate: `${moment(
@@ -157,13 +159,15 @@ const Index = ({ history }) => {
                         : response.result[i].dueDate
                             .status_transaction_due_date === "1"
                         ? "danger"
-                        : ""
+                        : "success"
                     } font-size-12 p-1`}
                   >
                     {response.result[i].dueDate.status_transaction_due_date ===
                       "0" && "Sedang Berlangsung"}
                     {response.result[i].dueDate.status_transaction_due_date ===
                       "1" && "Lewat Masa Tempo"}
+                    {response.result[i].dueDate.status_transaction_due_date ===
+                      "2" && "Sudah Selesai"}
                   </span>
                 ),
                 transactionDate: `${moment(

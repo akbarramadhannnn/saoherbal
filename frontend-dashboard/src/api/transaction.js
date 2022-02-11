@@ -15,8 +15,8 @@ export const ApiDetailListTransaction = async code => {
   return response;
 };
 
-export const ApiUpdateDueDateTransaction = async (id, payload) => {
-  const response = await axios.put(`/transaction/due-date/${id}`, payload);
+export const ApiUpdateTempoTransaction = async (id, payload) => {
+  const response = await axios.put(`/transaction/tempo/${id}`, payload);
   return response;
 };
 
@@ -27,6 +27,11 @@ export const ApiAddTransactionDueDate = async payload => {
 
 export const ApiUpdateStatusTransactionDueDate = async (id, payload) => {
   const response = await axios.put(`/transaction/update-status/${id}`, payload);
+  return response;
+};
+
+export const ApiAddTransactionTitipDetail = async payload => {
+  const response = await axios.post(`/transaction/titip`, payload);
   return response;
 };
 

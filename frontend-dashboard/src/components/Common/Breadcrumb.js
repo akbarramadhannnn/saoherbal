@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, memo } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { Breadcrumb, BreadcrumbItem, Col, Row } from "reactstrap";
@@ -25,13 +25,13 @@ class Breadcrumbs extends Component {
           </Col>
         </Row>
       </React.Fragment>
-    )
+    );
   }
 }
 
 Breadcrumbs.propTypes = {
   breadcrumbItem: PropTypes.string,
-  title: PropTypes.string
-}
+  title: PropTypes.string,
+};
 
-export default Breadcrumbs
+export default memo(Breadcrumbs);
