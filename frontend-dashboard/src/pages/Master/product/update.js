@@ -11,6 +11,7 @@ import {
   Button,
   InputGroup,
   InputGroupText,
+  Spinner,
 } from "reactstrap";
 import Breadcrumbs from "./../../../components/Common/Breadcrumb";
 import Alert from "./../../../components/Alert";
@@ -64,8 +65,10 @@ const Update = props => {
     message: "",
   });
   const [isDisabledButton, setIsDisabledButton] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
   useEffect(() => {
+    setIsLoadingData(true);
     ApiDetailListProduct(id).then(response => {
       if (response) {
         if (response.status === 200) {
@@ -105,6 +108,7 @@ const Update = props => {
             }
           });
         }
+        setIsLoadingData(false);
       }
     });
   }, [id]);
@@ -339,246 +343,258 @@ const Update = props => {
             <Col className="col-12">
               <Card>
                 <CardBody>
-                  <Row>
-                    <Col className="mx-auto col-10">
-                      <Alert
-                        isOpen={alert.isOpen}
-                        title={alert.title}
-                        message={alert.message}
-                        color="success"
-                        toggle={handleCloseAlert}
-                      />
-                      <Form id="form-add-product">
-                        <div className="mb-3 ">
-                          <Label htmlFor="formrow-firstname-Input">
-                            Category
-                          </Label>
-                          <select
-                            value={category}
-                            className="form-select"
-                            onChange={onChangeCategory}
-                          >
-                            <option value="">Select Category</option>
-                            {dataCategory.map((category, i) => (
-                              <option value={category.category_id} key={i}>
-                                {category.name}
-                              </option>
-                            ))}
-                          </select>
-                          {errorCategory && (
-                            <p className="text-danger">{errorCategory}</p>
-                          )}
-                        </div>
-                        <div className="mb-3 ">
-                          <Label htmlFor="formrow-firstname-Input">
-                            Variant
-                          </Label>
-                          <select
-                            value={variant}
-                            className="form-select"
-                            onChange={onChangeVariant}
-                          >
-                            <option value="">Select Variant</option>
-                            {dataVariant.map((variant, i) => (
-                              <option value={variant.variant_id} key={i}>
-                                {variant.name}
-                              </option>
-                            ))}
-                          </select>
-                          {errorVariant && (
-                            <p className="text-danger">{errorVariant}</p>
-                          )}
-                        </div>
-                        <div className="mb-3 ">
-                          <Label htmlFor="formrow-firstname-Input">Name</Label>
-                          <Input
-                            value={name}
-                            type="text"
-                            className="form-control"
-                            id="formrow-firstname-Input"
-                            onChange={onChangeName}
-                            placeholder="Enter product Name"
-                          />
-                          {errorName && (
-                            <p className="text-danger">{errorName}</p>
-                          )}
-                        </div>
+                  {isLoadingData && (
+                    <div className="d-flex justify-content-center pt-5 pb-5 text-primary">
+                      <Spinner />
+                    </div>
+                  )}
 
-                        <div className="mb-3 ">
-                          <Col className="d-flex align-items-center justify-content-between">
-                            <Col>
-                              <Label>Harga</Label>
-                            </Col>
-                          </Col>
-
-                          {priceList.map((m, idx) => {
-                            return (
-                              <Row key={idx}>
-                                <Col md="12">
-                                  <Card
-                                    body
-                                    style={{
-                                      boxShadow: "none",
-                                      border: "1px solid #ced4da",
-                                    }}
-                                  >
-                                    {idx !== 0 && (
-                                      <div
-                                        className="mb-3"
-                                        onClick={() => deleteMultiple(idx)}
-                                        style={{
-                                          cursor: "pointer",
-                                          position: "absolute",
-                                          right: -13,
-                                          top: -13,
-                                        }}
-                                      >
-                                        <i className="fas fa-window-close fs-2 text-danger" />
-                                      </div>
-                                    )}
-
-                                    <Col md="12" xs="12">
-                                      <Row>
-                                        <Col md="4" className="mb-3 mb-sm-0">
-                                          <select
-                                            value={m.unit.value}
-                                            className="form-select"
-                                            onChange={e =>
-                                              onChangePriceList(e, idx)
-                                            }
-                                            name="unit"
-                                          >
-                                            <option value="">
-                                              Select Jenis
-                                            </option>
-                                            {DataJenis.map((s, idx) => {
-                                              return (
-                                                <option
-                                                  value={s.kode}
-                                                  key={idx}
-                                                >
-                                                  {s.name}
-                                                </option>
-                                              );
-                                            })}
-                                          </select>
-                                          {m.unit.error && (
-                                            <p className="text-danger">
-                                              {m.unit.error}
-                                            </p>
-                                          )}
-                                        </Col>
-                                        <Col md="4" className="mb-3 mb-sm-0">
-                                          <InputGroup>
-                                            <Input
-                                              value={m.weight.value}
-                                              type="text"
-                                              className="form-control"
-                                              id="formrow-firstname-Input"
-                                              placeholder="Enter satuan"
-                                              onChange={e =>
-                                                onChangePriceList(e, idx)
-                                              }
-                                              name="weight"
-                                            />
-                                            <InputGroupText>
-                                              {m.unit.value}
-                                            </InputGroupText>
-                                          </InputGroup>
-                                          {m.weight.error && (
-                                            <p className="text-danger">
-                                              {m.weight.error}
-                                            </p>
-                                          )}
-                                        </Col>
-                                        <Col md="4" className="mb-3 mb-sm-0">
-                                          <InputGroup>
-                                            <InputGroupText>Rp</InputGroupText>
-                                            <Input
-                                              value={m.price.value}
-                                              type="text"
-                                              className="form-control"
-                                              id="formrow-firstname-Input"
-                                              placeholder="Enter price"
-                                              onChange={e =>
-                                                onChangePriceList(e, idx)
-                                              }
-                                              name="price"
-                                            />
-                                          </InputGroup>
-                                          {m.price.error && (
-                                            <p className="text-danger">
-                                              {m.price.error}
-                                            </p>
-                                          )}
-                                        </Col>
-                                      </Row>
-                                    </Col>
-                                  </Card>
-                                </Col>
-                              </Row>
-                            );
-                          })}
-
-                          <Col md="12" style={{ marginTop: -12 }}>
-                            <Button
-                              size="sm"
-                              color="primary"
-                              onClick={addMultiple}
+                  {!isLoadingData && (
+                    <Row>
+                      <Col className="mx-auto col-10">
+                        <Alert
+                          isOpen={alert.isOpen}
+                          title={alert.title}
+                          message={alert.message}
+                          color="success"
+                          toggle={handleCloseAlert}
+                        />
+                        <Form id="form-add-product">
+                          <div className="mb-3 ">
+                            <Label htmlFor="formrow-firstname-Input">
+                              Category
+                            </Label>
+                            <select
+                              value={category}
+                              className="form-select"
+                              onChange={onChangeCategory}
                             >
-                              <i className="fas fa-plus" /> Tambah Harga
-                            </Button>
-                          </Col>
-                        </div>
+                              <option value="">Select Category</option>
+                              {dataCategory.map((category, i) => (
+                                <option value={category.category_id} key={i}>
+                                  {category.name}
+                                </option>
+                              ))}
+                            </select>
+                            {errorCategory && (
+                              <p className="text-danger">{errorCategory}</p>
+                            )}
+                          </div>
+                          <div className="mb-3 ">
+                            <Label htmlFor="formrow-firstname-Input">
+                              Variant
+                            </Label>
+                            <select
+                              value={variant}
+                              className="form-select"
+                              onChange={onChangeVariant}
+                            >
+                              <option value="">Select Variant</option>
+                              {dataVariant.map((variant, i) => (
+                                <option value={variant.variant_id} key={i}>
+                                  {variant.name}
+                                </option>
+                              ))}
+                            </select>
+                            {errorVariant && (
+                              <p className="text-danger">{errorVariant}</p>
+                            )}
+                          </div>
+                          <div className="mb-3 ">
+                            <Label htmlFor="formrow-firstname-Input">
+                              Name
+                            </Label>
+                            <Input
+                              value={name}
+                              type="text"
+                              className="form-control"
+                              id="formrow-firstname-Input"
+                              onChange={onChangeName}
+                              placeholder="Enter product Name"
+                            />
+                            {errorName && (
+                              <p className="text-danger">{errorName}</p>
+                            )}
+                          </div>
 
-                        <div className="mb-3 ">
-                          <Label>Description</Label>
-                          <Input
-                            value={desc}
-                            type="textarea"
-                            id="textarea"
-                            rows="4"
-                            placeholder="Enter product description"
-                            onChange={onChangeDesc}
-                          />
-                          {errorDesc && (
-                            <p className="text-danger">{errorDesc}</p>
-                          )}
-                        </div>
-                        <div className="mb-3">
-                          <Input
-                            type="file"
-                            className="form-control"
-                            id="inputGroupFile02"
-                            onChange={onChangeImg}
-                            accept="image/png, image/gif, image/jpeg"
-                          />
-                          {errorImage && (
-                            <p className="text-danger">{errorImage}</p>
-                          )}
-                        </div>
-                      </Form>
-                    </Col>
+                          <div className="mb-3 ">
+                            <Col className="d-flex align-items-center justify-content-between">
+                              <Col>
+                                <Label>Harga</Label>
+                              </Col>
+                            </Col>
 
-                    <Col className="mx-auto col-10">
-                      <div className="d-flex justify-content-end">
-                        <Link
-                          to="/master/product"
-                          className="btn btn-danger me-2"
-                        >
-                          cancel
-                        </Link>
-                        <Button
-                          type="button"
-                          color="primary"
-                          disabled={isDisabledButton}
-                          onClick={handleSave}
-                        >
-                          save
-                        </Button>
-                      </div>
-                    </Col>
-                  </Row>
+                            {priceList.map((m, idx) => {
+                              return (
+                                <Row key={idx}>
+                                  <Col md="12">
+                                    <Card
+                                      body
+                                      style={{
+                                        boxShadow: "none",
+                                        border: "1px solid #ced4da",
+                                      }}
+                                    >
+                                      {idx !== 0 && (
+                                        <div
+                                          className="mb-3"
+                                          onClick={() => deleteMultiple(idx)}
+                                          style={{
+                                            cursor: "pointer",
+                                            position: "absolute",
+                                            right: -13,
+                                            top: -13,
+                                          }}
+                                        >
+                                          <i className="fas fa-window-close fs-2 text-danger" />
+                                        </div>
+                                      )}
+
+                                      <Col md="12" xs="12">
+                                        <Row>
+                                          <Col md="4" className="mb-3 mb-sm-0">
+                                            <select
+                                              value={m.unit.value}
+                                              className="form-select"
+                                              onChange={e =>
+                                                onChangePriceList(e, idx)
+                                              }
+                                              name="unit"
+                                            >
+                                              <option value="">
+                                                Select Jenis
+                                              </option>
+                                              {DataJenis.map((s, idx) => {
+                                                return (
+                                                  <option
+                                                    value={s.kode}
+                                                    key={idx}
+                                                  >
+                                                    {s.name}
+                                                  </option>
+                                                );
+                                              })}
+                                            </select>
+                                            {m.unit.error && (
+                                              <p className="text-danger">
+                                                {m.unit.error}
+                                              </p>
+                                            )}
+                                          </Col>
+                                          <Col md="4" className="mb-3 mb-sm-0">
+                                            <InputGroup>
+                                              <Input
+                                                value={m.weight.value}
+                                                type="text"
+                                                className="form-control"
+                                                id="formrow-firstname-Input"
+                                                placeholder="Enter satuan"
+                                                onChange={e =>
+                                                  onChangePriceList(e, idx)
+                                                }
+                                                name="weight"
+                                              />
+                                              <InputGroupText>
+                                                {m.unit.value}
+                                              </InputGroupText>
+                                            </InputGroup>
+                                            {m.weight.error && (
+                                              <p className="text-danger">
+                                                {m.weight.error}
+                                              </p>
+                                            )}
+                                          </Col>
+                                          <Col md="4" className="mb-3 mb-sm-0">
+                                            <InputGroup>
+                                              <InputGroupText>
+                                                Rp
+                                              </InputGroupText>
+                                              <Input
+                                                value={m.price.value}
+                                                type="text"
+                                                className="form-control"
+                                                id="formrow-firstname-Input"
+                                                placeholder="Enter price"
+                                                onChange={e =>
+                                                  onChangePriceList(e, idx)
+                                                }
+                                                name="price"
+                                              />
+                                            </InputGroup>
+                                            {m.price.error && (
+                                              <p className="text-danger">
+                                                {m.price.error}
+                                              </p>
+                                            )}
+                                          </Col>
+                                        </Row>
+                                      </Col>
+                                    </Card>
+                                  </Col>
+                                </Row>
+                              );
+                            })}
+
+                            <Col md="12" style={{ marginTop: -12 }}>
+                              <Button
+                                size="sm"
+                                color="primary"
+                                onClick={addMultiple}
+                              >
+                                <i className="fas fa-plus" /> Tambah Harga
+                              </Button>
+                            </Col>
+                          </div>
+
+                          <div className="mb-3 ">
+                            <Label>Description</Label>
+                            <Input
+                              value={desc}
+                              type="textarea"
+                              id="textarea"
+                              rows="4"
+                              placeholder="Enter product description"
+                              onChange={onChangeDesc}
+                            />
+                            {errorDesc && (
+                              <p className="text-danger">{errorDesc}</p>
+                            )}
+                          </div>
+                          <div className="mb-3">
+                            <Input
+                              type="file"
+                              className="form-control"
+                              id="inputGroupFile02"
+                              onChange={onChangeImg}
+                              accept="image/png, image/gif, image/jpeg"
+                            />
+                            {errorImage && (
+                              <p className="text-danger">{errorImage}</p>
+                            )}
+                          </div>
+                        </Form>
+                      </Col>
+
+                      <Col className="mx-auto col-10">
+                        <div className="d-flex justify-content-end">
+                          <Link
+                            to="/admin/master/product"
+                            className="btn btn-danger me-2"
+                          >
+                            cancel
+                          </Link>
+                          <Button
+                            type="button"
+                            color="primary"
+                            disabled={isDisabledButton}
+                            onClick={handleSave}
+                          >
+                            save
+                          </Button>
+                        </div>
+                      </Col>
+                    </Row>
+                  )}
                 </CardBody>
               </Card>
             </Col>

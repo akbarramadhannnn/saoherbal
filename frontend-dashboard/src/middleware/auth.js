@@ -6,15 +6,30 @@ const NonAuthmiddleware = ({
   component: Component,
   layout: Layout,
   isAuth,
+  position,
 }) => (
   <Route
     render={props => {
       if (isAuth === true) {
-        return (
-          <Redirect
-            to={{ pathname: "/dashboard", state: { from: props.location } }}
-          />
-        );
+        if (position === "0") {
+          return (
+            <Redirect
+              to={{
+                pathname: "/admin/dashboard",
+                state: { from: props.location },
+              }}
+            />
+          );
+        } else if (position === "2") {
+          return (
+            <Redirect
+              to={{
+                pathname: "/sales/dashboard",
+                state: { from: props.location },
+              }}
+            />
+          );
+        }
       }
 
       if (isAuth === "") {
@@ -64,6 +79,7 @@ NonAuthmiddleware.propTypes = {
   component: PropTypes.any,
   location: PropTypes.object,
   layout: PropTypes.any,
+  position: PropTypes.any,
 };
 
 Authmiddleware.propTypes = {

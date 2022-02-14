@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback, useState } from "react";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import MetaTags from "react-meta-tags";
@@ -29,6 +30,9 @@ import moment from "../../lib/moment";
 import classnames from "classnames";
 
 const Index = ({ history }) => {
+  const selectorAuth = useSelector(({ Auth }) => Auth);
+  const position = selectorAuth.user.position;
+  const [isSubscribe, setIsSubscribe] = useState(true);
   const [dataTransactionAll, setDataTransactionAll] = useState([]);
   const [dataTransactionTitip, setDataTransactionTitip] = useState([]);
   const [dataTransactionTempo, setDataTransactionTempo] = useState([]);
@@ -37,7 +41,12 @@ const Index = ({ history }) => {
   const [activeTab, setActiveTab] = useState("1");
 
   useEffect(() => {
+    // const controller = new AbortController();
+    // return () => controller.abort();
     handleGetData();
+    return () => {
+      setIsSubscribe(false);
+    };
   }, []);
 
   const handleClickCetakTransaction = useCallback(code => {
@@ -64,189 +73,248 @@ const Index = ({ history }) => {
 
   const handleClickDetailTransaction = useCallback(
     transactionCode => {
-      history.push(`/transaction/detail/${transactionCode}`);
+      history.push(
+        `${
+          position === "0" ? "/admin" : position === "2" ? "/sales" : ""
+        }/transaction/detail/${transactionCode}`
+      );
+    },
+    [history, position]
+  );
+
+  const handleClickDetailMaps = useCallback(
+    (lat, long) => {
+      window.open(
+        `https://www.google.com/maps/search/?api=1&query=${lat},${long}`
+      );
+      // history.push(`/transaction/detail/${transactionCode}`);
     },
     [history]
   );
 
   const handleGetData = useCallback(() => {
-    setIsLoading(true);
-    ApiGetListTransaction().then(response => {
-      if (response) {
-        const dataArrAll = [];
-        const dataArrTitip = [];
-        const dataArrTempo = [];
-        if (response.status === 200) {
-          for (let i = 0; i < response.result.length; i++) {
-            if (
-              response.result[i].transaction_type === "titip" &&
-              response.result[i].status === "0"
-            ) {
-              dataArrTitip.push({
-                jenisTransaction: (
-                  <span className={`badge badge-soft-info font-size-12 p-1`}>
-                    {response.result[i].transaction_type.toUpperCase()}
-                  </span>
-                ),
-                code: response.result[i].code,
-                consumerType: response.result[i].consumer_type,
-                consumer: response.result[i].consumer.name,
-                dueDate: `${moment(
-                  response.result[i].dueDate.start_date
-                ).format("Do MMMM YYYY")} s.d. ${moment(
-                  response.result[i].dueDate.end_date
-                ).format("Do MMMM YYYY")}`,
-                status: (
-                  <span
-                    className={`badge badge-soft-${
-                      response.result[i].dueDate.status_transaction_due_date ===
-                      "0"
-                        ? "warning"
-                        : response.result[i].dueDate
-                            .status_transaction_due_date === "1"
-                        ? "danger"
-                        : "success"
-                    } font-size-12 p-1`}
-                  >
-                    {response.result[i].dueDate.status_transaction_due_date ===
-                      "0" && "Sedang Berlangsung"}
-                    {response.result[i].dueDate.status_transaction_due_date ===
-                      "1" && "Lewat Masa Tenggang"}
-                    {response.result[i].dueDate.status_transaction_due_date ===
-                      "2" && "Sudah Selesai"}
-                  </span>
-                ),
-                transactionDate: `${moment(
-                  response.result[i].date_transaction
-                ).format("Do MMMM YYYY")} Pkl ${moment(
-                  response.result[i].date_transaction
-                ).format("H:mm:ss")}`,
-                actions: [
-                  {
-                    iconClassName: "fas fa-eye font-size-20",
-                    actClassName: "text-primary",
-                    text: "",
-                    onClick: () => {
-                      handleClickDetailTransaction(response.result[i].code);
+    if (isSubscribe) {
+      setIsLoading(true);
+      ApiGetListTransaction().then(response => {
+        if (response) {
+          const dataArrAll = [];
+          const dataArrTitip = [];
+          const dataArrTempo = [];
+          if (response.status === 200) {
+            for (let i = 0; i < response.result.length; i++) {
+              if (
+                response.result[i].transaction_type === "titip" &&
+                response.result[i].status === "0"
+              ) {
+                dataArrTitip.push({
+                  jenisTransaction: (
+                    <span className={`badge badge-soft-info font-size-12 p-1`}>
+                      {response.result[i].transaction_type.toUpperCase()}
+                    </span>
+                  ),
+                  code: response.result[i].code,
+                  consumerType: response.result[i].consumer_type,
+                  consumer: response.result[i].consumer.name,
+                  dueDate: `${moment(
+                    response.result[i].dueDate.start_date
+                  ).format("Do MMMM YYYY")} s.d. ${moment(
+                    response.result[i].dueDate.end_date
+                  ).format("Do MMMM YYYY")}`,
+                  status: (
+                    <span
+                      className={`badge badge-soft-${
+                        response.result[i].dueDate
+                          .status_transaction_due_date === "0"
+                          ? "warning"
+                          : response.result[i].dueDate
+                              .status_transaction_due_date === "1"
+                          ? "danger"
+                          : "success"
+                      } font-size-12 p-1`}
+                    >
+                      {response.result[i].dueDate
+                        .status_transaction_due_date === "0" &&
+                        "Sedang Berlangsung"}
+                      {response.result[i].dueDate
+                        .status_transaction_due_date === "1" &&
+                        "Lewat Masa Tenggang"}
+                      {response.result[i].dueDate
+                        .status_transaction_due_date === "2" && "Sudah Selesai"}
+                    </span>
+                  ),
+                  createdBy: response.result[i].employee.name,
+                  transactionDate: `${moment(
+                    response.result[i].date_transaction
+                  ).format("Do MMMM YYYY")} Pkl ${moment(
+                    response.result[i].date_transaction
+                  ).format("H:mm:ss")}`,
+                  actions: [
+                    {
+                      iconClassName: "fas fa-eye font-size-20",
+                      actClassName: "text-primary",
+                      text: "",
+                      onClick: () => {
+                        handleClickDetailTransaction(response.result[i].code);
+                      },
                     },
-                  },
-                ],
-              });
-            } else if (
-              response.result[i].transaction_type === "tempo" &&
-              response.result[i].status === "0"
-            ) {
-              dataArrTempo.push({
-                jenisTransaction: (
-                  <span className={`badge badge-soft-warning font-size-12 p-1`}>
-                    {response.result[i].transaction_type.toUpperCase()}
-                  </span>
-                ),
-                code: response.result[i].code,
-                consumerType: response.result[i].consumer_type,
-                consumer: response.result[i].consumer.name,
-                dueDate: `${moment(
-                  response.result[i].dueDate.start_date
-                ).format("Do MMMM YYYY")} s.d. ${moment(
-                  response.result[i].dueDate.end_date
-                ).format("Do MMMM YYYY")}`,
-                status: (
-                  <span
-                    className={`badge badge-soft-${
-                      response.result[i].dueDate.status_transaction_due_date ===
-                      "0"
-                        ? "warning"
-                        : response.result[i].dueDate
-                            .status_transaction_due_date === "1"
-                        ? "danger"
-                        : "success"
-                    } font-size-12 p-1`}
-                  >
-                    {response.result[i].dueDate.status_transaction_due_date ===
-                      "0" && "Sedang Berlangsung"}
-                    {response.result[i].dueDate.status_transaction_due_date ===
-                      "1" && "Lewat Masa Tempo"}
-                    {response.result[i].dueDate.status_transaction_due_date ===
-                      "2" && "Sudah Selesai"}
-                  </span>
-                ),
-                transactionDate: `${moment(
-                  response.result[i].date_transaction
-                ).format("Do MMMM YYYY")} Pkl ${moment(
-                  response.result[i].date_transaction
-                ).format("H:mm:ss")}`,
-                actions: [
-                  {
-                    iconClassName: "fas fa-eye font-size-20",
-                    actClassName: "text-primary",
-                    text: "",
-                    onClick: () => {
-                      handleClickDetailTransaction(response.result[i].code);
+                    {
+                      iconClassName: "fas fa-map-marker-alt font-size-20",
+                      actClassName: "text-warning",
+                      text: "",
+                      onClick: () => {
+                        handleClickDetailMaps(
+                          response.result[i].consumer.latitude,
+                          response.result[i].consumer.longitude
+                        );
+                      },
                     },
-                  },
-                ],
-              });
-            } else {
-              dataArrAll.push({
-                jenisTransaction: (
-                  <span
-                    className={`badge badge-soft-${
-                      response.result[i].transaction_type === "cash"
-                        ? "primary"
-                        : response.result[i].transaction_type === "tempo"
-                        ? "warning"
-                        : "info"
-                    } font-size-12 p-1`}
-                  >
-                    {response.result[i].transaction_type.toUpperCase()}
-                  </span>
-                ),
-                code: response.result[i].code,
-                consumerType: response.result[i].consumer_type,
-                consumer: response.result[i].consumer.name,
-                status: (
-                  <span className="badge badge-soft-success font-size-12 p-1">
-                    Sudah Selesai
-                  </span>
-                ),
-                transactionDate: `${moment(
-                  response.result[i].date_transaction
-                ).format("Do MMMM YYYY")} Pkl ${moment(
-                  response.result[i].date_transaction
-                ).format("H:mm:ss")}`,
-                actions: [
-                  {
-                    iconClassName: "fas fa-eye font-size-20",
-                    actClassName: "text-primary",
-                    text: "",
-                    onClick: () => {
-                      handleClickDetailTransaction(response.result[i].code);
+                  ],
+                });
+              } else if (
+                response.result[i].transaction_type === "tempo" &&
+                response.result[i].status === "0"
+              ) {
+                dataArrTempo.push({
+                  jenisTransaction: (
+                    <span
+                      className={`badge badge-soft-warning font-size-12 p-1`}
+                    >
+                      {response.result[i].transaction_type.toUpperCase()}
+                    </span>
+                  ),
+                  code: response.result[i].code,
+                  consumerType: response.result[i].consumer_type,
+                  consumer: response.result[i].consumer.name,
+                  dueDate: `${moment(
+                    response.result[i].dueDate.start_date
+                  ).format("Do MMMM YYYY")} s.d. ${moment(
+                    response.result[i].dueDate.end_date
+                  ).format("Do MMMM YYYY")}`,
+                  status: (
+                    <span
+                      className={`badge badge-soft-${
+                        response.result[i].dueDate
+                          .status_transaction_due_date === "0"
+                          ? "warning"
+                          : response.result[i].dueDate
+                              .status_transaction_due_date === "1"
+                          ? "danger"
+                          : "success"
+                      } font-size-12 p-1`}
+                    >
+                      {response.result[i].dueDate
+                        .status_transaction_due_date === "0" &&
+                        "Sedang Berlangsung"}
+                      {response.result[i].dueDate
+                        .status_transaction_due_date === "1" &&
+                        "Lewat Masa Tempo"}
+                      {response.result[i].dueDate
+                        .status_transaction_due_date === "2" && "Sudah Selesai"}
+                    </span>
+                  ),
+                  createdBy: response.result[i].employee.name,
+                  transactionDate: `${moment(
+                    response.result[i].date_transaction
+                  ).format("Do MMMM YYYY")} Pkl ${moment(
+                    response.result[i].date_transaction
+                  ).format("H:mm:ss")}`,
+                  actions: [
+                    {
+                      iconClassName: "fas fa-eye font-size-20",
+                      actClassName: "text-primary",
+                      text: "",
+                      onClick: () => {
+                        handleClickDetailTransaction(response.result[i].code);
+                      },
                     },
-                  },
-                ],
-              });
+                    {
+                      iconClassName: "fas fa-map-marker-alt font-size-20",
+                      actClassName: "text-warning",
+                      text: "",
+                      onClick: () => {
+                        handleClickDetailMaps(
+                          response.result[i].consumer.latitude,
+                          response.result[i].consumer.longitude
+                        );
+                      },
+                    },
+                  ],
+                });
+              } else {
+                dataArrAll.push({
+                  jenisTransaction: (
+                    <span
+                      className={`badge badge-soft-${
+                        response.result[i].transaction_type === "cash"
+                          ? "primary"
+                          : response.result[i].transaction_type === "tempo"
+                          ? "warning"
+                          : "info"
+                      } font-size-12 p-1`}
+                    >
+                      {response.result[i].transaction_type.toUpperCase()}
+                    </span>
+                  ),
+                  code: response.result[i].code,
+                  consumerType: response.result[i].consumer_type,
+                  consumer: response.result[i].consumer.name,
+                  status: (
+                    <span className="badge badge-soft-success font-size-12 p-1">
+                      Sudah Selesai
+                    </span>
+                  ),
+                  createdBy: response.result[i].employee.name,
+                  transactionDate: `${moment(
+                    response.result[i].date_transaction
+                  ).format("Do MMMM YYYY")} Pkl ${moment(
+                    response.result[i].date_transaction
+                  ).format("H:mm:ss")}`,
+                  actions: [
+                    {
+                      iconClassName: "fas fa-eye font-size-20",
+                      actClassName: "text-primary",
+                      text: "",
+                      onClick: () => {
+                        handleClickDetailTransaction(response.result[i].code);
+                      },
+                    },
+                    {
+                      iconClassName: "fas fa-map-marker-alt font-size-20",
+                      actClassName: "text-warning",
+                      text: "",
+                      onClick: () => {
+                        handleClickDetailMaps(
+                          response.result[i].consumer.latitude,
+                          response.result[i].consumer.longitude
+                        );
+                      },
+                    },
+                  ],
+                });
+              }
             }
-          }
 
-          setDataTransactionAll(dataArrAll);
-          setDataTransactionTitip(dataArrTitip);
-          setDataTransactionTempo(dataArrTempo);
-        } else if (response.status === 204) {
-          setDataTransactionAll(dataArrAll);
-          setDataTransactionAll(dataArrAll);
-          setDataTransactionTitip(dataArrTitip);
-          setDataTransactionTempo(dataArrTempo);
+            setDataTransactionAll(dataArrAll);
+            setDataTransactionTitip(dataArrTitip);
+            setDataTransactionTempo(dataArrTempo);
+          } else if (response.status === 204) {
+            setDataTransactionAll(dataArrAll);
+            setDataTransactionAll(dataArrAll);
+            setDataTransactionTitip(dataArrTitip);
+            setDataTransactionTempo(dataArrTempo);
+          }
         }
-      }
-      setIsLoading(false);
-    });
-  }, [handleClickDetailTransaction]);
+        setIsLoading(false);
+      });
+    }
+  }, [handleClickDetailTransaction, handleClickDetailMaps, isSubscribe]);
 
   const listColAll = [
     "col-2",
     "col-2",
     "col-2",
     "col-2",
+    "col-3",
     "col-3",
     "col-3",
     "col-1",
@@ -259,6 +327,7 @@ const Index = ({ history }) => {
     "col-2",
     "col-3",
     "col-2",
+    "col-3",
     "col-3",
     "col-1",
   ];
@@ -278,7 +347,16 @@ const Index = ({ history }) => {
               <CardBody>
                 <Row className="mb-2">
                   <Col md="12" sm="12" className="d-flex justify-content-end">
-                    <Link to="/transaction/create" className="btn btn-primary">
+                    <Link
+                      to={`${
+                        position === "0"
+                          ? "/admin"
+                          : position === "2"
+                          ? "/sales"
+                          : ""
+                      }/transaction/create`}
+                      className="btn btn-primary"
+                    >
                       Add New Transaction
                     </Link>
                   </Col>
@@ -346,6 +424,7 @@ const Index = ({ history }) => {
                           "Tipe Konsumen",
                           "Konsumen",
                           "Status",
+                          "Dibuat Oleh",
                           "Waktu Transaksi",
                           "Actions",
                         ]}
@@ -364,6 +443,7 @@ const Index = ({ history }) => {
                           "Konsumen",
                           "Waktu Masa Titip",
                           "Status",
+                          "Dibuat Oleh",
                           "Waktu Transaksi",
                           "Actions",
                         ]}
@@ -382,6 +462,7 @@ const Index = ({ history }) => {
                           "Konsumen",
                           "Waktu Masa Tempo",
                           "Status",
+                          "Dibuat Oleh",
                           "Waktu Transaksi",
                           "Actions",
                         ]}

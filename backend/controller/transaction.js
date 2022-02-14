@@ -19,6 +19,8 @@ const {
   addDueDateDataTransactionIdStartDateEndDate,
   addDataDueDateTransaction,
   updateDataDueDateStatusById,
+  getAllDataDueDateTransactionByStatus,
+  updateMultipleDataDueDateStatusById,
 } = require("../models/transaction_due_date");
 const {
   addDataTransactionTempoDetail,
@@ -35,6 +37,7 @@ const {
 const { getDataStoreById } = require("../models/store");
 const { getDataDistributorById } = require("../models/distributor");
 const { getDataProductById } = require("../models/product");
+const { getDataEmployeeById } = require("../models/employee");
 const {
   getDataPriceById,
   getDataPriceByIdAndProductId,
@@ -52,10 +55,16 @@ const Response = require("../helpers/response");
 const { getFirstDayDate, getLastDayDate } = require("../utils/date");
 
 exports.getTransaction = async (req, res) => {
+  const userId = req.userId;
+  const position = req.position;
   try {
     let result = await getDataTransactionAll();
     if (!result.length > 0) {
       return res.json(Response(true, 204, `Transaction Not Found`, result));
+    }
+
+    if (position === "2") {
+      result = result.filter((d) => d.employee_id_transaction === userId);
     }
 
     // Get Data Dsitributor
@@ -67,6 +76,8 @@ exports.getTransaction = async (req, res) => {
         result[i].consumer = {
           consumer_id: resultDistributor[0].distributor_id,
           name: resultDistributor[0].name,
+          latitude: resultDistributor[0].latitude,
+          longitude: resultDistributor[0].longitude,
         };
       } else if (result[i].store_id_transaction) {
         const resultStore = await getDataStoreById(
@@ -75,8 +86,19 @@ exports.getTransaction = async (req, res) => {
         result[i].consumer = {
           consumer_id: resultStore[0].store_id,
           name: resultStore[0].name,
+          latitude: resultDistributor[0].latitude,
+          longitude: resultDistributor[0].longitude,
         };
       }
+
+      const resultEmployee = await getDataEmployeeById(
+        result[i].employee_id_transaction
+      );
+
+      result[i].employee = {
+        employeeId: resultEmployee[0].employee_id,
+        name: resultEmployee[0].name,
+      };
 
       if (
         result[i].transaction_type === "tempo" ||
@@ -101,6 +123,7 @@ exports.getTransaction = async (req, res) => {
 
 exports.addTransaction = async (req, res) => {
   const distributor_id = req.body.distributor_id || null;
+  const userId = req.userId;
   const store_id = req.body.store_id || null;
   const { consumer_type, transaction_type, dueDate, productList } = req.body;
 
@@ -256,6 +279,7 @@ exports.addTransaction = async (req, res) => {
       storeId,
       distributorId,
       billNumberEngineer,
+      userId,
       code,
       consumerType,
       transactionType,
@@ -332,6 +356,8 @@ exports.getDetailTransaction = async (req, res) => {
         address: resultDistributor[0].address,
         provinsi: resultProvinsi[0].name,
         kabupaten: resultKabupaten[0].name,
+        latitude: resultDistributor[0].latitude,
+        longitude: resultDistributor[0].longitude,
       };
     } else if (resultTransactionCode[0].store_id_transaction) {
       const resultStore = await getDataStoreById(
@@ -350,6 +376,8 @@ exports.getDetailTransaction = async (req, res) => {
         address: resultStore[0].address,
         provinsi: resultProvinsi[0].name,
         kabupaten: resultKabupaten[0].name,
+        latitude: resultDistributor[0].latitude,
+        longitude: resultDistributor[0].longitude,
       };
     }
 
@@ -674,6 +702,29 @@ exports.addTitipTransaction = async (req, res) => {
       Response(true, 201, `Added Transaction In Out Product Successfully`, {
         totalPaidPrice,
       })
+    );
+  } catch (err) {
+    console.log("err", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
+};
+
+exports.checkDueDateStatus = async (req, res) => {
+  try {
+    const resultDueDate = await getAllDataDueDateTransactionByStatus("0");
+    const dateNow = moment(new Date()).format("YYYY-MM-DD");
+    for (let i = 0; i < resultDueDate.length; i++) {
+      const endDate = moment(resultDueDate[i].end_date).format("YYYY-MM-DD");
+      if (endDate < dateNow) {
+        await updateMultipleDataDueDateStatusById([
+          "1",
+          resultDueDate[i].transaction_due_date_id,
+        ]);
+      }
+    }
+    return res.json(
+      Response(true, 201, `Updated Due Date Status Successfully`, {})
     );
   } catch (err) {
     console.log("err", err);

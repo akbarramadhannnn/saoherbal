@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import {
@@ -42,6 +43,8 @@ import { RegexAllowNumberWithDot } from "../../utils/regex";
 
 const DetailTransaction = props => {
   const transactionCode = props.match.params.code;
+  const selectorAuth = useSelector(({ Auth }) => Auth);
+  const position = selectorAuth.user.position;
   const [dataDetail, setDataDetail] = useState({});
   const [dataDueDate, setDataDueDate] = useState([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -246,12 +249,14 @@ const DetailTransaction = props => {
           error: "Pleasa enter this value",
         },
       }));
-    } else if (Number(ReplaceDot(diBayarkan.value)) > dataDetail.bill_total) {
+    } else if (
+      Number(ReplaceDot(diBayarkan.value)) > dataDetail.total_bill_price
+    ) {
       setFormEditModal(oldState => ({
         ...oldState,
         diBayar: {
           ...oldState.diBayar,
-          error: `max paid Rp${ConvertToRupiah(dataDetail.bill_total)}`,
+          error: `max paid Rp${ConvertToRupiah(dataDetail.total_bill_price)}`,
         },
       }));
     } else {
@@ -535,6 +540,11 @@ const DetailTransaction = props => {
     ApiAddTransactionTitipDetail(payload).then(response => {
       if (response) {
         if (response.status === 201) {
+          setModalMessage({
+            isOpen: true,
+            message: "Updated Titip Successfully",
+            params: "success",
+          });
           const stateDueDate = [...dataDueDate];
           const indexDataDueDate = dataDueDate
             .map(d => d.transaction_due_date_id)
@@ -1123,7 +1133,13 @@ const DetailTransaction = props => {
                     <Col className="col-12 mt-4">
                       <div className="d-flex justify-content-end">
                         <Link
-                          to="/transaction"
+                          to={`${
+                            position === "0"
+                              ? "/admin"
+                              : position === "2"
+                              ? "/sales"
+                              : ""
+                          }/transaction`}
                           className="btn btn-danger mb-2 me-2"
                         >
                           Kembali

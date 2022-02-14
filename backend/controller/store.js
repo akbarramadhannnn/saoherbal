@@ -35,7 +35,16 @@ exports.getStoreList = async (req, res) => {
 };
 
 exports.addStoreList = async (req, res) => {
-  let { provinsi_id, kabupaten_id, name, email, no_tlp, address } = req.body;
+  let {
+    provinsi_id,
+    kabupaten_id,
+    name,
+    email,
+    no_tlp,
+    address,
+    latitude,
+    longitude,
+  } = req.body;
   name = ReplaceToStartUpperCase(name);
 
   try {
@@ -96,7 +105,16 @@ exports.addStoreList = async (req, res) => {
       );
     }
 
-    await addDataStore(provinsi_id, kabupaten_id, name, email, no_tlp, address);
+    await addDataStore(
+      provinsi_id,
+      kabupaten_id,
+      name,
+      email,
+      no_tlp,
+      address,
+      latitude,
+      longitude
+    );
     return res.json(Response(true, 201, `Added Store Successfully`, {}));
   } catch (err) {
     console.log("errr", err);
@@ -107,7 +125,16 @@ exports.addStoreList = async (req, res) => {
 
 exports.updateStoreList = async (req, res) => {
   const { id } = req.params;
-  let { provinsi_id, kabupaten_id, name, email, no_tlp, address } = req.body;
+  let {
+    provinsi_id,
+    kabupaten_id,
+    name,
+    email,
+    no_tlp,
+    address,
+    latitude,
+    longitude,
+  } = req.body;
   name = ReplaceToStartUpperCase(name);
 
   try {
@@ -190,7 +217,9 @@ exports.updateStoreList = async (req, res) => {
       name,
       email,
       no_tlp,
-      address
+      address,
+      latitude,
+      longitude
     );
     return res.json(Response(true, 201, `Updated Store Successfully`, {}));
   } catch (err) {

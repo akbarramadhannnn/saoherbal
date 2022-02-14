@@ -16,6 +16,7 @@ const {
   addDueDateTransaction,
   updateStatusTransaction,
   addTitipTransaction,
+  checkDueDateStatus
 } = require("../../../controller/transaction");
 
 router.get("/", getToken, getTransaction);
@@ -47,7 +48,7 @@ router.put(
   RunValidation,
   updateStatusTransaction
 );
-// router.delete("/:id", deleteCategoryList);
+router.get("/check-due-date-status", checkDueDateStatus);
 router.get("/detail", getToken, getDetailTransaction);
 router.post(
   "/titip",

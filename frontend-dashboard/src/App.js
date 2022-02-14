@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { BrowserRouter as Router, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Redirect } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // Import Routes
@@ -33,17 +33,18 @@ const App = () => {
   return (
     <Router>
       <Switch>
-        {publicRoutes.map((p, i) => (
+        {publicRoutes(selectorAuth).map((p, i) => (
           <NonAuthmiddleware
             path={p.path}
             layout={NonAuthLayout}
             component={p.component}
             key={i}
             isAuth={selectorAuth.isAuth}
+            position={selectorAuth.user.position}
           />
         ))}
 
-        {authProtectedRoutes.map((route, idx) => (
+        {authProtectedRoutes(selectorAuth).map((route, idx) => (
           <Authmiddleware
             exact={route.exact}
             path={route.path}

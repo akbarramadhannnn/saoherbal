@@ -1,24 +1,28 @@
 const {
-  getDataCategoryAll,
-  addDataCategory,
-  getDataCategoryById,
-  updateDataCategoryById,
-  deleteDataCategoryById,
-  getDetailDataCategory,
-  getDataCategoryByName,
-  getDataCategoryByNameNotById,
-} = require("../models/category");
+  getDataEmployeeAll,
+  addDataEmployee,
+  getDataEmployeeById,
+  updateDataActiveEmployeeById,
+  updateDataEmployee,
+} = require("../models/employee");
+const {
+  getDataProvinsiById,
+  getDataKabupatenById,
+  getDataKabupatenAndProvinsiById,
+} = require("../models/wilayah");
 const Response = require("../helpers/response");
 const { ReplaceToStartUpperCase } = require("../utils/replace");
-const GenerateNipEmployee = require("../utils/generateNipEmployee");
+const GenerateNikEmployee = require("../utils/generateNikEmployee");
+const GenerateNomorUrut = require("../utils/generateNomorUrut");
+const moment = require("moment");
 
 exports.getEmployeeList = async (req, res) => {
   try {
-    const result = await getDataCategoryAll();
+    const result = await getDataEmployeeAll();
     if (!result.length > 0) {
-      return res.json(Response(true, 204, `Get Category Successfully`, result));
+      return res.json(Response(true, 204, `Get Employee Successfully`, result));
     }
-    return res.json(Response(true, 200, `Get Category Successfully`, result));
+    return res.json(Response(true, 200, `Get Employee Successfully`, result));
   } catch (err) {
     console.log("errr", err);
     const error = JSON.stringify(err, undefined, 2);
@@ -28,39 +32,80 @@ exports.getEmployeeList = async (req, res) => {
 
 exports.addEmployeeList = async (req, res) => {
   let {
+    typeId,
     numberId,
     name,
+    email,
     gender,
     placeOfDate,
     birthOfDate,
+    position,
+    noTlp,
     provinsiId,
     kabupatenId,
     address,
     joinDate,
   } = req.body;
-
-  // GenerateNipEmployee('tahun masuk', 'bulan masuk kerja', 'jabatan', 'nomor urut data karyawan')
-  // name = ReplaceToStartUpperCase(name);
-  console.log("numberId", numberId);
-  console.log("name", name);
-  console.log("gender", gender);
-  console.log("placeOfDate", placeOfDate);
-  console.log("birthOfDate", birthOfDate);
-  console.log("provinsiId", provinsiId);
-  console.log("kabupatenId", kabupatenId);
-  console.log("address", address);
-  console.log("joinDate", joinDate);
+  name = ReplaceToStartUpperCase(name);
+  placeOfDate = ReplaceToStartUpperCase(placeOfDate);
   try {
-    // const resultCategoryname = await getDataCategoryByName(name);
-    // if (resultCategoryname.length > 0) {
-    //   return res.json(
-    //     Response(false, 400, `Category Name has Already`, {
-    //       name: "name",
-    //     })
-    //   );
-    // }
-    // await addDataCategory(name);
-    // return res.json(Response(true, 201, `Added Category Successfully`, {}));
+    const resultProvinsiById = await getDataProvinsiById(provinsiId);
+    if (!resultProvinsiById.length > 0) {
+      return res.json(
+        Response(false, 400, `Provinsi Id Not Found`, {
+          name: "provinsiId",
+        })
+      );
+    }
+
+    const resultKabupatenById = await getDataKabupatenById(kabupatenId);
+    if (!resultKabupatenById.length > 0) {
+      return res.json(
+        Response(false, 400, `Kabupaten Id Not Found`, {
+          name: "kabupatenId",
+        })
+      );
+    }
+
+    const resultKabProvById = await getDataKabupatenAndProvinsiById(
+      kabupatenId,
+      provinsiId
+    );
+    if (!resultKabProvById.length > 0) {
+      return res.json(
+        Response(false, 400, `Kabupaten Id And Provinsi Id No Match`, {
+          name: "kabupatenId",
+        })
+      );
+    }
+
+    const resultEmployeeAll = await getDataEmployeeAll();
+    const yearsNow = moment(new Date()).format("YYYY");
+    const joinMonth = moment(joinDate).format("MM");
+    const nikEmployee = GenerateNikEmployee(
+      yearsNow,
+      joinMonth,
+      position,
+      GenerateNomorUrut(resultEmployeeAll.length + 1)
+    );
+
+    await addDataEmployee(
+      nikEmployee,
+      typeId,
+      numberId,
+      name,
+      email,
+      gender,
+      placeOfDate,
+      birthOfDate,
+      position,
+      noTlp,
+      provinsiId,
+      kabupatenId,
+      address,
+      joinDate
+    );
+    return res.json(Response(true, 201, `Added Employee Successfully`, {}));
   } catch (err) {
     console.log("errr", err);
     const error = JSON.stringify(err, undefined, 2);
@@ -69,34 +114,69 @@ exports.addEmployeeList = async (req, res) => {
 };
 
 exports.updateEmployeeList = async (req, res) => {
-  let { name } = req.body;
+  let {
+    typeId,
+    numberId,
+    name,
+    email,
+    gender,
+    placeOfDate,
+    birthOfDate,
+    position,
+    noTlp,
+    provinsiId,
+    kabupatenId,
+    address,
+    joinDate,
+  } = req.body;
   const { id } = req.params;
+
   name = ReplaceToStartUpperCase(name);
+  placeOfDate = ReplaceToStartUpperCase(placeOfDate);
 
   try {
-    const resultCategoryId = await getDataCategoryById(id);
-    if (!resultCategoryId.length > 0) {
+    const resultEmployeeId = await getDataEmployeeById(id);
+    if (!resultEmployeeId.length > 0) {
       return res.json(
-        Response(false, 400, `Category Id not found`, {
-          name: "category_id",
+        Response(false, 400, `Employee Id not found`, {
+          name: "employee_id",
         })
       );
     }
 
-    const resultCategoryNameNotById = await getDataCategoryByNameNotById(
+    // const resultCategoryNameNotById = await getDataCategoryByNameNotById(
+    //   name,
+    //   id
+    // );
+    // if (resultCategoryNameNotById.length > 0) {
+    //   return res.json(
+    //     Response(false, 400, `Category Name has Already`, {
+    //       name: "name",
+    //     })
+    //   );
+    // }
+
+    const dateTime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+
+    await updateDataEmployee(
+      id,
+      typeId,
+      numberId,
       name,
-      id
+      email,
+      gender,
+      placeOfDate,
+      birthOfDate,
+      position,
+      noTlp,
+      provinsiId,
+      kabupatenId,
+      address,
+      joinDate,
+      dateTime
     );
-    if (resultCategoryNameNotById.length > 0) {
-      return res.json(
-        Response(false, 400, `Category Name has Already`, {
-          name: "name",
-        })
-      );
-    }
 
-    await updateDataCategoryById(id, name);
-    return res.json(Response(true, 201, `Updated Category Successfully`, {}));
+    return res.json(Response(true, 201, `Updated Employee Successfully`, {}));
   } catch (err) {
     console.log("err", err);
     const error = JSON.stringify(err, undefined, 2);
@@ -105,20 +185,35 @@ exports.updateEmployeeList = async (req, res) => {
 };
 
 exports.deleteEmployeeList = async (req, res) => {
-  const { id } = req.params;
+  // const { id } = req.params;
+  // try {
+  //   const resultCategoryId = await getDataCategoryById(id);
+  //   if (!resultCategoryId.length > 0) {
+  //     return res.json(
+  //       Response(false, 400, `Category Id Not Found`, {
+  //         name: "category_id",
+  //       })
+  //     );
+  //   }
+  //   await deleteDataCategoryById(id);
+  //   return res.json(Response(true, 200, `Deleted Category Successfully`, {}));
+  // } catch (err) {
+  //   console.log("errr", err);
+  //   const error = JSON.stringify(err, undefined, 2);
+  //   return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  // }
+};
 
+exports.detailEmployee = async (req, res) => {
+  const { id } = req.query;
   try {
-    const resultCategoryId = await getDataCategoryById(id);
-    if (!resultCategoryId.length > 0) {
-      return res.json(
-        Response(false, 400, `Category Id Not Found`, {
-          name: "category_id",
-        })
-      );
+    const result = await getDataEmployeeById(id);
+    if (!result.length > 0) {
+      return res.json(Response(false, 400, `Employee Id Not Found`, {}));
     }
-
-    await deleteDataCategoryById(id);
-    return res.json(Response(true, 200, `Deleted Category Successfully`, {}));
+    return res.json(
+      Response(true, 200, `Get Employee Successfully`, result[0])
+    );
   } catch (err) {
     console.log("errr", err);
     const error = JSON.stringify(err, undefined, 2);
@@ -126,16 +221,19 @@ exports.deleteEmployeeList = async (req, res) => {
   }
 };
 
-exports.detailEmployee = async (req, res) => {
-  const { id } = req.query;
+exports.updateActive = async (req, res) => {
+  const { active } = req.body;
+  const { id } = req.params;
 
   try {
-    const result = await getDetailDataCategory(id);
+    const result = await getDataEmployeeById(id);
     if (!result.length > 0) {
-      return res.json(Response(true, 204, `Data Category Not Found`, {}));
+      return res.json(Response(false, 400, `Employee Id Not Found`, {}));
     }
+
+    await updateDataActiveEmployeeById(id, active);
     return res.json(
-      Response(true, 200, `Get Category Successfully`, result[0])
+      Response(true, 200, `Update Active Employee Successfully`, {})
     );
   } catch (err) {
     console.log("errr", err);

@@ -12,9 +12,11 @@ exports.addDataDistributor = async (
   name,
   email,
   no_tlp,
-  address
+  address,
+  latitude,
+  longitude
 ) => {
-  const sql = `INSERT INTO distributor (distributor_prov_id, distributor_kab_id, name, email, no_tlp, address) values ('${provinsi_id}', '${kabupaten_id}', '${name}', '${email}', '${no_tlp}', '${address}')`;
+  const sql = `INSERT INTO distributor (distributor_prov_id, distributor_kab_id, name, email, no_tlp, address, latitude, longitude) values ('${provinsi_id}', '${kabupaten_id}', '${name}', '${email}', '${no_tlp}', '${address}', '${latitude}', '${longitude}')`;
   const result = await poolConnection.query(sql);
   return result[0];
 };
@@ -68,9 +70,11 @@ exports.updateDataDistributorById = async (
   name,
   email,
   no_tlp,
-  address
+  address,
+  latitude,
+  longitude
 ) => {
-  const sql = `UPDATE distributor SET distributor_prov_id = '${provinsi_id}' , distributor_kab_id = '${kabupaten_id}' , name = '${name}' , email = '${email}' , no_tlp = '${no_tlp}' , address = '${address}' WHERE distributor_id = ${id}`;
+  const sql = `UPDATE distributor SET distributor_prov_id = '${provinsi_id}' , distributor_kab_id = '${kabupaten_id}' , name = '${name}' , email = '${email}' , no_tlp = '${no_tlp}' , address = '${address}', latitude = '${latitude}', longitude = '${longitude}' WHERE distributor_id = ${id}`;
   const result = await poolConnection.query(sql);
   return result[0];
 };

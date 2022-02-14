@@ -39,7 +39,16 @@ exports.getDistributorList = async (req, res) => {
 };
 
 exports.addDistributorList = async (req, res) => {
-  let { provinsi_id, kabupaten_id, name, email, no_tlp, address } = req.body;
+  let {
+    provinsi_id,
+    kabupaten_id,
+    name,
+    email,
+    no_tlp,
+    address,
+    latitude,
+    longitude,
+  } = req.body;
   name = ReplaceToStartUpperCase(name);
 
   try {
@@ -106,7 +115,9 @@ exports.addDistributorList = async (req, res) => {
       name,
       email,
       no_tlp,
-      address
+      address,
+      latitude,
+      longitude
     );
     return res.json(Response(true, 201, `Added Distributor Successfully`, {}));
   } catch (err) {
@@ -118,7 +129,16 @@ exports.addDistributorList = async (req, res) => {
 
 exports.updateDistributorList = async (req, res) => {
   const { id } = req.params;
-  let { provinsi_id, kabupaten_id, name, email, no_tlp, address } = req.body;
+  let {
+    provinsi_id,
+    kabupaten_id,
+    name,
+    email,
+    no_tlp,
+    address,
+    latitude,
+    longitude,
+  } = req.body;
   name = ReplaceToStartUpperCase(name);
 
   try {
@@ -198,7 +218,9 @@ exports.updateDistributorList = async (req, res) => {
       name,
       email,
       no_tlp,
-      address
+      address,
+      latitude,
+      longitude
     );
     return res.json(
       Response(true, 201, `Updated Distributor Successfully`, {})

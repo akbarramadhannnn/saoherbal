@@ -1,13 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import {
-  Card,
-  CardBody,
-  Col,
-  Container,
-  Row,
-  Label,
-  Input,
-} from "reactstrap";
+import { Card, CardBody, Col, Container, Row, Label, Input } from "reactstrap";
 
 import { Link } from "react-router-dom";
 
@@ -19,6 +11,8 @@ import { HandleLogin, HandleLoadUser } from "../../api/auth";
 import { useDispatch } from "react-redux";
 import { LOAD_USER } from "../../store/auth/actionsTypes";
 
+import Alert from "../../components/Alert";
+
 const Login = () => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState("");
@@ -26,6 +20,11 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
   const [disabledButton, setDisabledButton] = useState(true);
+  const [alert, setAlert] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+  });
 
   useEffect(() => {
     if (username && password) {
@@ -59,6 +58,13 @@ const Login = () => {
             setErrorUsername(responseLogin.message);
           } else if (responseLogin.result.name === "password") {
             setErrorPassword(responseLogin.message);
+          } else if (responseLogin.result.name === "user") {
+            setAlert(oldState => ({
+              ...oldState,
+              isOpen: true,
+              title: "Login Failed!",
+              message: responseLogin.message,
+            }));
           }
           setDisabledButton(false);
         } else if (responseLogin.status === 200) {
@@ -128,6 +134,21 @@ const Login = () => {
                     </div>
                   </Link>
                 </div>
+
+                <Alert
+                  isOpen={alert.isOpen}
+                  title={alert.title}
+                  message={alert.message}
+                  color="danger"
+                  toggle={() => {
+                    setAlert(oldState => ({
+                      ...oldState,
+                      isOpen: false,
+                      title: "",
+                      message: "",
+                    }));
+                  }}
+                />
 
                 <div className="p-2">
                   <div className="mb-3">

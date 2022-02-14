@@ -110,7 +110,7 @@ const Create = () => {
                   <Col className="mx-auto col-10">
                     <div className="d-flex justify-content-end">
                       <Link
-                        to="/master/category"
+                        to="/admin/master/category"
                         className="btn btn-danger mb-2 me-2"
                       >
                         cancel

@@ -27,7 +27,8 @@ const ProfileMenu = props => {
       },
     });
     localStorage.removeItem("token");
-  }, [dispatch]);
+    props.history.push("/login");
+  }, [dispatch, props]);
 
   return (
     <React.Fragment>
@@ -83,6 +84,7 @@ const ProfileMenu = props => {
 ProfileMenu.propTypes = {
   t: PropTypes.any,
   success: PropTypes.string,
+  history: PropTypes.any,
 };
 
 export default withRouter(withTranslation()(ProfileMenu));

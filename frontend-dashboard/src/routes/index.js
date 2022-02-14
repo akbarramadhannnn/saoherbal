@@ -11,6 +11,7 @@ import Logout from "../pages/Authentication/Logout";
 import Dashboard from "../pages/Dashboard/index";
 
 //MASTER
+// Category
 import Category from "../pages/Master/category";
 import CreateCategory from "../pages/Master/category/create";
 import UpdateCategory from "../pages/Master/category/update";
@@ -25,13 +26,18 @@ import Product from "../pages/Master/product";
 import CreateProduct from "../pages/Master/product/create";
 import UpdateProduct from "../pages/Master/product/update";
 
+//product
+import Employee from "../pages/Master/employee";
+import CreateEmployee from "../pages/Master/employee/create";
+import UpdateEmployee from "../pages/Master/employee/update";
+
 //KONSUMEN
-//distributor
+//Distributor
 import Distributor from "../pages/Konsumen/Distributor";
 import CreateDistributor from "../pages/Konsumen/Distributor/create";
 import UpdateDistributor from "../pages/Konsumen/Distributor/update";
 
-//toko
+//Toko
 import Toko from "../pages/Konsumen/Toko";
 import CreateToko from "../pages/Konsumen/Toko/create";
 import UpdateToko from "../pages/Konsumen/Toko/update";
@@ -45,51 +51,123 @@ import DetailTransaksi from "../pages/Transaksi/Detail";
 import Tagihan from "../pages/Tagihan";
 import DetailTagihan from "../pages/Tagihan/detail";
 
-const authProtectedRoutes = [
-  { path: "/dashboard", component: Dashboard },
+const authProtectedRoutes = selectorAuth => {
+  let result = [];
+  if (selectorAuth.isAuth) {
+    const position = selectorAuth.user.position;
+    if (position === "0") {
+      result = [
+        { path: "/admin/dashboard", component: Dashboard },
 
-  //profile
-  { path: "/profile", component: UserProfile },
+        //profile
+        { path: "/admin/profile", component: UserProfile },
 
-  //category
-  { path: "/master/category", exact: true, component: Category },
-  { path: "/master/category/create", component: CreateCategory },
-  { path: "/master/category/update/:id", component: UpdateCategory },
+        //category
+        { path: "/admin/master/category", exact: true, component: Category },
+        { path: "/admin/master/category/create", component: CreateCategory },
+        {
+          path: "/admin/master/category/update/:id",
+          component: UpdateCategory,
+        },
 
-  //variant
-  { path: "/master/variant", exact: true, component: Variant },
-  { path: "/master/variant/create", component: CreateVariant },
-  { path: "/master/variant/update/:id", component: UpdateVariant },
+        //variant
+        { path: "/admin/master/variant", exact: true, component: Variant },
+        { path: "/admin/master/variant/create", component: CreateVariant },
+        { path: "/admin/master/variant/update/:id", component: UpdateVariant },
 
-  //product
-  { path: "/master/product", exact: true, component: Product },
-  { path: "/master/product/create", component: CreateProduct },
-  { path: "/master/product/update/:id", component: UpdateProduct },
+        //product
+        { path: "/admin/master/product", exact: true, component: Product },
+        { path: "/admin/master/product/create", component: CreateProduct },
+        { path: "/admin/master/product/update/:id", component: UpdateProduct },
 
-  //konsumen
-  //distributor
-  { path: "/konsumen/distributor", exact: true, component: Distributor },
-  { path: "/konsumen/distributor/create", component: CreateDistributor },
-  { path: "/konsumen/distributor/update/:id", component: UpdateDistributor },
+        //product
+        { path: "/admin/master/employee", exact: true, component: Employee },
+        { path: "/admin/master/employee/create", component: CreateEmployee },
+        {
+          path: "/admin/master/employee/update/:id",
+          component: UpdateEmployee,
+        },
 
-  //toko
-  { path: "/konsumen/toko", exact: true, component: Toko },
-  { path: "/konsumen/toko/create", component: CreateToko },
-  { path: "/konsumen/toko/update/:id", component: UpdateToko },
+        //konsumen
+        //distributor
+        {
+          path: "/admin/konsumen/distributor",
+          exact: true,
+          component: Distributor,
+        },
+        {
+          path: "/admin/konsumen/distributor/create",
+          component: CreateDistributor,
+        },
+        {
+          path: "/admin/konsumen/distributor/update/:id",
+          component: UpdateDistributor,
+        },
 
-  //transaction
-  { path: "/transaction", exact: true, component: Transaksi },
-  { path: "/transaction/create", component: CreateTransaksi },
-  { path: "/transaction/detail/:code", component: DetailTransaksi },
+        //toko
+        { path: "/admin/konsumen/toko", exact: true, component: Toko },
+        { path: "/admin/konsumen/toko/create", component: CreateToko },
+        { path: "/admin/konsumen/toko/update/:id", component: UpdateToko },
 
-  // tagihan
-  { path: "/tagihan", exact: true, component: Tagihan },
-  { path: "/tagihan/detail/:billNumber", component: DetailTagihan },
-  // this route should be at the end of all other routes
-  // eslint-disable-next-line react/display-name
-  { path: "/", exact: true, component: () => <Redirect to="/dashboard" /> },
-];
+        //transaction
+        { path: "/admin/transaction", exact: true, component: Transaksi },
+        { path: "/admin/transaction/create", component: CreateTransaksi },
+        { path: "/admin/transaction/detail/:code", component: DetailTransaksi },
 
-const publicRoutes = [{ path: "/login", component: Login }];
+        // tagihan
+        { path: "/admin/tagihan", exact: true, component: Tagihan },
+        { path: "/admin/tagihan/detail/:billNumber", component: DetailTagihan },
+        // this route should be at the end of all other routes
+        // eslint-disable-next-line react/display-name
+        {
+          path: "/",
+          exact: true,
+          component: () => <Redirect to="/admin/dashboard" />,
+        },
+        {
+          path: "*",
+          exact: true,
+          component: () => <Redirect to="/admin/dashboard" />,
+        },
+      ];
+    } else if (position === "2") {
+      result = [
+        { path: "/sales/dashboard", component: Dashboard },
+        //transaction
+        { path: "/sales/transaction", exact: true, component: Transaksi },
+        { path: "/sales/transaction/create", component: CreateTransaksi },
+        { path: "/sales/transaction/detail/:code", component: DetailTransaksi },
+        {
+          path: "/",
+          exact: true,
+          component: () => <Redirect to="/sales/dashboard" />,
+        },
+        {
+          path: "*",
+          exact: true,
+          component: () => <Redirect to="/sales/dashboard" />,
+        },
+      ];
+    }
+  } else {
+    result = [
+      { path: "/", exact: true, component: () => <Redirect to="/login" /> },
+    ];
+  }
+
+  return result;
+};
+
+const publicRoutes = selectorAuth => {
+  let result = [{ path: "/login", component: Login }];
+  if (selectorAuth.isAuth === false) {
+    result.push({
+      path: "/",
+      exact: true,
+      component: () => <Redirect to="/login" />,
+    });
+  }
+  return result;
+};
 
 export { authProtectedRoutes, publicRoutes };

@@ -9,9 +9,10 @@ import {
   Col,
   Input,
   Button,
+  Spinner,
 } from "reactstrap";
 import Breadcrumbs from "../../../components/Common/Breadcrumb";
-import Alert from "./../../../components/Alert";
+import ModalMessage from "../../../components/Modal/ModalMessage";
 import { MetaTags } from "react-meta-tags";
 import { Link } from "react-router-dom";
 
@@ -37,14 +38,26 @@ const Update = props => {
   const [errorKabupaten, setErrorKabupaten] = useState("");
   const [alamat, setAlamat] = useState("");
   const [errorAlamat, setErrorAlamat] = useState("");
+  const [coordinate, setCoordinate] = useState({
+    longitude: {
+      value: "",
+      error: "",
+    },
+    latitude: {
+      value: "",
+      error: "",
+    },
+  });
   const [isDisabled, setIsDisabled] = useState(false);
-  const [alert, setAlert] = useState({
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [modalMessage, setModalMessage] = useState({
     isOpen: false,
-    title: "",
     message: "",
+    params: "",
   });
 
   useEffect(() => {
+    setIsLoadingData(true);
     ApiDetailListDistributor(id).then(response => {
       if (response) {
         if (response.status === 200) {
@@ -54,7 +67,19 @@ const Update = props => {
           setProvinsi(response.result.distributor_prov_id);
           setKabupaten(response.result.distributor_kab_id);
           setAlamat(response.result.address);
+          setCoordinate(oldState => ({
+            ...oldState,
+            latitude: {
+              ...oldState.latitude,
+              value: response.result.latitude,
+            },
+            longitude: {
+              ...oldState.longitude,
+              value: response.result.longitude,
+            },
+          }));
         }
+        setIsLoadingData(false);
       }
     });
   }, [id]);
@@ -115,13 +140,26 @@ const Update = props => {
     setErrorAlamat("");
   }, []);
 
-  const handleCloseAlert = useCallback(() => {
-    setAlert(oldState => ({
-      ...oldState,
-      isOpen: false,
-      title: "",
-      message: "",
-    }));
+  const onChangeCoordinate = useCallback(e => {
+    const { name, value } = e.target;
+
+    if (name === "longitude") {
+      setCoordinate(oldState => ({
+        ...oldState,
+        longitude: {
+          value: value,
+          error: "",
+        },
+      }));
+    } else if (name === "latitude") {
+      setCoordinate(oldState => ({
+        ...oldState,
+        latitude: {
+          value: value,
+          error: "",
+        },
+      }));
+    }
   }, []);
 
   const handleSave = useCallback(() => {
@@ -133,6 +171,8 @@ const Update = props => {
       provinsi_id: provinsi,
       kabupaten_id: kabupaten,
       address: alamat,
+      latitude: coordinate.latitude.value,
+      longitude: coordinate.longitude.value,
     };
     ApiUpdateListDistributor(id, payload).then(response => {
       if (response) {
@@ -149,19 +189,34 @@ const Update = props => {
             setErrorKabupaten(response.message);
           } else if (response.result.name === "address") {
             setErrorAlamat(response.message);
+          } else if (response.result.name === "latitude") {
+            setCoordinate(oldState => ({
+              ...oldState,
+              latitude: {
+                ...oldState.latitude,
+                error: response.message,
+              },
+            }));
+          } else if (response.result.name === "longitude") {
+            setCoordinate(oldState => ({
+              ...oldState,
+              longitude: {
+                ...oldState.longitude,
+                error: response.message,
+              },
+            }));
           }
         } else if (response.status === 201) {
-          setAlert(oldState => ({
-            ...oldState,
+          setModalMessage({
             isOpen: true,
-            title: "Success!",
             message: response.message,
-          }));
+            params: "success",
+          });
         }
       }
       setIsDisabled(false);
     });
-  }, [id, name, email, tlp, provinsi, kabupaten, alamat]);
+  }, [id, name, email, tlp, provinsi, kabupaten, alamat, coordinate]);
 
   return (
     <React.Fragment>
@@ -176,144 +231,201 @@ const Update = props => {
             <Col className="col-12">
               <Card>
                 <CardBody>
-                  <Row>
-                    <Col className="mx-auto col-10">
-                      <Alert
-                        isOpen={alert.isOpen}
-                        title={alert.title}
-                        message={alert.message}
-                        color="success"
-                        toggle={handleCloseAlert}
-                      />
-                      <Form>
-                        <div className="mb-3 ">
-                          <Label htmlFor="formrow-firstname-Input">Name</Label>
-                          <Input
-                            value={name}
-                            type="text"
-                            className="form-control"
-                            id="formrow-firstname-Input"
-                            onChange={onChangeName}
-                            placeholder="Enter distributor name"
-                          />
-                          {errorName && (
-                            <p className="text-danger">{errorName}</p>
-                          )}
-                        </div>
-                        <div className="mb-3 ">
-                          <Label htmlFor="formrow-firstname-Input">Email</Label>
-                          <Input
-                            value={email}
-                            type="text"
-                            className="form-control"
-                            id="formrow-firstname-Input"
-                            onChange={onChangeEmail}
-                            placeholder="Enter email "
-                          />
-                          {errorEmail && (
-                            <p className="text-danger">{errorEmail}</p>
-                          )}
-                        </div>
-                        <div className="mb-3 ">
-                          <Label htmlFor="formrow-firstname-Input">
-                            No Telepon
-                          </Label>
-                          <Input
-                            value={tlp}
-                            type="text"
-                            className="form-control"
-                            id="formrow-firstname-Input"
-                            onChange={onChangeTlp}
-                            placeholder="Enter telepon "
-                          />
-                          {errorTlp && (
-                            <p className="text-danger">{errorTlp}</p>
-                          )}
-                        </div>
-                        <div className="mb-3 ">
-                          <Label htmlFor="formrow-firstname-Input">
-                            Provinsi
-                          </Label>
-                          <select
-                            value={provinsi}
-                            className="form-select"
-                            onChange={onChangeProvinsi}
-                          >
-                            <option value="">Select Provinsi</option>
-                            {dataProvinsi.map((d, i) => (
-                              <option key={i} value={d.provinsi_id}>
-                                {d.name}
-                              </option>
-                            ))}
-                          </select>
-                          {errorProvinsi && (
-                            <p className="text-danger">{errorProvinsi}</p>
-                          )}
-                        </div>
-                        <div className="mb-3 ">
-                          <Label htmlFor="formrow-firstname-Input">
-                            Kabupaten
-                          </Label>
-                          <select
-                            value={kabupaten}
-                            className="form-select"
-                            onChange={onChangeKabupaten}
-                          >
-                            <option value="">Select Kabupaten</option>
-                            {dataKabupaten.map((d, i) => (
-                              <option key={i} value={d.kabupaten_id}>
-                                {d.name}
-                              </option>
-                            ))}
-                          </select>
-                          {errorKabupaten && (
-                            <p className="text-danger">{errorKabupaten}</p>
-                          )}
-                        </div>
+                  {isLoadingData && (
+                    <div className="d-flex justify-content-center pt-5 pb-5 text-primary">
+                      <Spinner />
+                    </div>
+                  )}
 
-                        <div className="mb-3 ">
-                          <Label>Alamat</Label>
-                          <Input
-                            value={alamat}
-                            type="textarea"
-                            id="textarea"
-                            // maxLength="225"
-                            rows="4"
-                            placeholder="enter address"
-                            onChange={onChangeAlamat}
-                          />
-                          {errorAlamat && (
-                            <p className="text-danger">{errorAlamat}</p>
-                          )}
-                        </div>
-                      </Form>
-                    </Col>
+                  {!isLoadingData && (
+                    <Row>
+                      <Col className="mx-auto col-10">
+                        <Form>
+                          <div className="mb-3 ">
+                            <Label htmlFor="formrow-firstname-Input">
+                              Name
+                            </Label>
+                            <Input
+                              value={name}
+                              type="text"
+                              className="form-control"
+                              id="formrow-firstname-Input"
+                              onChange={onChangeName}
+                              placeholder="Enter distributor name"
+                            />
+                            {errorName && (
+                              <p className="text-danger">{errorName}</p>
+                            )}
+                          </div>
+                          <div className="mb-3 ">
+                            <Label htmlFor="formrow-firstname-Input">
+                              Email
+                            </Label>
+                            <Input
+                              value={email}
+                              type="text"
+                              className="form-control"
+                              id="formrow-firstname-Input"
+                              onChange={onChangeEmail}
+                              placeholder="Enter email "
+                            />
+                            {errorEmail && (
+                              <p className="text-danger">{errorEmail}</p>
+                            )}
+                          </div>
+                          <div className="mb-3 ">
+                            <Label htmlFor="formrow-firstname-Input">
+                              No Telepon
+                            </Label>
+                            <Input
+                              value={tlp}
+                              type="text"
+                              className="form-control"
+                              id="formrow-firstname-Input"
+                              onChange={onChangeTlp}
+                              placeholder="Enter telepon "
+                            />
+                            {errorTlp && (
+                              <p className="text-danger">{errorTlp}</p>
+                            )}
+                          </div>
+                          <div className="mb-3 ">
+                            <Label htmlFor="formrow-firstname-Input">
+                              Provinsi
+                            </Label>
+                            <select
+                              value={provinsi}
+                              className="form-select"
+                              onChange={onChangeProvinsi}
+                            >
+                              <option value="">Select Provinsi</option>
+                              {dataProvinsi.map((d, i) => (
+                                <option key={i} value={d.provinsi_id}>
+                                  {d.name}
+                                </option>
+                              ))}
+                            </select>
+                            {errorProvinsi && (
+                              <p className="text-danger">{errorProvinsi}</p>
+                            )}
+                          </div>
+                          <div className="mb-3 ">
+                            <Label htmlFor="formrow-firstname-Input">
+                              Kabupaten
+                            </Label>
+                            <select
+                              value={kabupaten}
+                              className="form-select"
+                              onChange={onChangeKabupaten}
+                            >
+                              <option value="">Select Kabupaten</option>
+                              {dataKabupaten.map((d, i) => (
+                                <option key={i} value={d.kabupaten_id}>
+                                  {d.name}
+                                </option>
+                              ))}
+                            </select>
+                            {errorKabupaten && (
+                              <p className="text-danger">{errorKabupaten}</p>
+                            )}
+                          </div>
 
-                    <Col className="mx-auto col-10">
-                      <div className="d-flex justify-content-end">
-                        <Link
-                          to="/konsumen/distributor"
-                          className="btn btn-danger"
-                        >
-                          cancel
-                        </Link>
-                        <Button
-                          type="button"
-                          color="primary"
-                          className=" mx-2 "
-                          disabled={isDisabled}
-                          onClick={handleSave}
-                        >
-                          save
-                        </Button>
-                      </div>
-                    </Col>
-                  </Row>
+                          <div className="mb-3 ">
+                            <Label>Alamat</Label>
+                            <Input
+                              value={alamat}
+                              type="textarea"
+                              id="textarea"
+                              // maxLength="225"
+                              rows="4"
+                              placeholder="enter address"
+                              onChange={onChangeAlamat}
+                            />
+                            {errorAlamat && (
+                              <p className="text-danger">{errorAlamat}</p>
+                            )}
+                          </div>
+
+                          <div className="mb-3">
+                            <Label>Kordinat Maps</Label>
+                            <Row>
+                              <Col md="6" className="mb-3">
+                                <p className="p-0 m-0 mb-1 text-secondary">
+                                  Latitude
+                                </p>
+                                <Input
+                                  value={coordinate.latitude.value}
+                                  type="text"
+                                  name="latitude"
+                                  placeholder="ex: -8.1980306"
+                                  onChange={onChangeCoordinate}
+                                />
+                                {coordinate.latitude.error && (
+                                  <p className="text-danger">
+                                    {coordinate.latitude.error}
+                                  </p>
+                                )}
+                              </Col>
+                              <Col md="6" className="mb-3">
+                                <p className="p-0 m-0 mb-1 text-secondary">
+                                  Longitude
+                                </p>
+                                <Input
+                                  value={coordinate.longitude.value}
+                                  type="text"
+                                  name="longitude"
+                                  placeholder="ex: 110.7102276"
+                                  onChange={onChangeCoordinate}
+                                />
+                                {coordinate.longitude.error && (
+                                  <p className="text-danger">
+                                    {coordinate.longitude.error}
+                                  </p>
+                                )}
+                              </Col>
+                            </Row>
+                          </div>
+                        </Form>
+                      </Col>
+
+                      <Col className="mx-auto col-10">
+                        <div className="d-flex justify-content-end">
+                          <Link
+                            to="/admin/konsumen/distributor"
+                            className="btn btn-danger me-2"
+                          >
+                            cancel
+                          </Link>
+                          <Button
+                            type="button"
+                            color="primary"
+                            disabled={isDisabled}
+                            onClick={handleSave}
+                          >
+                            save
+                          </Button>
+                        </div>
+                      </Col>
+                    </Row>
+                  )}
                 </CardBody>
               </Card>
             </Col>
           </Row>
         </div>
+
+        <ModalMessage
+          isOpen={modalMessage.isOpen}
+          params={modalMessage.params}
+          message={modalMessage.message}
+          onClose={() => {
+            setModalMessage({
+              isOpen: false,
+              message: "",
+              params: "",
+            });
+          }}
+        />
       </div>
     </React.Fragment>
   );

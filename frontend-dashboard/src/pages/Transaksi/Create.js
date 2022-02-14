@@ -5,6 +5,7 @@ import React, {
   useMemo,
   Fragment,
 } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import {
@@ -22,7 +23,7 @@ import {
   InputGroupText,
 } from "reactstrap";
 import Breadcrumbs from "./../../components/Common/Breadcrumb";
-import Alert from "./../../components/Alert";
+import ModalMessage from "./../../components/Modal/ModalMessage";
 import { MetaTags } from "react-meta-tags";
 
 import { ApiGetListStore } from "../../api/store";
@@ -32,6 +33,8 @@ import { ApiAddLisTransaction } from "../../api/transaction";
 import { ConvertToRupiah } from "../../utils/convert";
 
 const Create = () => {
+  const selectorAuth = useSelector(({ Auth }) => Auth);
+  const position = selectorAuth.user.position;
   const [dataTypeKonsumen] = useState(["Store", "Distributor"]);
   const [dataStore, setDataStore] = useState([]);
   const [dataDistributor, setDataDistributor] = useState([]);
@@ -71,10 +74,10 @@ const Create = () => {
   ]);
 
   const [isDisabledButton, setIsDisabledButton] = useState(false);
-  const [alert, setAlert] = useState({
+  const [modalMessage, setModalMessage] = useState({
     isOpen: false,
-    title: "",
     message: "",
+    params: "",
   });
 
   useEffect(() => {
@@ -303,15 +306,6 @@ const Create = () => {
     [productList]
   );
 
-  const handleCloseAlert = useCallback(() => {
-    setAlert(oldState => ({
-      ...oldState,
-      isOpen: false,
-      title: "",
-      message: "",
-    }));
-  }, []);
-
   const handleAddProuctList = useCallback(() => {
     const data = {
       productId: "",
@@ -423,8 +417,6 @@ const Create = () => {
           };
         }
 
-        console.log("payload", payload);
-
         setIsDisabledButton(true);
         ApiAddLisTransaction(payload).then(response => {
           if (response) {
@@ -460,12 +452,11 @@ const Create = () => {
                   priceList: [],
                 },
               ]);
-              setAlert(oldState => ({
-                ...oldState,
+              setModalMessage({
                 isOpen: true,
-                title: "Success",
-                message: response.message,
-              }));
+                message: "Add Transaction Successfully",
+                params: "success",
+              });
             }
           }
           setIsDisabledButton(false);
@@ -494,14 +485,6 @@ const Create = () => {
               <CardBody>
                 <Row>
                   <Col className="mx-auto col-10">
-                    <Alert
-                      isOpen={alert.isOpen}
-                      title={alert.title}
-                      message={alert.message}
-                      color="success"
-                      toggle={handleCloseAlert}
-                    />
-
                     <Form>
                       <div className="mb-3 ">
                         <Label htmlFor="formrow-firstname-Input">
@@ -872,7 +855,13 @@ const Create = () => {
                   <Col className="mx-auto col-10">
                     <div className="d-flex justify-content-end">
                       <Link
-                        to="/transaction"
+                        to={`${
+                          position === "0"
+                            ? "/admin"
+                            : position === "2"
+                            ? "/sales"
+                            : ""
+                        }/transaction`}
                         className="btn btn-danger mb-2 me-2"
                       >
                         cancel
@@ -894,6 +883,19 @@ const Create = () => {
           </Col>
         </Row>
       </div>
+
+      <ModalMessage
+        isOpen={modalMessage.isOpen}
+        params={modalMessage.params}
+        message={modalMessage.message}
+        onClose={() => {
+          setModalMessage({
+            isOpen: false,
+            message: "",
+            params: "",
+          });
+        }}
+      />
     </div>
   );
 };

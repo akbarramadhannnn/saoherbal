@@ -6,7 +6,8 @@ const Response = require("../helpers/response");
 
 exports.signJWT = (payload) => {
   const token = jwt.sign(payload, privateKey, {
-    expiresIn: "1h",
+    expiresIn: "1h", //Hours
+    // expiresIn: "3s", // Seconds
     algorithm: "RS256",
   });
   return token;
@@ -22,6 +23,7 @@ exports.getToken = (req, res, next) => {
   jwt.verify(token, publicKey, (err, decode) => {
     if (err) return res.json(Response(false, 401, "No Authenticate", {}));
     req.userId = decode.userId;
+    req.position = decode.position;
     next();
   });
 };

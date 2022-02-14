@@ -12,9 +12,11 @@ exports.addDataStore = async (
   name,
   email,
   no_tlp,
-  address
+  address,
+  latitude,
+  longitude
 ) => {
-  const sql = `INSERT INTO store (store_prov_id, store_kab_id, name, email, no_tlp, address) values ('${provinsi_id}', '${kabupaten_id}', '${name}', '${email}', '${no_tlp}', '${address}')`;
+  const sql = `INSERT INTO store (store_prov_id, store_kab_id, name, email, no_tlp, address, latitude, longitude) values ('${provinsi_id}', '${kabupaten_id}', '${name}', '${email}', '${no_tlp}', '${address}', '${latitude}', '${longitude}')`;
   const result = await poolConnection.query(sql);
   return result[0];
 };
@@ -68,9 +70,11 @@ exports.updateDataStoreById = async (
   name,
   email,
   no_tlp,
-  address
+  address,
+  latitude,
+  longitude
 ) => {
-  const sql = `UPDATE store SET store_prov_id = '${provinsi_id}' , store_kab_id = '${kabupaten_id}' , name = '${name}' , email = '${email}' , no_tlp = '${no_tlp}' , address = '${address}' WHERE store_id = ${id}`;
+  const sql = `UPDATE store SET store_prov_id = '${provinsi_id}' , store_kab_id = '${kabupaten_id}' , name = '${name}' , email = '${email}' , no_tlp = '${no_tlp}' , address = '${address}', latitude = '${latitude}', longitude = '${longitude}' WHERE store_id = ${id}`;
   const result = await poolConnection.query(sql);
   return result[0];
 };

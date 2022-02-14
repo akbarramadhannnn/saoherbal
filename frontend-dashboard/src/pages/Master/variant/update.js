@@ -9,6 +9,7 @@ import {
   Col,
   Input,
   Button,
+  Spinner
 } from "reactstrap";
 import Breadcrumbs from "./../../../components/Common/Breadcrumb";
 import Alert from "./../../../components/Alert";
@@ -29,6 +30,7 @@ const Update = props => {
   const [name, setName] = useState("");
   const [errorName, setErrorName] = useState("");
   const [isDisabledButton, setIsDisabledButton] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [alert, setAlert] = useState({
     isOpen: false,
     title: "",
@@ -36,12 +38,14 @@ const Update = props => {
   });
 
   useEffect(() => {
+    setIsLoadingData(true);
     ApiDetailListVariant(id).then(response => {
       if (response) {
         if (response.status === 200) {
           setCategoryId(response.result.variant_category_id);
           setName(response.result.name);
         }
+        setIsLoadingData(false);
       }
     });
   }, [props]);
@@ -116,75 +120,83 @@ const Update = props => {
           <Col className="col-12">
             <Card>
               <CardBody>
-                <Row>
-                  <Col className="mx-auto col-10">
-                    <Alert
-                      isOpen={alert.isOpen}
-                      title={alert.title}
-                      message={alert.message}
-                      color="success"
-                      toggle={handleCloseAlert}
-                    />
+                {isLoadingData && (
+                  <div className="d-flex justify-content-center pt-5 pb-5 text-primary">
+                    <Spinner />
+                  </div>
+                )}
 
-                    <Form>
-                      <div className="mb-3 ">
-                        <Label htmlFor="formrow-firstname-Input">
-                          Category
-                        </Label>
-                        <select
-                          value={categoryId}
-                          className="form-select"
-                          onChange={onChangeCategory}
+                {!isLoadingData && (
+                  <Row>
+                    <Col className="mx-auto col-10">
+                      <Alert
+                        isOpen={alert.isOpen}
+                        title={alert.title}
+                        message={alert.message}
+                        color="success"
+                        toggle={handleCloseAlert}
+                      />
+
+                      <Form>
+                        <div className="mb-3 ">
+                          <Label htmlFor="formrow-firstname-Input">
+                            Category
+                          </Label>
+                          <select
+                            value={categoryId}
+                            className="form-select"
+                            onChange={onChangeCategory}
+                          >
+                            <option value="">Select Category</option>
+                            {dataCategory.map((category, i) => (
+                              <option value={category.category_id} key={i}>
+                                {category.name}
+                              </option>
+                            ))}
+                          </select>
+                          {errorCategoryId && (
+                            <p className="text-danger">{errorCategoryId}</p>
+                          )}
+                        </div>
+
+                        <div className="mb-3 ">
+                          <Label htmlFor="formrow-firstname-Input">Name</Label>
+                          <Input
+                            value={name}
+                            type="text"
+                            className="form-control"
+                            id="formrow-firstname-Input"
+                            onChange={handleChangeInput}
+                            placeholder="Enter variant name"
+                          />
+                          {errorName && (
+                            <p className="text-danger">{errorName}</p>
+                          )}
+                        </div>
+                      </Form>
+                    </Col>
+
+                    <Col className="mx-auto col-10">
+                      <div className="d-flex justify-content-end">
+                        <Link
+                          to="/admin/master/variant"
+                          className="btn btn-danger mb-2 me-2"
                         >
-                          <option value="">Select Category</option>
-                          {dataCategory.map((category, i) => (
-                            <option value={category.category_id} key={i}>
-                              {category.name}
-                            </option>
-                          ))}
-                        </select>
-                        {errorCategoryId && (
-                          <p className="text-danger">{errorCategoryId}</p>
-                        )}
+                          cancel
+                        </Link>
+                        <Button
+                          type="button"
+                          color="primary"
+                          className="mb-2"
+                          onClick={handleSave}
+                          disabled={isDisabledButton}
+                        >
+                          save
+                        </Button>
                       </div>
-
-                      <div className="mb-3 ">
-                        <Label htmlFor="formrow-firstname-Input">Name</Label>
-                        <Input
-                          value={name}
-                          type="text"
-                          className="form-control"
-                          id="formrow-firstname-Input"
-                          onChange={handleChangeInput}
-                          placeholder="Enter variant name"
-                        />
-                        {errorName && (
-                          <p className="text-danger">{errorName}</p>
-                        )}
-                      </div>
-                    </Form>
-                  </Col>
-
-                  <Col className="mx-auto col-10">
-                    <div className="d-flex justify-content-end">
-                      <Link
-                        to="/master/variant"
-                        className="btn btn-danger mb-2 me-2"
-                      >
-                        cancel
-                      </Link>
-                      <Button
-                        type="button"
-                        color="primary"
-                        className="mb-2"
-                        onClick={handleSave}
-                        disabled={isDisabledButton}
-                      >
-                        save
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
+                    </Col>
+                  </Row>
+                )}
               </CardBody>
             </Card>
           </Col>

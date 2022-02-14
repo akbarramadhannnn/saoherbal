@@ -12,6 +12,7 @@ exports.addDataTransaction = async (
   storeId,
   distributorId,
   billNumberEngineer,
+  userId,
   code,
   consumerType,
   transactionType,
@@ -20,9 +21,9 @@ exports.addDataTransaction = async (
 ) => {
   let sql = "";
   if (transactionType === "tempo") {
-    sql = `INSERT INTO transaction (store_id_transaction, distributor_id_transaction, bill_number_engineer_transaction, code, consumer_type, transaction_type, total_bill_price, subtotal_price, status) values (${storeId}, ${distributorId}, '${billNumberEngineer}', '${code}', '${consumerType}', '${transactionType}', ${subtotal}, ${subtotal}, '${status}')`;
+    sql = `INSERT INTO transaction (store_id_transaction, distributor_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, total_bill_price, subtotal_price, status) values (${storeId}, ${distributorId}, '${billNumberEngineer}', ${userId}, '${code}', '${consumerType}', '${transactionType}', ${subtotal}, ${subtotal}, '${status}')`;
   } else {
-    sql = `INSERT INTO transaction (store_id_transaction, distributor_id_transaction, bill_number_engineer_transaction, code, consumer_type, transaction_type, subtotal_price, status) values (${storeId}, ${distributorId}, '${billNumberEngineer}', '${code}', '${consumerType}', '${transactionType}', ${subtotal}, '${status}')`;
+    sql = `INSERT INTO transaction (store_id_transaction, distributor_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, subtotal_price, status) values (${storeId}, ${distributorId}, '${billNumberEngineer}', ${userId}, '${code}', '${consumerType}', '${transactionType}', ${subtotal}, '${status}')`;
   }
   const result = await poolConnection.query(sql);
   return result[0];

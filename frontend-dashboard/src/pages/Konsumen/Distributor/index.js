@@ -16,6 +16,7 @@ import {
 } from "../../../api/distributor";
 
 const Index = ({ history }) => {
+  const [isSubscribe, setIsSubscribe] = useState(true);
   const [dataDistributor, setDataDistributor] = useState([]);
   const [distributorId, setDstributorId] = useState([]);
   const [modal, setModal] = useState({
@@ -32,6 +33,9 @@ const Index = ({ history }) => {
 
   useEffect(() => {
     handleGetData();
+    return () => {
+      setIsSubscribe(false);
+    };
   }, []);
 
   const handleClickDelete = useCallback(id => {
@@ -46,50 +50,52 @@ const Index = ({ history }) => {
 
   const handleClickUpdate = useCallback(
     id => {
-      history.push(`/konsumen/distributor/update/${id}`);
+      history.push(`/admin/konsumen/distributor/update/${id}`);
     },
     [history]
   );
 
   const handleGetData = useCallback(() => {
-    setIsLoading(true);
-    ApiGetListDistributor().then(response => {
-      if (response) {
-        const dataArr = [];
-        if (response.status === 200) {
-          for (let i = 0; i < response.result.length; i++) {
-            dataArr.push({
-              name: response.result[i].name,
-              provinsi: response.result[i].provinsi.name,
-              kabupaten: response.result[i].kabupaten.name,
-              actions: [
-                {
-                  iconClassName: "mdi mdi-pencil font-size-18",
-                  actClassName: "text-warning",
-                  text: "",
-                  onClick: () => {
-                    handleClickUpdate(response.result[i].distributor_id);
+    if (isSubscribe) {
+      setIsLoading(true);
+      ApiGetListDistributor().then(response => {
+        if (response) {
+          const dataArr = [];
+          if (response.status === 200) {
+            for (let i = 0; i < response.result.length; i++) {
+              dataArr.push({
+                name: response.result[i].name,
+                provinsi: response.result[i].provinsi.name,
+                kabupaten: response.result[i].kabupaten.name,
+                actions: [
+                  {
+                    iconClassName: "mdi mdi-pencil font-size-18",
+                    actClassName: "text-warning",
+                    text: "",
+                    onClick: () => {
+                      handleClickUpdate(response.result[i].distributor_id);
+                    },
                   },
-                },
-                {
-                  iconClassName: "mdi mdi-delete font-size-18",
-                  actClassName: "text-danger",
-                  text: "",
-                  onClick: () => {
-                    handleClickDelete(response.result[i].distributor_id);
+                  {
+                    iconClassName: "mdi mdi-delete font-size-18",
+                    actClassName: "text-danger",
+                    text: "",
+                    onClick: () => {
+                      handleClickDelete(response.result[i].distributor_id);
+                    },
                   },
-                },
-              ],
-            });
+                ],
+              });
+            }
+            setDataDistributor(dataArr);
+          } else if (response.status === 204) {
+            setDataDistributor(dataArr);
           }
-          setDataDistributor(dataArr);
-        } else if (response.status === 204) {
-          setDataDistributor(dataArr);
         }
-      }
-      setIsLoading(false);
-    });
-  }, [handleClickUpdate, handleClickDelete]);
+        setIsLoading(false);
+      });
+    }
+  }, [handleClickUpdate, handleClickDelete, isSubscribe]);
 
   const handleCloseModal = useCallback(() => {
     setModal(oldState => ({
@@ -142,7 +148,7 @@ const Index = ({ history }) => {
                 <Row className="mb-2">
                   <Col md="12" sm="12" className="d-flex justify-content-end">
                     <Link
-                      to="/konsumen/distributor/create"
+                      to="/admin/konsumen/distributor/create"
                       className="btn btn-primary"
                     >
                       Add New Distributor
@@ -160,7 +166,12 @@ const Index = ({ history }) => {
                       toggle={handleCloseAlert}
                     />
                     <Table
-                      column={["Distributor Name", "Provinsi", "Kabupaten", "Actions"]}
+                      column={[
+                        "Distributor Name",
+                        "Provinsi",
+                        "Kabupaten",
+                        "Actions",
+                      ]}
                       row={dataDistributor}
                       isLoading={isLoading}
                     />

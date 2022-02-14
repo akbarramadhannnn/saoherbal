@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { ApiGetListVariant, ApiDeleteListVariant } from "../../../api/variant";
 
 const Index = ({ history }) => {
+  const [isSubscribe, setIsSubscribe] = useState(true);
   const [dataVariant, setDataVariant] = useState([]);
   const [variantId, setVariantId] = useState([]);
   const [modal, setModal] = useState({
@@ -29,6 +30,9 @@ const Index = ({ history }) => {
 
   useEffect(() => {
     handleGetData();
+    return () => {
+      setIsSubscribe(false);
+    };
   }, []);
 
   const handleClickDelete = useCallback(id => {
@@ -43,49 +47,51 @@ const Index = ({ history }) => {
 
   const handleClickUpdate = useCallback(
     id => {
-      history.push(`/master/variant/update/${id}`);
+      history.push(`/admin/master/variant/update/${id}`);
     },
     [history]
   );
 
   const handleGetData = useCallback(() => {
-    setIsLoading(true);
-    ApiGetListVariant().then(response => {
-      if (response) {
-        const dataArr = [];
-        if (response.status === 200) {
-          for (let i = 0; i < response.result.length; i++) {
-            dataArr.push({
-              category: response.result[i].category.name,
-              name: response.result[i].name,
-              actions: [
-                {
-                  iconClassName: "mdi mdi-pencil font-size-18",
-                  actClassName: "text-warning",
-                  text: "",
-                  onClick: () => {
-                    handleClickUpdate(response.result[i].variant_id);
+    if (isSubscribe) {
+      setIsLoading(true);
+      ApiGetListVariant().then(response => {
+        if (response) {
+          const dataArr = [];
+          if (response.status === 200) {
+            for (let i = 0; i < response.result.length; i++) {
+              dataArr.push({
+                category: response.result[i].category.name,
+                name: response.result[i].name,
+                actions: [
+                  {
+                    iconClassName: "mdi mdi-pencil font-size-18",
+                    actClassName: "text-warning",
+                    text: "",
+                    onClick: () => {
+                      handleClickUpdate(response.result[i].variant_id);
+                    },
                   },
-                },
-                {
-                  iconClassName: "mdi mdi-delete font-size-18",
-                  actClassName: "text-danger",
-                  text: "",
-                  onClick: () => {
-                    handleClickDelete(response.result[i].variant_id);
+                  {
+                    iconClassName: "mdi mdi-delete font-size-18",
+                    actClassName: "text-danger",
+                    text: "",
+                    onClick: () => {
+                      handleClickDelete(response.result[i].variant_id);
+                    },
                   },
-                },
-              ],
-            });
+                ],
+              });
+            }
+            setDataVariant(dataArr);
+          } else if (response.status === 204) {
+            setDataVariant(dataArr);
           }
-          setDataVariant(dataArr);
-        } else if (response.status === 204) {
-          setDataVariant(dataArr);
         }
-      }
-      setIsLoading(false);
-    });
-  }, [handleClickUpdate, handleClickDelete]);
+        setIsLoading(false);
+      });
+    }
+  }, [handleClickUpdate, handleClickDelete, isSubscribe]);
 
   const handleCloseModal = useCallback(() => {
     setModal(oldState => ({
@@ -138,7 +144,7 @@ const Index = ({ history }) => {
                 <Row className="mb-2">
                   <Col md="12" sm="12" className="d-flex justify-content-end">
                     <Link
-                      to="/master/variant/create"
+                      to="/admin/master/variant/create"
                       className="btn btn-primary"
                     >
                       Add New Variant

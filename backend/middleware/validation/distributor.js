@@ -1,4 +1,5 @@
 const { check } = require("express-validator");
+const { RegexLatitude, RegexLongitude } = require("../../utils/regex");
 
 exports.validationAddDistributor = [
   check("name").custom(async (value) => {
@@ -29,6 +30,20 @@ exports.validationAddDistributor = [
   check("address").custom(async (value) => {
     if (!value) {
       throw new Error("Address is Required");
+    }
+  }),
+  check("latitude").custom(async (value) => {
+    if (!value) {
+      throw new Error("Latitude is Required");
+    } else if (!RegexLatitude(value)) {
+      throw new Error("Latitude Wrong");
+    }
+  }),
+  check("longitude").custom(async (value) => {
+    if (!value) {
+      throw new Error("Longitude is Required");
+    } else if (!RegexLongitude(value)) {
+      throw new Error("Longitude Wrong");
     }
   }),
 ];
@@ -62,6 +77,20 @@ exports.validationUpdateDistributor = [
   check("address").custom(async (value) => {
     if (!value) {
       throw new Error("Address is Required");
+    }
+  }),
+  check("latitude").custom(async (value) => {
+    if (!value) {
+      throw new Error("Latitude is Required");
+    } else if (!RegexLatitude(value)) {
+      throw new Error("Latitude Wrong");
+    }
+  }),
+  check("longitude").custom(async (value) => {
+    if (!value) {
+      throw new Error("Longitude is Required");
+    } else if (!RegexLongitude(value)) {
+      throw new Error("Longitude Wrong");
     }
   }),
 ];
