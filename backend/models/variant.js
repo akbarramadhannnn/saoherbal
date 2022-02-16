@@ -1,13 +1,14 @@
 const poolConnection = require("../connection/mysql2");
 
-exports.getDataVariantAll = async (categoryId) => {
-  let sql = "";
-  if (categoryId) {
-    sql = `SELECT variant.variant_id, variant.name, JSON_OBJECT('category_id', category.category_id, 'name', category.name) AS category FROM variant JOIN category ON variant.variant_category_id = category.category_id WHERE variant_category_id = ${categoryId}`;
-  } else {
-    sql = `SELECT variant.variant_id, variant.name, JSON_OBJECT('category_id', category.category_id, 'name', category.name) AS category FROM variant JOIN category ON variant.variant_category_id = category.category_id`;
-  }
-  const result = await poolConnection.query(sql);
+exports.getDataVariantAll = async (start, limit, search) => {
+  const sql = `SELECT variant.variant_id, variant.name, JSON_OBJECT('category_id', category.category_id, 'name', category.name) AS category FROM variant JOIN category ON variant.variant_category_id = category.category_id WHERE variant.name LIKE N? LIMIT ${limit} OFFSET ${start}`;
+  const result = await poolConnection.query(sql, `%${search}%`);
+  return result[0];
+};
+
+exports.getTotalDataVariant = async (search) => {
+  const sql = `SELECT COUNT(*) AS total FROM variant WHERE name LIKE N?`;
+  const result = await poolConnection.query(sql, `%${search}%`);
   return result[0];
 };
 
@@ -47,8 +48,13 @@ exports.deleteDataVariantById = async (id) => {
   return result[0];
 };
 
-exports.getDetailDataVariant = async (id) => {
-  const sql = `SELECT * FROM variant WHERE variant_id = ${id}`;
+exports.getDetailDataVariant = async (id, categoryId) => {
+  let sql;
+  if (id) {
+    sql = `SELECT * FROM variant WHERE variant_id = ${id}`;
+  } else {
+    sql = `SELECT variant.variant_id, variant.name, JSON_OBJECT('category_id', category.category_id, 'name', category.name) AS category FROM variant JOIN category ON variant.variant_category_id = category.category_id WHERE variant_category_id = ${categoryId}`;
+  }
   const result = await poolConnection.query(sql);
   return result[0];
 };

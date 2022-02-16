@@ -1,7 +1,9 @@
 import axios from "../lib/axiosDefault";
 
-export const ApiGetListVariant = async categoryId => {
-  const response = axios.get(`/variant?categoryId=${categoryId || ""}`);
+export const ApiGetListVariant = async (search, page) => {
+  const response = axios.get(
+    `/variant?search=${search || ""}&page=${page || ""}`
+  );
   return response;
 };
 
@@ -10,8 +12,10 @@ export const ApiAddListVariant = async payload => {
   return response;
 };
 
-export const ApiDetailListVariant = async id => {
-  const response = axios.get(`/variant/detail?id=${id}`);
+export const ApiDetailListVariant = async (id, categoryId) => {
+  const response = axios.get(
+    `/variant/detail?id=${id || ""}&categoryId=${categoryId || ""}`
+  );
   return response;
 };
 

@@ -1,8 +1,14 @@
 const poolConnection = require("../connection/mysql2");
 
-exports.getDataCategoryAll = async () => {
-  const sql = `SELECT * FROM category`;
-  const result = await poolConnection.query(sql);
+exports.getDataCategoryAll = async (start, limit, search) => {
+  const sql = `SELECT * FROM category WHERE name LIKE N? LIMIT ${limit} OFFSET ${start}`;
+  const result = await poolConnection.query(sql, `%${search}%`);
+  return result[0];
+};
+
+exports.getTotalDataCategory = async (search) => {
+  const sql = `SELECT COUNT(*) AS total FROM category WHERE name LIKE N?`;
+  const result = await poolConnection.query(sql, `%${search}%`);
   return result[0];
 };
 

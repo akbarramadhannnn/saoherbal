@@ -74,6 +74,21 @@ exports.validationUpdateTempoTransaction = [
       throw new Error("Due Date Status is Required");
     }
   }),
+  check("coordinate").custom(async (value, { req }) => {
+    if (!value) {
+      throw new Error("Coordinate is Required");
+    }
+  }),
+  check("coordinate.latitude").custom(async (value, { req }) => {
+    if (!value) {
+      throw new Error("Latitude is Required");
+    }
+  }),
+  check("coordinate.longitude").custom(async (value, { req }) => {
+    if (!value) {
+      throw new Error("Longitude is Required");
+    }
+  }),
 ];
 
 exports.validationAddDueDateTransaction = [
@@ -116,6 +131,21 @@ exports.validationAddTitipTransaction = [
   check("dueDateId").custom(async (value, { req }) => {
     if (!value) {
       throw new Error("Due Date Id Id is Required");
+    }
+  }),
+  check("coordinate").custom(async (value, { req }) => {
+    if (!value) {
+      throw new Error("Coordinate is Required");
+    }
+  }),
+  check("coordinate.latitude").custom(async (value, { req }) => {
+    if (!value) {
+      throw new Error("Latitude is Required");
+    }
+  }),
+  check("coordinate.longitude").custom(async (value, { req }) => {
+    if (!value) {
+      throw new Error("Longitude is Required");
     }
   }),
 ];

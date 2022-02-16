@@ -6,7 +6,7 @@ import { Table, Spinner } from "reactstrap";
 const Index = ({ column = [], row = [], isLoading = false, col = [] }) => {
   return (
     <Fragment>
-      <div className="table-responsive">
+      <div className="table-responsive" style={{ height: 330 }}>
         <Table className="text-center align-middle table-nowrap">
           <thead>
             <tr className={col.length > 0 ? "d-flex" : ""}>
@@ -34,7 +34,10 @@ const Index = ({ column = [], row = [], isLoading = false, col = [] }) => {
                       // !Array.isArray(r[obj])
                       if (obj === "actions") {
                         return (
-                          <td key={id} className={col.length > 0 ? col[id] : ""}>
+                          <td
+                            key={id}
+                            className={col.length > 0 ? col[id] : ""}
+                          >
                             <div className="d-flex gap-3 justify-content-center">
                               {r[obj].map((act, actId) => (
                                 <Link
@@ -67,19 +70,19 @@ const Index = ({ column = [], row = [], isLoading = false, col = [] }) => {
               </tbody>
             ))}
         </Table>
+
+        {!isLoading && !row.length > 0 && (
+          <div className="d-flex justify-content-center pt-5 pb-5 text-danger">
+            Data Not Found
+          </div>
+        )}
+
+        {isLoading && (
+          <div className="d-flex justify-content-center pt-5 pb-5 text-primary">
+            <Spinner />
+          </div>
+        )}
       </div>
-
-      {!isLoading && !row.length > 0 && (
-        <div className="d-flex justify-content-center pt-5 pb-5 text-danger">
-          Data Not Found
-        </div>
-      )}
-
-      {isLoading && (
-        <div className="d-flex justify-content-center pt-5 pb-5 text-primary">
-          <Spinner />
-        </div>
-      )}
     </Fragment>
   );
 };

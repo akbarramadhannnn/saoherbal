@@ -1,10 +1,18 @@
-import React, { memo } from "react";
+import React, { memo, Fragment } from "react";
 import PropTypes from "prop-types";
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  Spinner,
+} from "reactstrap";
 
 const Index = ({
   isOpen = false,
   title = "",
+  isLoading = false,
   description = "",
   children,
   onClose = () => {},
@@ -17,23 +25,32 @@ const Index = ({
 }) => {
   return (
     <Modal isOpen={isOpen} size={size}>
-      <ModalHeader>{title}</ModalHeader>
-      <ModalBody>
-        {description && description}
-        {children && children}
-      </ModalBody>
-      <ModalFooter>
-        <Button disabled={isDisabledButtonLeft} onClick={onClose}>
-          {tetxButtonLeft}
-        </Button>
-        <Button
-          disabled={isDisabledButtonRight}
-          color="primary"
-          onClick={onSubmit}
-        >
-          {tetxButtonRight}
-        </Button>
-      </ModalFooter>
+      {isLoading && (
+        <div className="d-flex justify-content-center pt-5 pb-5 text-primary">
+          <Spinner />
+        </div>
+      )}
+      {!isLoading && (
+        <Fragment>
+          <ModalHeader>{title}</ModalHeader>
+          <ModalBody>
+            {description && description}
+            {children && children}
+          </ModalBody>
+          <ModalFooter>
+            <Button disabled={isDisabledButtonLeft} onClick={onClose}>
+              {tetxButtonLeft}
+            </Button>
+            <Button
+              disabled={isDisabledButtonRight}
+              color="primary"
+              onClick={onSubmit}
+            >
+              {tetxButtonRight}
+            </Button>
+          </ModalFooter>
+        </Fragment>
+      )}
     </Modal>
   );
 };
@@ -41,6 +58,7 @@ const Index = ({
 Index.propTypes = {
   isOpen: PropTypes.bool,
   title: PropTypes.string,
+  isLoading: PropTypes.bool,
   description: PropTypes.string,
   onClose: PropTypes.func,
   tetxButtonLeft: PropTypes.string,

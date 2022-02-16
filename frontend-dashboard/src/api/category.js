@@ -1,7 +1,9 @@
-import axios from '../lib/axiosDefault';
+import axios from "../lib/axiosDefault";
 
-export const ApiGetListCategory = async => {
-  const response = axios.get(`/category`);
+export const ApiGetListCategory = async (search, page) => {
+  const response = axios.get(
+    `/category?search=${search || ""}&page=${page || ""}`
+  );
   return response;
 };
 

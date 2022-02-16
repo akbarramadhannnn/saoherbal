@@ -1,7 +1,7 @@
 import axios from "../lib/axiosDefault";
 
-export const ApiGetListTransaction = async () => {
-  const response = await axios.get(`/transaction`);
+export const ApiGetListTransaction = async page => {
+  const response = await axios.get(`/transaction?page=${page || ""}`);
   return response;
 };
 

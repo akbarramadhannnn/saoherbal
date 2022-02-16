@@ -11,6 +11,7 @@ const {
   getDetailTransactionProductById,
   updateTotalLefDetailProductById,
   updateTotalPaidPriceTransaction,
+  getTotalDataTransaction,
 } = require("../models/transaction");
 const {
   getDataDueDateTransactionByTransactionId,
@@ -51,16 +52,46 @@ const {
   getDataProvinsiById,
   getDataKabupatenById,
 } = require("../models/wilayah");
+const { getDataConfigureByModuleAndKey } = require("../models/configure");
 const Response = require("../helpers/response");
 const { getFirstDayDate, getLastDayDate } = require("../utils/date");
+const { ReplaceToRupiah } = require("../utils/replace");
+const CalculateDistance = require("../utils/calculateDistance");
 
 exports.getTransaction = async (req, res) => {
   const userId = req.userId;
   const position = req.position;
+
+  // Pagination
+  const pagination = {};
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
   try {
-    let result = await getDataTransactionAll();
+    const resultTotalCategory = await getTotalDataTransaction();
+    const total = resultTotalCategory[0].total;
+    if (endIndex < total) {
+      pagination.next = {
+        page: page + 1,
+        limit,
+      };
+    }
+
+    if (startIndex > 0) {
+      pagination.prev = {
+        page: page - 1,
+        limit,
+      };
+    }
+
+    const totalPage = Math.ceil(total / limit);
+
+    let result = await getDataTransactionAll(startIndex, limit);
+
     if (!result.length > 0) {
-      return res.json(Response(true, 204, `Transaction Not Found`, result));
+      return res.json(Response(true, 204, `Transaction Not Found`, {}));
     }
 
     if (position === "2") {
@@ -112,7 +143,11 @@ exports.getTransaction = async (req, res) => {
     }
 
     return res.json(
-      Response(true, 200, `Get Transaction Successfully`, result)
+      Response(true, 200, `Get Transaction Successfully`, {
+        data: result,
+        totalPage,
+        pagination,
+      })
     );
   } catch (err) {
     console.log("err", err);
@@ -343,19 +378,13 @@ exports.getDetailTransaction = async (req, res) => {
       const resultDistributor = await getDataDistributorById(
         resultTransactionCode[0].distributor_id_transaction
       );
-      const resultProvinsi = await getDataProvinsiById(
-        resultDistributor[0].distributor_prov_id
-      );
-      const resultKabupaten = await getDataKabupatenById(
-        resultDistributor[0].distributor_kab_id
-      );
       resultTransactionCode[0].consumer = {
         consumer_id: resultDistributor[0].distributor_id,
         name: resultDistributor[0].name,
         no_tlp: resultDistributor[0].no_tlp,
         address: resultDistributor[0].address,
-        provinsi: resultProvinsi[0].name,
-        kabupaten: resultKabupaten[0].name,
+        provinsiId: resultDistributor[0].distributor_prov_id,
+        kabupatenId: resultDistributor[0].distributor_kab_id,
         latitude: resultDistributor[0].latitude,
         longitude: resultDistributor[0].longitude,
       };
@@ -363,23 +392,30 @@ exports.getDetailTransaction = async (req, res) => {
       const resultStore = await getDataStoreById(
         resultTransactionCode[0].store_id_transaction
       );
-      const resultProvinsi = await getDataProvinsiById(
-        resultStore[0].store_prov_id
-      );
-      const resultKabupaten = await getDataKabupatenById(
-        resultStore[0].store_kab_id
-      );
       resultTransactionCode[0].consumer = {
         consumer_id: resultStore[0].store_id,
         name: resultStore[0].name,
         no_tlp: resultStore[0].no_tlp,
         address: resultStore[0].address,
-        provinsi: resultProvinsi[0].name,
-        kabupaten: resultKabupaten[0].name,
+        provinsiId: resultStore[0].store_prov_id,
+        kabupatenId: resultStore[0].store_kab_id,
         latitude: resultDistributor[0].latitude,
         longitude: resultDistributor[0].longitude,
       };
     }
+
+    const resultProvinsi = await getDataProvinsiById(
+      resultTransactionCode[0].consumer.provinsiId
+    );
+    const resultKabupaten = await getDataKabupatenById(
+      resultTransactionCode[0].consumer.kabupatenId
+    );
+
+    resultTransactionCode[0].consumer = {
+      ...resultTransactionCode[0].consumer,
+      provinsi: resultProvinsi[0].name,
+      kabupaten: resultKabupaten[0].name,
+    };
 
     // Mapping Product
     for (let i = 0; i < resultTransactionCode[0].product.length; i++) {
@@ -465,7 +501,7 @@ exports.getDetailTransaction = async (req, res) => {
 };
 
 exports.updateTempoTransaction = async (req, res) => {
-  let { description, paid, dueDateStatus } = req.body;
+  let { description, paid, dueDateStatus, coordinate } = req.body;
   let { id } = req.params;
   try {
     const resultTempo = await getDataTempoDetailByTempoId(id);
@@ -478,8 +514,8 @@ exports.updateTempoTransaction = async (req, res) => {
     }
 
     const dueDateId = resultTempo[0].id_due_date_transaction_tempo_detail;
-
     const resultDueDate = await getDataDueDateById(dueDateId);
+
     if (!resultDueDate.length > 0) {
       return res.json(
         Response(false, 400, `Due Date Id Code Not Found`, {
@@ -517,6 +553,72 @@ exports.updateTempoTransaction = async (req, res) => {
     }
 
     const resultTransaction = await getDataTransactionById(transactionId);
+    if (paid > resultTransaction[0].total_bill_price) {
+      return res.json(
+        Response(
+          false,
+          400,
+          `max paid Rp${ReplaceToRupiah(
+            resultTransaction[0].total_bill_price
+          )}`,
+          {
+            name: "paid",
+          }
+        )
+      );
+    }
+
+    let resultDistance;
+    if (resultTransaction[0].distributor_id_transaction) {
+      const resultDistributor = await getDataDistributorById(
+        resultTransaction[0].distributor_id_transaction
+      );
+      const latitudeDistributor = resultDistributor[0].latitude;
+      const longitudeDistributor = resultDistributor[0].longitude;
+      resultDistance = CalculateDistance(
+        coordinate.latitude,
+        coordinate.longitude,
+        latitudeDistributor,
+        longitudeDistributor
+      );
+    }
+
+    if (resultTransaction[0].store_id_transaction) {
+      const resultStore = await getDataStoreById(
+        resultTransaction[0].store_id_transaction
+      );
+      const latitudeDistributor = resultStore[0].latitude;
+      const longitudeDistributor = resultStore[0].longitude;
+      resultDistance = CalculateDistance(
+        coordinate.latitude,
+        coordinate.longitude,
+        latitudeDistributor,
+        longitudeDistributor
+      );
+    }
+
+    const resultConfigure = await getDataConfigureByModuleAndKey(
+      "TRANSACTION",
+      "radius"
+    );
+    if (
+      resultDistance >
+      parseFloat(ReplaceToRupiah(resultConfigure[0].value)).toFixed(1)
+    ) {
+      return res.json(
+        Response(
+          false,
+          400,
+          `max distance ${parseFloat(
+            ReplaceToRupiah(resultConfigure[0].value)
+          )}km`,
+          {
+            name: "distance",
+          }
+        )
+      );
+    }
+
     const resultTotalPaidTempo = listDueDate
       .filter((d) => d.paid_price !== null)
       .reduce((a, b) => {
@@ -635,7 +737,7 @@ exports.updateStatusTransaction = async (req, res) => {
 };
 
 exports.addTitipTransaction = async (req, res) => {
-  let { transactionId, dueDateId, listSell } = req.body;
+  let { transactionId, dueDateId, listSell, coordinate } = req.body;
 
   try {
     const resultTransaction = await getDataTransactionById(transactionId);
@@ -653,6 +755,57 @@ exports.addTitipTransaction = async (req, res) => {
         Response(false, 400, `Due Date Id Not Found`, {
           name: "dueDateId",
         })
+      );
+    }
+
+    let resultDistance;
+    if (resultTransaction[0].distributor_id_transaction) {
+      const resultDistributor = await getDataDistributorById(
+        resultTransaction[0].distributor_id_transaction
+      );
+      const latitudeDistributor = resultDistributor[0].latitude;
+      const longitudeDistributor = resultDistributor[0].longitude;
+      resultDistance = CalculateDistance(
+        coordinate.latitude,
+        coordinate.longitude,
+        latitudeDistributor,
+        longitudeDistributor
+      );
+    }
+
+    if (resultTransaction[0].store_id_transaction) {
+      const resultStore = await getDataStoreById(
+        resultTransaction[0].store_id_transaction
+      );
+      const latitudeDistributor = resultStore[0].latitude;
+      const longitudeDistributor = resultStore[0].longitude;
+      resultDistance = CalculateDistance(
+        coordinate.latitude,
+        coordinate.longitude,
+        latitudeDistributor,
+        longitudeDistributor
+      );
+    }
+
+    const resultConfigure = await getDataConfigureByModuleAndKey(
+      "TRANSACTION",
+      "radius"
+    );
+    if (
+      resultDistance >
+      parseFloat(ReplaceToRupiah(resultConfigure[0].value)).toFixed(1)
+    ) {
+      return res.json(
+        Response(
+          false,
+          400,
+          `max distance ${parseFloat(
+            ReplaceToRupiah(resultConfigure[0].value)
+          )}km`,
+          {
+            name: "distance",
+          }
+        )
       );
     }
 

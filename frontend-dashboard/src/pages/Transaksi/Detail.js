@@ -25,6 +25,7 @@ import {
 import Breadcrumbs from "./../../components/Common/Breadcrumb";
 import Modal from "./../../components/Modal";
 import ModalMessage from "./../../components/Modal/ModalMessage";
+import Toast from "./../../components/Toast";
 import { MetaTags } from "react-meta-tags";
 import TableComponents from "./../../components/Table";
 
@@ -74,6 +75,31 @@ const DetailTransaction = props => {
   const [isShowAddButtonDueDate, setIsShowAddButtonDueDate] = useState(false);
   const [isDisabledButtonTransactionDone, setIsDisabledButtonTransactionDone] =
     useState(true);
+
+  const [userCoordinate, setUserCoordinate] = useState({
+    latitude: "",
+    longitude: "",
+  });
+
+  const [toast, setToast] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    bgColor: "",
+  });
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        setUserCoordinate({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      });
+    } else {
+      console.log("Not Available");
+    }
+  }, []);
 
   useEffect(() => {
     setIsLoadingData(true);
@@ -266,16 +292,34 @@ const DetailTransaction = props => {
         description: description.value,
         paid: Number(ReplaceDot(diBayarkan.value)),
         dueDateStatus: "2",
+        coordinate: userCoordinate,
       };
       ApiUpdateTempoTransaction(tempoDetailId, payload).then(response => {
         if (response) {
-          if (response.status === 201) {
+          if (response.status === 400) {
+            if (response.result.name === "paid") {
+              setFormEditModal(oldState => ({
+                ...oldState,
+                diBayar: {
+                  ...oldState.diBayar,
+                  error: response.message,
+                },
+              }));
+            } else if (response.result.name === "distance") {
+              setToast(oldState => ({
+                ...oldState,
+                isOpen: true,
+                title: "Location",
+                message: `Please check your location. ${response.message}`,
+                bgColor: "danger",
+              }));
+            }
+          } else if (response.status === 201) {
             setModalMessage({
               isOpen: true,
               message: "Updated Tempo Successfully",
               params: "success",
             });
-            setIsDisabledButtonModal(false);
             setDataDetail(oldState => ({
               ...oldState,
               total_paid_price: response.result.sumTotalPaid,
@@ -293,10 +337,17 @@ const DetailTransaction = props => {
             setDataDueDate(state);
             handleCloseModalEditTempo();
           }
+          setIsDisabledButtonModal(false);
         }
       });
     }
-  }, [dataDetail, dataDueDate, formEditModal, handleCloseModalEditTempo]);
+  }, [
+    dataDetail,
+    dataDueDate,
+    formEditModal,
+    handleCloseModalEditTempo,
+    userCoordinate,
+  ]);
 
   const handleShowModalAddDueDate = useCallback(() => {
     setFormAddModal({
@@ -514,59 +565,82 @@ const DetailTransaction = props => {
   );
 
   const handleSubmitEditTitip = useCallback(() => {
-    setIsDisabledButtonModal(true);
-    const arrListSell = [];
-    const arrListDueDateProduct = [];
-    for (let i = 0; i < listInputEditTitip.length; i++) {
-      arrListSell.push({
-        transactionDetailProductId:
-          listInputEditTitip[i].transactionDetailProductId,
-        totalSell: listInputEditTitip[i].totalSell.value,
-      });
+    const indexTotalSell = listInputEditTitip.findIndex(
+      d => d.totalSell.value === ""
+    );
 
-      arrListDueDateProduct.push({
-        name: listInputEditTitip[i].name,
-        sellPrice: `Rp${ConvertToRupiah(listInputEditTitip[i].sellPrice)}`,
-        totalLeft: listInputEditTitip[i].totalLeft,
-        totalSell: listInputEditTitip[i].totalSell.value,
-        total: `Rp${ConvertToRupiah(listInputEditTitip[i].total)}`,
-      });
-    }
-    const payload = {
-      transactionId: dataDetail.transaction_id,
-      dueDateId: idDueDate,
-      listSell: arrListSell,
-    };
-    ApiAddTransactionTitipDetail(payload).then(response => {
-      if (response) {
-        if (response.status === 201) {
-          setModalMessage({
-            isOpen: true,
-            message: "Updated Titip Successfully",
-            params: "success",
-          });
-          const stateDueDate = [...dataDueDate];
-          const indexDataDueDate = dataDueDate
-            .map(d => d.transaction_due_date_id)
-            .indexOf(idDueDate);
-          stateDueDate[indexDataDueDate].product = arrListDueDateProduct;
-          stateDueDate[indexDataDueDate].status_transaction_due_date = "2";
-          setDataDueDate(stateDueDate);
-          setDataDetail(oldState => ({
-            ...oldState,
-            total_paid_price: response.result.totalPaidPrice,
-          }));
-          handleCloseModalEditTitip();
+    if (indexTotalSell >= 0) {
+      const state = [...listInputEditTitip];
+      state[indexTotalSell].totalSell.error = "Total is Required";
+      setListInputEditTitip(state);
+      return false;
+    } else {
+      setIsDisabledButtonModal(true);
+      const arrListSell = [];
+      const arrListDueDateProduct = [];
+      for (let i = 0; i < listInputEditTitip.length; i++) {
+        arrListSell.push({
+          transactionDetailProductId:
+            listInputEditTitip[i].transactionDetailProductId,
+          totalSell: listInputEditTitip[i].totalSell.value,
+        });
+
+        arrListDueDateProduct.push({
+          name: listInputEditTitip[i].name,
+          sellPrice: `Rp${ConvertToRupiah(listInputEditTitip[i].sellPrice)}`,
+          totalLeft: listInputEditTitip[i].totalLeft,
+          totalSell: listInputEditTitip[i].totalSell.value,
+          total: `Rp${ConvertToRupiah(listInputEditTitip[i].total)}`,
+        });
+      }
+      const payload = {
+        transactionId: dataDetail.transaction_id,
+        dueDateId: idDueDate,
+        listSell: arrListSell,
+        coordinate: userCoordinate,
+      };
+      ApiAddTransactionTitipDetail(payload).then(response => {
+        if (response) {
+          if (response.status === 400) {
+            if (response.result.name === "distance") {
+              setToast(oldState => ({
+                ...oldState,
+                isOpen: true,
+                title: "Location",
+                message: `Please check your location. ${response.message}`,
+                bgColor: "danger",
+              }));
+            }
+          } else if (response.status === 201) {
+            setModalMessage({
+              isOpen: true,
+              message: "Updated Titip Successfully",
+              params: "success",
+            });
+            const stateDueDate = [...dataDueDate];
+            const indexDataDueDate = dataDueDate
+              .map(d => d.transaction_due_date_id)
+              .indexOf(idDueDate);
+            stateDueDate[indexDataDueDate].product = arrListDueDateProduct;
+            stateDueDate[indexDataDueDate].status_transaction_due_date = "2";
+            setDataDueDate(stateDueDate);
+            setDataDetail(oldState => ({
+              ...oldState,
+              total_paid_price: response.result.totalPaidPrice,
+            }));
+            handleCloseModalEditTitip();
+          }
           setIsDisabledButtonModal(false);
         }
-      }
-    });
+      });
+    }
   }, [
     listInputEditTitip,
     dataDetail,
     idDueDate,
     dataDueDate,
     handleCloseModalEditTitip,
+    userCoordinate,
   ]);
 
   return (
@@ -1067,7 +1141,7 @@ const DetailTransaction = props => {
                       </div> */}
                       <Row className="mt-2">
                         <div className="col-12 col-md-12">
-                          <div className="offset-md-6 offset-12 badge-soft-primary p-1">
+                          <div className="offset-md-6 offset-12 bg-light p-1">
                             {(dataDetail.transaction_type === "tempo" ||
                               dataDetail.transaction_type === "titip") && (
                               <Fragment>
@@ -1352,18 +1426,38 @@ const DetailTransaction = props => {
         </Modal>
       )}
 
-      <ModalMessage
-        isOpen={modalMessage.isOpen}
-        params={modalMessage.params}
-        message={modalMessage.message}
-        onClose={() => {
-          setModalMessage({
-            isOpen: false,
-            message: "",
-            params: "",
-          });
-        }}
-      />
+      {modalMessage.isOpen && (
+        <ModalMessage
+          isOpen={modalMessage.isOpen}
+          params={modalMessage.params}
+          message={modalMessage.message}
+          onClose={() => {
+            setModalMessage({
+              isOpen: false,
+              message: "",
+              params: "",
+            });
+          }}
+        />
+      )}
+
+      {toast.isOpen && (
+        <Toast
+          isOpen={toast.isOpen}
+          title={toast.title}
+          message={toast.message}
+          bgColor={toast.bgColor}
+          onClose={() => {
+            setToast(oldState => ({
+              ...oldState,
+              isOpen: false,
+              title: "",
+              message: ``,
+              bgColor: "",
+            }));
+          }}
+        />
+      )}
     </div>
   );
 };

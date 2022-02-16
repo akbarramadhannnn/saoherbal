@@ -54,7 +54,7 @@ const Update = props => {
     ApiGetListCategory().then(response => {
       if (response) {
         if (response.status === 200) {
-          setDataCategory(response.result);
+          setDataCategory(response.result.data);
         }
       }
     });

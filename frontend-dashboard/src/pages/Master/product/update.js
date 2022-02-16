@@ -18,7 +18,7 @@ import Alert from "./../../../components/Alert";
 import { MetaTags } from "react-meta-tags";
 import { Link } from "react-router-dom";
 import { ApiGetListCategory } from "../../../api/category";
-import { ApiGetListVariant } from "../../../api/variant";
+import { ApiDetailListVariant } from "../../../api/variant";
 import { ApiUploadSingleImage } from "../../../api/file";
 import DataJenis from "./../../../data/jenis";
 import { ConvertToRupiah } from "../../../utils/convert";
@@ -98,15 +98,17 @@ const Update = props => {
           setPriceList(dataPriceArr);
           setDesc(response.result.description);
 
-          ApiGetListVariant(response.result.category_id).then(response => {
-            if (response) {
-              if (response.status === 200) {
-                setDataVariant(response.result);
-              } else if (response.status === 204) {
-                setDataVariant([]);
+          ApiDetailListVariant("", response.result.category_id).then(
+            response => {
+              if (response) {
+                if (response.status === 200) {
+                  setDataVariant(response.result);
+                } else if (response.status === 204) {
+                  setDataVariant([]);
+                }
               }
             }
-          });
+          );
         }
         setIsLoadingData(false);
       }
@@ -117,7 +119,7 @@ const Update = props => {
     ApiGetListCategory().then(response => {
       if (response) {
         if (response.status === 200) {
-          setDataCategory(response.result);
+          setDataCategory(response.result.data);
         }
       }
     });
@@ -127,7 +129,7 @@ const Update = props => {
     let { value } = e.target;
     if (value) {
       value = Number(value);
-      ApiGetListVariant(value).then(response => {
+      ApiDetailListVariant("", value).then(response => {
         if (response) {
           if (response.status === 200) {
             setDataVariant(response.result);

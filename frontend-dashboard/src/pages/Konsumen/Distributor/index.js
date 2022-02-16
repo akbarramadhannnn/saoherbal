@@ -6,8 +6,11 @@ import MetaTags from "react-meta-tags";
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb";
 import Modal from "../../../components/Modal";
-import Alert from "./../../../components/Alert";
-import Table from "./../../../components/Table";
+import Alert from "../../../components/Alert";
+import Table from "../../../components/Table";
+import InputSearch from "../../../components/Input/InputSearch";
+import Pagination from "../../../components/Pagination";
+
 import { Link } from "react-router-dom";
 
 import {
@@ -145,7 +148,7 @@ const Index = ({ history }) => {
           <Col className="col-12">
             <Card>
               <CardBody>
-                <Row className="mb-2">
+                <Row className="mb-4">
                   <Col md="12" sm="12" className="d-flex justify-content-end">
                     <Link
                       to="/admin/konsumen/distributor/create"
@@ -153,6 +156,12 @@ const Index = ({ history }) => {
                     >
                       Add New Distributor
                     </Link>
+                  </Col>
+                </Row>
+
+                <Row className="mb-2">
+                  <Col md="12">
+                    <InputSearch />
                   </Col>
                 </Row>
 
@@ -176,6 +185,10 @@ const Index = ({ history }) => {
                       isLoading={isLoading}
                     />
                   </Col>
+                </Row>
+
+                <Row className="mt-3">
+                  <Pagination />
                 </Row>
               </CardBody>
             </Card>

@@ -7,17 +7,52 @@ const {
   getDetailDataCategory,
   getDataCategoryByName,
   getDataCategoryByNameNotById,
+  getTotalDataCategory,
 } = require("../models/category");
 const Response = require("../helpers/response");
 const { ReplaceToStartUpperCase } = require("../utils/replace");
 
 exports.getCategoryList = async (req, res) => {
+  let search = req.query.search || "";
+
+  // Pagination
+  const pagination = {};
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  
   try {
-    const result = await getDataCategoryAll();
-    if (!result.length > 0) {
-      return res.json(Response(true, 204, `Get Category Successfully`, result));
+    const resultTotalCategory = await getTotalDataCategory(search);
+    const total = resultTotalCategory[0].total;
+    if (endIndex < total) {
+      pagination.next = {
+        page: page + 1,
+        limit,
+      };
     }
-    return res.json(Response(true, 200, `Get Category Successfully`, result));
+
+    if (startIndex > 0) {
+      pagination.prev = {
+        page: page - 1,
+        limit,
+      };
+    }
+
+    const totalPage = Math.ceil(total / limit);
+
+    const result = await getDataCategoryAll(startIndex, limit, search);
+    if (!result.length > 0) {
+      return res.json(Response(true, 204, `Get Category Successfully`, {}));
+    }
+
+    return res.json(
+      Response(true, 200, `Get Category Successfully`, {
+        data: result,
+        totalPage,
+        pagination,
+      })
+    );
   } catch (err) {
     console.log("errr", err);
     const error = JSON.stringify(err, undefined, 2);

@@ -7,19 +7,52 @@ const {
   getDetailDataVariant,
   getDataVariantByName,
   getDataVariantByNameNotById,
+  getTotalDataVariant,
 } = require("../models/variant");
 const { getDataCategoryById } = require("../models/category");
 const Response = require("../helpers/response");
 const { ReplaceToStartUpperCase } = require("../utils/replace");
 
 exports.getVariantList = async (req, res) => {
-  const categoryId = req.query.categoryId || "";
+  let search = req.query.search || "";
+
+  // Pagination
+  const pagination = {};
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
   try {
-    const result = await getDataVariantAll(categoryId);
-    if (!result.length > 0) {
-      return res.json(Response(true, 204, `Get Variant Successfully`, result));
+    const resultTotalCategory = await getTotalDataVariant(search);
+    const total = resultTotalCategory[0].total;
+    if (endIndex < total) {
+      pagination.next = {
+        page: page + 1,
+        limit,
+      };
     }
-    return res.json(Response(true, 200, `Get Variant Successfully`, result));
+
+    if (startIndex > 0) {
+      pagination.prev = {
+        page: page - 1,
+        limit,
+      };
+    }
+
+    const totalPage = Math.ceil(total / limit);
+
+    const result = await getDataVariantAll(startIndex, limit, search);
+    if (!result.length > 0) {
+      return res.json(Response(true, 204, `Get Variant Successfully`, {}));
+    }
+    return res.json(
+      Response(true, 200, `Get Variant Successfully`, {
+        data: result,
+        totalPage,
+        pagination,
+      })
+    );
   } catch (err) {
     console.log("errr", err);
     const error = JSON.stringify(err, undefined, 2);
@@ -127,15 +160,30 @@ exports.deleteVariantList = async (req, res) => {
 };
 
 exports.detailVariant = async (req, res) => {
-  const { id } = req.query;
+  const { id, categoryId } = req.query;
 
   try {
-    const result = await getDetailDataVariant(id);
-    if (!result.length > 0) {
-      return res.json(Response(true, 204, `Data Variant Not Found`, {}));
+    let resultData;
+
+    if (id) {
+      const result = await getDetailDataVariant(id, categoryId);
+      if (!result.length > 0) {
+        return res.json(Response(true, 204, `Data Variant Not Found`, {}));
+      }
+      resultData = result[0];
     }
 
-    return res.json(Response(true, 200, `Get Variant Successfully`, result[0]));
+    if (categoryId) {
+      const result = await getDetailDataVariant(id, categoryId);
+      if (!result.length > 0) {
+        return res.json(
+          Response(true, 204, `Data Variant By Category Id Not Found`, {})
+        );
+      }
+      resultData = result;
+    }
+
+    return res.json(Response(true, 200, `Get Variant Successfully`, resultData));
   } catch (err) {
     console.log("errr", err);
     const error = JSON.stringify(err, undefined, 2);

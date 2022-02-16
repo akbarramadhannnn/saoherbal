@@ -1,7 +1,9 @@
 import axios from "../lib/axiosDefault";
 
-export const ApiGetListEmployee = async () => {
-  const response = await axios.get(`/employee`);
+export const ApiGetListEmployee = async (search, page) => {
+  const response = await axios.get(
+    `/employee?search=${search || ""}&page=${page || ""}`
+  );
   return response;
 };
 

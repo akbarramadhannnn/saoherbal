@@ -1,8 +1,17 @@
 const poolConnection = require("../connection/mysql2");
 
-exports.getDataEmployeeAll = async () => {
-  const sql = `SELECT * FROM employee WHERE position != '0' AND position != '9'`;
-  const result = await poolConnection.query(sql);
+exports.getDataEmployeeAll = async (start, limit, search) => {
+  const sql = `SELECT * FROM employee WHERE position != '0' AND position != '9' AND name LIKE N? LIMIT ${limit} OFFSET ${start}`;
+  const result = await poolConnection.query(sql, `%${search}%`);
+  return result[0];
+  // const sql = `SELECT * FROM employee WHERE position != '0' AND position != '9'`;
+  // const result = await poolConnection.query(sql);
+  // return result[0];
+};
+
+exports.getTotalDataEmployee = async (search) => {
+  const sql = `SELECT COUNT(*) AS total FROM employee WHERE position != '0' AND position != '9' AND name LIKE N?`;
+  const result = await poolConnection.query(sql, `%${search}%`);
   return result[0];
 };
 
