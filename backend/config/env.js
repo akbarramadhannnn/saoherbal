@@ -13,6 +13,8 @@ module.exports = {
   },
   api_image: {
     url_api_v1:
-      NODE_ENV === "development" ? "http://localhost:2001/api/v1" : "",
+      NODE_ENV === "development"
+        ? "http://localhost:2001/api/v1"
+        : "http://185.210.144.158:2001/api/v1",
   },
 };
