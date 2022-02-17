@@ -11,6 +11,7 @@ const {
   getDataStoreByEmailNotById,
   getDataStoreByNoTlp,
   getDataStoreByNoTlpNotById,
+  getTotalDataStore,
 } = require("../models/store");
 const {
   getDataProvinsiById,
@@ -21,12 +22,70 @@ const Response = require("../helpers/response");
 const { ReplaceToStartUpperCase } = require("../utils/replace");
 
 exports.getStoreList = async (req, res) => {
+  let search = req.query.search || "";
+
+  // Pagination
+  const pagination = {};
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  try {
+    const resultTotalCategory = await getTotalDataStore(search);
+    const total = resultTotalCategory[0].total;
+    if (endIndex < total) {
+      pagination.next = {
+        page: page + 1,
+        limit,
+      };
+    }
+
+    if (startIndex > 0) {
+      pagination.prev = {
+        page: page - 1,
+        limit,
+      };
+    }
+
+    const totalPage = Math.ceil(total / limit);
+
+    const result = await getDataStoreAll(startIndex, limit, search);
+    
+    if (!result.length > 0) {
+      return res.json(Response(true, 204, `Get Store Successfully`, {}));
+    }
+
+    return res.json(
+      Response(true, 200, `Get Store Successfully`, {
+        data: result,
+        totalPage,
+        pagination,
+      })
+    );
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
+};
+
+exports.getStoreListAll = async (req, res) => {
   try {
     const result = await getDataStoreAll();
     if (!result.length > 0) {
-      return res.json(Response(true, 204, `Get Store Successfully`, result));
+      return res.json(Response(true, 204, `Store Not Found`, {}));
     }
-    return res.json(Response(true, 200, `Get Store Successfully`, result));
+    // for (let i = 0; i < resultProduct.length; i++) {
+    //   resultProduct[i].category = JSON.parse(resultProduct[i].category);
+    //   resultProduct[i].variant = JSON.parse(resultProduct[i].variant);
+    //   resultProduct[i].price_list = JSON.parse(resultProduct[i].price_list);
+    // }
+    return res.json(
+      Response(true, 200, `Get Store Successfully`, {
+        data: result,
+      })
+    );
   } catch (err) {
     console.log("errr", err);
     const error = JSON.stringify(err, undefined, 2);

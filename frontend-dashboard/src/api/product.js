@@ -1,7 +1,14 @@
 import axios from "../lib/axiosDefault";
 
-export const ApiGetListProduct = async () => {
-  const response = await axios.get(`/product`);
+export const ApiGetListProduct = async (search, page) => {
+  const response = await axios.get(
+    `/product?search=${search || ""}&page=${page || ""}`
+  );
+  return response;
+};
+
+export const ApiGetListAllProduct = async (search, page) => {
+  const response = await axios.get(`/product/all`);
   return response;
 };
 

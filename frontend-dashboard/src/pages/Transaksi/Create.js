@@ -26,9 +26,9 @@ import Breadcrumbs from "./../../components/Common/Breadcrumb";
 import ModalMessage from "./../../components/Modal/ModalMessage";
 import { MetaTags } from "react-meta-tags";
 
-import { ApiGetListStore } from "../../api/store";
-import { ApiGetListDistributor } from "../../api/distributor";
-import { ApiGetListProduct } from "../../api/product";
+import { ApiGetListAllStore } from "../../api/store";
+import { ApiGetListAllDistributor } from "../../api/distributor";
+import { ApiGetListAllProduct } from "../../api/product";
 import { ApiAddLisTransaction } from "../../api/transaction";
 import { ConvertToRupiah } from "../../utils/convert";
 
@@ -81,29 +81,29 @@ const Create = () => {
   });
 
   useEffect(() => {
-    ApiGetListStore().then(response => {
+    ApiGetListAllStore().then(response => {
       if (response) {
         if (response.status === 200) {
-          setDataStore(response.result);
+          setDataStore(response.result.data);
         }
       }
     });
-    ApiGetListDistributor().then(response => {
+    ApiGetListAllDistributor().then(response => {
       if (response) {
         if (response.status === 200) {
-          setDataDistributor(response.result);
+          setDataDistributor(response.result.data);
         }
       }
     });
-    ApiGetListProduct().then(response => {
+    ApiGetListAllProduct().then(response => {
       if (response) {
         if (response.status === 200) {
           const dataArrProduct = [];
-          for (let i = 0; i < response.result.length; i++) {
+          for (let i = 0; i < response.result.data.length; i++) {
             dataArrProduct.push({
-              id: response.result[i].product_id,
-              name: response.result[i].product_name,
-              priceList: response.result[i].price_list,
+              id: response.result.data[i].product_id,
+              name: response.result.data[i].product_name,
+              priceList: response.result.data[i].price_list,
             });
           }
           setDataProduct(dataArrProduct);

@@ -12,6 +12,7 @@ const {
   getDetailDataProduct,
   updateDataProductById,
   getDataProductByNameNotById,
+  getTotalDataProduct,
 } = require("../models/product");
 const {
   addMultipleDataPrice,
@@ -24,17 +25,74 @@ const { ReplaceToStartUpperCase } = require("../utils/replace");
 const config = require("../config/env");
 
 exports.getProductList = async (req, res) => {
+  let search = req.query.search || "";
+
+  // Pagination
+  const pagination = {};
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
   try {
-    const result = await getDataProductAll();
+    const resultTotalCategory = await getTotalDataProduct(search);
+    const total = resultTotalCategory[0].total;
+    if (endIndex < total) {
+      pagination.next = {
+        page: page + 1,
+        limit,
+      };
+    }
+
+    if (startIndex > 0) {
+      pagination.prev = {
+        page: page - 1,
+        limit,
+      };
+    }
+
+    const totalPage = Math.ceil(total / limit);
+
+    const result = await getDataProductAll(startIndex, limit, search);
+
     if (!result.length > 0) {
-      return res.json(Response(true, 204, `Product Not Found`, result));
+      return res.json(Response(true, 204, `Product Not Found`, {}));
     }
     // for (let i = 0; i < resultProduct.length; i++) {
     //   resultProduct[i].category = JSON.parse(resultProduct[i].category);
     //   resultProduct[i].variant = JSON.parse(resultProduct[i].variant);
     //   resultProduct[i].price_list = JSON.parse(resultProduct[i].price_list);
     // }
-    return res.json(Response(true, 200, `Get Product Successfully`, result));
+    return res.json(
+      Response(true, 200, `Get Product Successfully`, {
+        data: result,
+        totalPage,
+        pagination,
+      })
+    );
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
+};
+
+exports.getProductListAll = async (req, res) => {
+  try {
+    const result = await getDataProductAll();
+    if (!result.length > 0) {
+      return res.json(Response(true, 204, `Product Not Found`, {}));
+    }
+    // for (let i = 0; i < resultProduct.length; i++) {
+    //   resultProduct[i].category = JSON.parse(resultProduct[i].category);
+    //   resultProduct[i].variant = JSON.parse(resultProduct[i].variant);
+    //   resultProduct[i].price_list = JSON.parse(resultProduct[i].price_list);
+    // }
+    return res.json(
+      Response(true, 200, `Get Product Successfully`, {
+        data: result,
+      })
+    );
   } catch (err) {
     console.log("errr", err);
     const error = JSON.stringify(err, undefined, 2);

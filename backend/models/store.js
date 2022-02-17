@@ -1,8 +1,20 @@
 const poolConnection = require("../connection/mysql2");
 
-exports.getDataStoreAll = async () => {
-  const sql = `SELECT store.store_id, store.name, email, no_tlp, address, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM store JOIN provinsi ON store.store_prov_id = provinsi.provinsi_id JOIN kabupaten ON store.store_kab_id = kabupaten.kabupaten_id`;
-  const result = await poolConnection.query(sql);
+exports.getDataStoreAll = async (start, limit, search) => {
+  let result;
+  if (start || limit || search) {
+    const sql = `SELECT store.store_id, store.name, email, no_tlp, address, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM store JOIN provinsi ON store.store_prov_id = provinsi.provinsi_id JOIN kabupaten ON store.store_kab_id = kabupaten.kabupaten_id WHERE store.name LIKE N? LIMIT ${limit} OFFSET ${start}`;
+    result = await poolConnection.query(sql, `%${search}%`);
+  } else {
+    const sql = `SELECT store.store_id, store.name, email, no_tlp, address, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM store JOIN provinsi ON store.store_prov_id = provinsi.provinsi_id JOIN kabupaten ON store.store_kab_id = kabupaten.kabupaten_id`;
+    result = await poolConnection.query(sql);
+  }
+  return result[0];
+};
+
+exports.getTotalDataStore = async (search) => {
+  const sql = `SELECT COUNT(*) AS total FROM store WHERE name LIKE N?`;
+  const result = await poolConnection.query(sql, `%${search}%`);
   return result[0];
 };
 

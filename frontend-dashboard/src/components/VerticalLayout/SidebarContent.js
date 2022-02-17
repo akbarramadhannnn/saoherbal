@@ -121,12 +121,12 @@ const SidebarContent = props => {
               </Link>
             </li>
 
-            <li>
+            {/* <li>
               <Link to="/admin/tagihan">
                 <i className="bx bx-receipt" />
                 <span>{props.t("Tagihan")}</span>
               </Link>
-            </li>
+            </li> */}
           </ul>
         )}
 

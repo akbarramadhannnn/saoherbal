@@ -33,12 +33,45 @@ const Index = ({ history }) => {
     message: "",
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [pagination, setPagination] = useState({
+    totalPage: 0,
+    currentPage: 1,
+    nextPage: 0,
+    prevPage: 0,
+  });
 
   useEffect(() => {
-    handleGetData();
     return () => {
       setIsSubscribe(false);
     };
+  }, []);
+
+  useEffect(() => {
+    setIsLoading(true);
+    if (search || pagination.currentPage) {
+      let timeout;
+      timeout = setTimeout(() => {
+        setIsSubscribe(true);
+        handleGetData(search, pagination.currentPage);
+      }, 500);
+      return () => {
+        clearTimeout(timeout);
+      };
+    } else {
+      handleGetData();
+    }
+  }, [search, pagination.currentPage]);
+
+  const handleChangeSearch = useCallback(e => {
+    const { value } = e.target;
+    setPagination({
+      totalPage: 0,
+      currentPage: 1,
+      nextPage: 0,
+      prevPage: 0,
+    });
+    setSearch(value);
   }, []);
 
   const handleClickDelete = useCallback(id => {
@@ -58,47 +91,93 @@ const Index = ({ history }) => {
     [history]
   );
 
-  const handleGetData = useCallback(() => {
-    if (isSubscribe) {
-      setIsLoading(true);
-      ApiGetListDistributor().then(response => {
-        if (response) {
-          const dataArr = [];
-          if (response.status === 200) {
-            for (let i = 0; i < response.result.length; i++) {
-              dataArr.push({
-                name: response.result[i].name,
-                provinsi: response.result[i].provinsi.name,
-                kabupaten: response.result[i].kabupaten.name,
-                actions: [
-                  {
-                    iconClassName: "mdi mdi-pencil font-size-18",
-                    actClassName: "text-warning",
-                    text: "",
-                    onClick: () => {
-                      handleClickUpdate(response.result[i].distributor_id);
+  const handleGetData = useCallback(
+    (search, page) => {
+      if (isSubscribe) {
+        ApiGetListDistributor(search, page).then(response => {
+          if (response) {
+            const dataArr = [];
+            if (response.status === 200) {
+              for (let i = 0; i < response.result.data.length; i++) {
+                dataArr.push({
+                  name: response.result.data[i].name,
+                  provinsi: response.result.data[i].provinsi.name,
+                  kabupaten: response.result.data[i].kabupaten.name,
+                  actions: [
+                    {
+                      iconClassName: "mdi mdi-pencil font-size-18",
+                      actClassName: "text-warning",
+                      text: "",
+                      onClick: () => {
+                        handleClickUpdate(
+                          response.result.data[i].distributor_id
+                        );
+                      },
                     },
-                  },
-                  {
-                    iconClassName: "mdi mdi-delete font-size-18",
-                    actClassName: "text-danger",
-                    text: "",
-                    onClick: () => {
-                      handleClickDelete(response.result[i].distributor_id);
+                    {
+                      iconClassName: "mdi mdi-delete font-size-18",
+                      actClassName: "text-danger",
+                      text: "",
+                      onClick: () => {
+                        handleClickDelete(
+                          response.result.data[i].distributor_id
+                        );
+                      },
                     },
-                  },
-                ],
-              });
+                  ],
+                });
+              }
+
+              if (
+                !response.result.pagination.next &&
+                !response.result.pagination.prev
+              ) {
+                setPagination(oldState => ({
+                  ...oldState,
+                  totalPage: response.result.totalPage,
+                }));
+              } else {
+                if (response.result.pagination.next) {
+                  setPagination(oldState => ({
+                    ...oldState,
+                    nextPage: response.result.pagination.next.page,
+                  }));
+                } else {
+                  setPagination(oldState => ({
+                    ...oldState,
+                    nextPage: 0,
+                  }));
+                }
+
+                if (response.result.pagination.prev) {
+                  setPagination(oldState => ({
+                    ...oldState,
+                    prevPage: response.result.pagination.prev.page,
+                  }));
+                } else {
+                  setPagination(oldState => ({
+                    ...oldState,
+                    prevPage: 0,
+                  }));
+                }
+
+                setPagination(oldState => ({
+                  ...oldState,
+                  totalPage: response.result.totalPage,
+                }));
+              }
+
+              setDataDistributor(dataArr);
+            } else if (response.status === 204) {
+              setDataDistributor(dataArr);
             }
-            setDataDistributor(dataArr);
-          } else if (response.status === 204) {
-            setDataDistributor(dataArr);
           }
-        }
-        setIsLoading(false);
-      });
-    }
-  }, [handleClickUpdate, handleClickDelete, isSubscribe]);
+          setIsLoading(false);
+        });
+      }
+    },
+    [handleClickUpdate, handleClickDelete, isSubscribe]
+  );
 
   const handleCloseModal = useCallback(() => {
     setModal(oldState => ({
@@ -161,7 +240,11 @@ const Index = ({ history }) => {
 
                 <Row className="mb-2">
                   <Col md="12">
-                    <InputSearch />
+                    <InputSearch
+                      value={search}
+                      onChange={handleChangeSearch}
+                      placeholder="distributor name.."
+                    />
                   </Col>
                 </Row>
 
@@ -188,7 +271,13 @@ const Index = ({ history }) => {
                 </Row>
 
                 <Row className="mt-3">
-                  <Pagination />
+                  <Pagination
+                    totalPage={pagination.totalPage}
+                    currentPage={pagination.currentPage}
+                    nextPage={pagination.nextPage}
+                    prevPage={pagination.prevPage}
+                    setPagination={setPagination}
+                  />
                 </Row>
               </CardBody>
             </Card>

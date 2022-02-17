@@ -1,7 +1,14 @@
-import axios from '../lib/axiosDefault';
+import axios from "../lib/axiosDefault";
 
-export const ApiGetListDistributor = async () => {
-  const response = await axios.get(`/distributor`);
+export const ApiGetListDistributor = async (search, page) => {
+  const response = await axios.get(
+    `/distributor?search=${search || ""}&page=${page || ""}`
+  );
+  return response;
+};
+
+export const ApiGetListAllDistributor = async () => {
+  const response = await axios.get(`/distributor/all`);
   return response;
 };
 

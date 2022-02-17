@@ -7,6 +7,7 @@ const {
 } = require("../../../middleware/validation/distributor");
 const {
   getDistributorList,
+  getDistributorListAll,
   addDistributorList,
   updateDistributorList,
   deleteDistributorList,
@@ -21,6 +22,7 @@ router.post(
   RunValidation,
   addDistributorList
 );
+router.get("/all", getToken, getDistributorListAll);
 router.put(
   "/:id",
   getToken,

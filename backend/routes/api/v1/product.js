@@ -7,6 +7,7 @@ const {
 } = require("../../../middleware/validation/product");
 const {
   getProductList,
+  getProductListAll,
   addProductList,
   updateProductList,
   deleteProductList,
@@ -15,6 +16,7 @@ const {
 
 router.get("/", getToken, getProductList);
 router.post("/", getToken, validationAddProduct, RunValidation, addProductList);
+router.get("/all", getToken, getProductListAll);
 router.put(
   "/:id",
   getToken,
