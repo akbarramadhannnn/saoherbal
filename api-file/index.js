@@ -28,6 +28,6 @@ app.use(routes);
 
 app.listen(config.server.port, (req, res) => {
   console.log(
-    `Server running on port ${config.server.host}:${config.server.port}`
+    `Server running on port ${config.server.port}`
   );
 });
