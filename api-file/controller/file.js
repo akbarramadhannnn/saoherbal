@@ -16,14 +16,17 @@ exports.uploadSingleImage = (req, res) => {
   const form = new formidable.IncomingForm();
   form.keepExtensions = true;
   form.parse(req, function (err, fields, files) {
-    const { name } = fields;
+    const { name, type } = fields;
     const { image } = files;
+    const nameFile = `${ReplaceToStartUpperCase(name)}-${
+      image.originalFilename
+    }`;
     var oldPath = image.filepath;
     let newPath;
-    if (name === "product") {
+    if (type === "product") {
       newPath = "./assets/images/product";
     }
-    const pathFile = path.resolve(newPath, image.originalFilename);
+    const pathFile = path.resolve(newPath, nameFile);
     var rawData = fs.readFileSync(oldPath);
     fs.writeFile(pathFile, rawData, (err) => {
       if (err) {
@@ -32,7 +35,7 @@ exports.uploadSingleImage = (req, res) => {
       }
       return res.json(
         Response(true, 201, `Upload Image Successfully`, {
-          path: image.originalFilename,
+          nameFile: nameFile,
         })
       );
     });
@@ -40,8 +43,11 @@ exports.uploadSingleImage = (req, res) => {
 };
 
 exports.deleteSingleImage = (req, res) => {
-  const { name } = req.params;
-  const pathOld = path.resolve("./assets/images/product", name);
+  const { type, name } = req.params;
+  let pathOld;
+  if (type === "product") {
+    pathOld = path.resolve("./assets/images/product", name);
+  }
   const cekFoto = fs.existsSync(pathOld);
   if (!cekFoto) {
     return res.json(

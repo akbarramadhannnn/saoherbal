@@ -11,8 +11,8 @@ import {
   InputGroup,
   InputGroupText,
 } from "reactstrap";
-import Breadcrumbs from "./../../../components/Common/Breadcrumb";
-import Alert from "./../../../components/Alert";
+import Breadcrumbs from "../../../components/Common/Breadcrumb";
+import ModalMessage from "../../../components/Modal/ModalMessage";
 import { MetaTags } from "react-meta-tags";
 import { Link } from "react-router-dom";
 import { ApiGetListCategory } from "../../../api/category";
@@ -23,6 +23,8 @@ import { ConvertToRupiah } from "../../../utils/convert";
 import { RegexAllowNumberWithDot } from "../../../utils/regex";
 import { ReplaceDot } from "../../../utils/replace";
 import { ApiAddListProduct } from "../../../api/product";
+
+import { URL_API_IMAGES } from "../../../config/url";
 
 const Create = () => {
   const [dataCategory, setDataCategory] = useState([]);
@@ -37,6 +39,7 @@ const Create = () => {
   const [errorDesc, setErrorDesc] = useState("");
   const [image, setImage] = useState("");
   const [errorImage, setErrorImage] = useState("");
+  const [oldImage, setOldImage] = useState("");
   const [priceList, setPriceList] = useState([
     {
       unit: {
@@ -53,12 +56,13 @@ const Create = () => {
       },
     },
   ]);
-  const [alert, setAlert] = useState({
+  const [modalMessage, setModalMessage] = useState({
     isOpen: false,
-    title: "",
     message: "",
+    params: "",
   });
   const [isDisabledButton, setIsDisabledButton] = useState(false);
+  const [isLoadingImage, setIsLoadingImage] = useState(false);
 
   useEffect(() => {
     ApiGetListCategory().then(response => {
@@ -166,29 +170,32 @@ const Create = () => {
     setErrorDesc("");
   }, []);
 
-  const onChangeImg = useCallback(e => {
-    const formData = new FormData();
-    formData.append("name", "product");
-    formData.append("image", e.target.files[0]);
-    ApiUploadSingleImage(formData).then(response => {
-      if (response) {
-        if (response.status === 201) {
-          setImage(response.result.path);
-          setErrorImage("");
-        }
+  const onChangeImg = useCallback(
+    e => {
+      if (name === "") {
+        setErrorImage("enter your product name please");
+      } else {
+        setErrorImage("");
+        setIsLoadingImage(true);
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("type", "product");
+        formData.append("image", e.target.files[0]);
+        ApiUploadSingleImage(formData).then(response => {
+          if (response) {
+            if (response.status === 201) {
+              setImage(response.result.nameFile);
+              setOldImage(response.result.nameFile);
+            }
+            setIsLoadingImage(false);
+          }
+        });
       }
-    });
-    // setImage(URL.createObjectURL(e.target.files[0]));
-  }, []);
 
-  const handleCloseAlert = useCallback(() => {
-    setAlert(oldState => ({
-      ...oldState,
-      isOpen: false,
-      title: "",
-      message: "",
-    }));
-  }, []);
+      // setImage(URL.createObjectURL(e.target.files[0]));
+    },
+    [name]
+  );
 
   const handleSave = useCallback(() => {
     const indexUnit = priceList.findIndex(d => d.unit.value === "");
@@ -280,13 +287,13 @@ const Create = () => {
           ]);
           setDesc("");
           setImage("");
+          setOldImage("");
           document.getElementById("form-add-product").reset();
-          setAlert(oldState => ({
-            ...oldState,
+          setModalMessage({
             isOpen: true,
-            title: "Success",
             message: response.message,
-          }));
+            params: "success",
+          });
         }
         setIsDisabledButton(false);
       }
@@ -308,13 +315,6 @@ const Create = () => {
                 <CardBody>
                   <Row>
                     <Col className="mx-auto col-10">
-                      <Alert
-                        isOpen={alert.isOpen}
-                        title={alert.title}
-                        message={alert.message}
-                        color="success"
-                        toggle={handleCloseAlert}
-                      />
                       <Form id="form-add-product">
                         <div className="mb-3 ">
                           <Label htmlFor="formrow-firstname-Input">
@@ -513,17 +513,31 @@ const Create = () => {
                           )}
                         </div>
                         <div className="mb-3">
+                          <Label>Upload Foto</Label>
                           <Input
                             type="file"
                             className="form-control"
-                            id="inputGroupFile02"
                             onChange={onChangeImg}
                             accept="image/png, image/gif, image/jpeg"
+                            disabled={isLoadingImage ? true : false}
                           />
                           {errorImage && (
                             <p className="text-danger">{errorImage}</p>
                           )}
                         </div>
+
+                        {oldImage && (
+                          <div className="mb-3">
+                            <Col md="6">
+                              <img
+                                src={`${URL_API_IMAGES}/product/get-single-image/${oldImage}`}
+                                alt="img"
+                                width="100%"
+                                height="100%"
+                              />
+                            </Col>
+                          </div>
+                        )}
                       </Form>
                     </Col>
 
@@ -551,6 +565,19 @@ const Create = () => {
             </Col>
           </Row>
         </div>
+
+        <ModalMessage
+          isOpen={modalMessage.isOpen}
+          params={modalMessage.params}
+          message={modalMessage.message}
+          onClose={() => {
+            setModalMessage({
+              isOpen: false,
+              message: "",
+              params: "",
+            });
+          }}
+        />
       </div>
     </React.Fragment>
   );

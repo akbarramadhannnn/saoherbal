@@ -43,6 +43,12 @@ exports.getDataProductByNameNotById = async (name, id) => {
   return result[0];
 };
 
+exports.getDataProductByName = async (name) => {
+  const sql = `SELECT * FROM product WHERE name = '${name}'`;
+  const result = await poolConnection.query(sql);
+  return result[0];
+};
+
 exports.updateDataProductById = async (
   id,
   name,

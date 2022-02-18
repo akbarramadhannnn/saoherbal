@@ -1,6 +1,12 @@
 const router = require("express").Router();
-const product = require("./product");
+const {
+  uploadSingleImage,
+  deleteSingleImage,
+  generateFilePdf,
+} = require("../../../controller/file");
 
-router.use("/product", product);
+router.post("/upload-single-image", uploadSingleImage);
+router.post("/generate-pdf-invoice", generateFilePdf);
+router.delete("/delete-single-image/:type/:name", deleteSingleImage);
 
 module.exports = router;

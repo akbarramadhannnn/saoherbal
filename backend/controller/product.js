@@ -11,6 +11,7 @@ const {
   deleteDataProductById,
   getDetailDataProduct,
   updateDataProductById,
+  getDataProductByName,
   getDataProductByNameNotById,
   getTotalDataProduct,
 } = require("../models/product");
@@ -136,6 +137,15 @@ exports.addProductList = async (req, res) => {
       );
     }
 
+    const resultProductByName = await getDataProductByName(name);
+    if (resultProductByName.length > 0) {
+      return res.json(
+        Response(false, 400, `Name Has Already`, {
+          name: "name",
+        })
+      );
+    }
+
     const resultAddProduct = await addDataProduct(
       name,
       category_id,
@@ -220,6 +230,14 @@ exports.updateProductList = async (req, res) => {
       );
     }
 
+    if (image) {
+      if (image !== resultProductById[0].image) {
+        await axios.delete(
+          `${config.api_image.url_api_v1}/delete-single-image/product/${resultProductById[0].image}`
+        );
+      }
+    }
+
     await updateDataProductById(
       id,
       name,
@@ -286,7 +304,7 @@ exports.deleteProductList = async (req, res) => {
     }
 
     await axios.delete(
-      `${config.api_image.url_api_v1}/product/delete-single-image/${resultProductById[0].image}`
+      `${config.api_image.url_api_v1}/delete-single-image/product/${resultProductById[0].image}`
     );
 
     await deleteDataProductById(id);
