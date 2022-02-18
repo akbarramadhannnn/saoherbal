@@ -2,7 +2,8 @@ const NODE_ENV = process.env.NODE_ENV;
 
 module.exports = {
   server: {
-    port: NODE_ENV === "development" ? 2000 : 2000,
+    host: NODE_ENV === "development" ? "http://localhost" : "185.210.144.158",
+    port: NODE_ENV === "development" ? 2000 : 2002,
   },
   database_sql: {
     host: NODE_ENV === "development" ? "localhost" : "185.210.144.158",
@@ -15,6 +16,6 @@ module.exports = {
     url_api_v1:
       NODE_ENV === "development"
         ? "http://localhost:2001/api/v1"
-        : "http://185.210.144.158:2001/api/v1",
+        : "http://185.210.144.158:2003/api/v1",
   },
 };

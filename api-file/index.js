@@ -1,6 +1,7 @@
 const express = require("express");
 const config = require("./config/env");
 const cors = require("cors");
+const morgan = require("morgan");
 const routes = require("./routes");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -22,6 +23,7 @@ app.use(
   })
 );
 app.use(express.static(path.join(__dirname, "public")));
+app.use(morgan("combined"));
 app.use(routes);
 
 app.listen(config.server.port, (req, res) => {
