@@ -68,6 +68,7 @@ const Create = () => {
       discount: 0,
       discountPrice: "",
       qty: 0,
+      errorQty: "",
       total: 0,
       priceList: [],
     },
@@ -204,6 +205,7 @@ const Create = () => {
       state[index].discountPrice = "";
       state[index].errorProductId = "";
       state[index].qty = 0;
+      state[index].errorQty = "";
       state[index].total = 0;
       setProductList(state);
     },
@@ -229,6 +231,7 @@ const Create = () => {
         state[index].total = 0;
       }
       state[index].qty = 0;
+      state[index].errorQty = "";
       state[index].errorPriceId = "";
       setProductList(state);
     },
@@ -277,6 +280,7 @@ const Create = () => {
       value = Number(value);
       const state = [...productList];
       state[index].qty = value;
+      state[index].errorQty = "";
 
       if (isNaN(value)) return false;
 
@@ -316,6 +320,7 @@ const Create = () => {
       discount: 0,
       discountPrice: "",
       qty: 0,
+      errorQty: "",
       total: 0,
       priceList: [],
     };
@@ -375,16 +380,22 @@ const Create = () => {
     } else {
       const filterValueProduct = productList.filter(d => d.productId === "");
       const filterValuePrice = productList.filter(d => d.priceId === "");
+      const filterValueQty = productList.filter(d => d.qty === 0);
 
-      if (filterValueProduct.length || filterValuePrice.length) {
+      if (
+        filterValueProduct.length ||
+        filterValuePrice.length ||
+        filterValueQty.length
+      ) {
         let stateProductList = [...productList];
 
         for (let i = 0; i < productList.length; i++) {
           if (stateProductList[i].productId === "") {
             stateProductList[i].errorProductId = "Silahkan pilih product";
-          }
-          if (stateProductList[i].priceId === "") {
+          } else if (stateProductList[i].priceId === "") {
             stateProductList[i].errorPriceId = "Silahkan pilih berat";
+          } else if (stateProductList[i].qty === 0) {
+            stateProductList[i].errorQty = "jumlah barang tidak boleh 0";
           }
         }
         setProductList(stateProductList);
@@ -448,6 +459,7 @@ const Create = () => {
                   discount: 0,
                   discountPrice: "",
                   qty: 0,
+                  errorQty: "",
                   total: 0,
                   priceList: [],
                 },
@@ -783,6 +795,9 @@ const Create = () => {
                                     onChange={e => onChangeQuantity(e, i)}
                                     placeholder="Quantity"
                                   />
+                                  {pl.errorQty && (
+                                    <p className="text-danger">{pl.errorQty}</p>
+                                  )}
                                 </Col>
 
                                 <Col md="12" className="text-end mb-3">
