@@ -338,7 +338,7 @@ const Create = () => {
                                   <Input
                                     type="radio"
                                     value="sim c"
-                                    checked={typeId === "sim ac"}
+                                    checked={typeId === "sim c"}
                                     onChange={onChangeTypeId}
                                   />{" "}
                                   SIM C
