@@ -222,7 +222,7 @@ const Update = props => {
           <title>Toko</title>
         </MetaTags>
         <div className="container-fluid">
-          <Breadcrumbs title="Create" breadcrumbItem="Toko" />
+          <Breadcrumbs title="Edit" breadcrumbItem="Toko" />
 
           <Row>
             <Col className="col-12">
@@ -248,7 +248,7 @@ const Update = props => {
                               className="form-control"
                               id="formrow-firstname-Input"
                               onChange={onChangeName}
-                              placeholder="Enter Toko name"
+                              placeholder="inputkan nama toko"
                             />
                             {errorName && (
                               <p className="text-danger">{errorName}</p>
@@ -264,7 +264,7 @@ const Update = props => {
                               className="form-control"
                               id="formrow-firstname-Input"
                               onChange={onChangeEmail}
-                              placeholder="Enter email "
+                              placeholder="inputkan email"
                             />
                             {errorEmail && (
                               <p className="text-danger">{errorEmail}</p>
@@ -280,7 +280,7 @@ const Update = props => {
                               className="form-control"
                               id="formrow-firstname-Input"
                               onChange={onChangeTlp}
-                              placeholder="Enter telepon "
+                              placeholder="inputkan nomor telepon"
                             />
                             {errorTlp && (
                               <p className="text-danger">{errorTlp}</p>
@@ -295,7 +295,7 @@ const Update = props => {
                               className="form-select"
                               onChange={onChangeProvinsi}
                             >
-                              <option value="">Select Provinsi</option>
+                              <option value="">Pilih Provinsi</option>
                               {dataProvinsi.map((d, i) => (
                                 <option key={i} value={d.provinsi_id}>
                                   {d.name}
@@ -315,7 +315,7 @@ const Update = props => {
                               className="form-select"
                               onChange={onChangeKabupaten}
                             >
-                              <option value="">Select Kabupaten</option>
+                              <option value="">Pilih Kabupaten</option>
                               {dataKabupaten.map((d, i) => (
                                 <option key={i} value={d.kabupaten_id}>
                                   {d.name}
@@ -335,7 +335,7 @@ const Update = props => {
                               id="textarea"
                               // maxLength="225"
                               rows="4"
-                              placeholder="enter address"
+                              placeholder="inputkan alamat"
                               onChange={onChangeAlamat}
                             />
                             {errorAlamat && (
@@ -391,7 +391,7 @@ const Update = props => {
                             to="/admin/konsumen/toko"
                             className="btn btn-danger me-2"
                           >
-                            cancel
+                            <i className="fas fa-arrow-left"></i> Kembali
                           </Link>
                           <Button
                             type="button"
@@ -399,7 +399,7 @@ const Update = props => {
                             disabled={isDisabled}
                             onClick={handleSave}
                           >
-                            save
+                            <i className="fas fa-save"></i> Simpan
                           </Button>
                         </div>
                       </Col>

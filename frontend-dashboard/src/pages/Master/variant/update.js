@@ -9,7 +9,7 @@ import {
   Col,
   Input,
   Button,
-  Spinner
+  Spinner,
 } from "reactstrap";
 import Breadcrumbs from "./../../../components/Common/Breadcrumb";
 import Alert from "./../../../components/Alert";
@@ -111,10 +111,10 @@ const Update = props => {
   return (
     <div className="page-content">
       <MetaTags>
-        <title>Variant</title>
+        <title>Varian</title>
       </MetaTags>
       <div className="container-fluid">
-        <Breadcrumbs title="Create" breadcrumbItem="Variant" />
+        <Breadcrumbs title="Edit" breadcrumbItem="Varian" />
 
         <Row>
           <Col className="col-12">
@@ -140,14 +140,14 @@ const Update = props => {
                       <Form>
                         <div className="mb-3 ">
                           <Label htmlFor="formrow-firstname-Input">
-                            Category
+                            Nama Kategori
                           </Label>
                           <select
                             value={categoryId}
                             className="form-select"
                             onChange={onChangeCategory}
                           >
-                            <option value="">Select Category</option>
+                            <option value="">Pilih Kategori</option>
                             {dataCategory.map((category, i) => (
                               <option value={category.category_id} key={i}>
                                 {category.name}
@@ -160,14 +160,16 @@ const Update = props => {
                         </div>
 
                         <div className="mb-3 ">
-                          <Label htmlFor="formrow-firstname-Input">Name</Label>
+                          <Label htmlFor="formrow-firstname-Input">
+                            Nama Varian
+                          </Label>
                           <Input
                             value={name}
                             type="text"
                             className="form-control"
                             id="formrow-firstname-Input"
                             onChange={handleChangeInput}
-                            placeholder="Enter variant name"
+                            placeholder="inputkan nama varian"
                           />
                           {errorName && (
                             <p className="text-danger">{errorName}</p>
@@ -182,7 +184,7 @@ const Update = props => {
                           to="/admin/master/variant"
                           className="btn btn-danger mb-2 me-2"
                         >
-                          cancel
+                          <i className="fas fa-arrow-left"></i> Kembali
                         </Link>
                         <Button
                           type="button"
@@ -191,7 +193,7 @@ const Update = props => {
                           onClick={handleSave}
                           disabled={isDisabledButton}
                         >
-                          save
+                          <i className="fas fa-save"></i> Simpan
                         </Button>
                       </div>
                     </Col>

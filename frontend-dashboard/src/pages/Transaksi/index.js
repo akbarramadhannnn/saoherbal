@@ -11,9 +11,13 @@ import {
   Nav,
   NavItem,
   NavLink,
-  Badge,
   Button,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
 } from "reactstrap";
+import Breadcrumbs from "../../components/Common/Breadcrumb";
 import Table from "../../components/Table";
 import ModalLoading from "../../components/Modal/ModalLoading";
 import Pagination from "../../components/Pagination";
@@ -174,29 +178,51 @@ const Index = ({ history }) => {
                     ).format("Do MMMM YYYY")} Pkl ${moment(
                       response.result.data[i].date_transaction
                     ).format("H:mm:ss")}`,
-                    actions: [
-                      {
-                        iconClassName: "fas fa-eye font-size-20",
-                        actClassName: "text-primary",
-                        text: "",
-                        onClick: () => {
-                          handleClickDetailTransaction(
-                            response.result.data[i].code
-                          );
-                        },
-                      },
-                      {
-                        iconClassName: "fas fa-map-marker-alt font-size-20",
-                        actClassName: "text-warning",
-                        text: "",
-                        onClick: () => {
-                          handleClickDetailMaps(
-                            response.result.data[i].consumer.latitude,
-                            response.result.data[i].consumer.longitude
-                          );
-                        },
-                      },
-                    ],
+                    actions: (
+                      <UncontrolledDropdown>
+                        <DropdownToggle href="#" className="card-drop" tag="i">
+                          <i
+                            style={{ cursor: "pointer" }}
+                            className="mdi mdi-dots-horizontal font-size-18"
+                          />
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-end">
+                          <DropdownItem
+                            onClick={() =>
+                              handleClickDetailTransaction(
+                                response.result.data[i].code
+                              )
+                            }
+                          >
+                            <i className="mdi mdi-eye font-size-16 text-info me-1" />{" "}
+                            Lihat Detail
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
+                    ),
+                    // actions: [
+                    //   {
+                    //     iconClassName: "fas fa-eye font-size-20",
+                    //     actClassName: "text-primary",
+                    //     text: "",
+                    //     onClick: () => {
+                    //       handleClickDetailTransaction(
+                    //         response.result.data[i].code
+                    //       );
+                    //     },
+                    //   },
+                    //   {
+                    //     iconClassName: "fas fa-map-marker-alt font-size-20",
+                    //     actClassName: "text-warning",
+                    //     text: "",
+                    //     onClick: () => {
+                    //       handleClickDetailMaps(
+                    //         response.result.data[i].consumer.latitude,
+                    //         response.result.data[i].consumer.longitude
+                    //       );
+                    //     },
+                    //   },
+                    // ],
                   });
                 } else if (
                   response.result.data[i].transaction_type === "tempo" &&
@@ -247,29 +273,51 @@ const Index = ({ history }) => {
                     ).format("Do MMMM YYYY")} Pkl ${moment(
                       response.result.data[i].date_transaction
                     ).format("H:mm:ss")}`,
-                    actions: [
-                      {
-                        iconClassName: "fas fa-eye font-size-20",
-                        actClassName: "text-primary",
-                        text: "",
-                        onClick: () => {
-                          handleClickDetailTransaction(
-                            response.result.data[i].code
-                          );
-                        },
-                      },
-                      {
-                        iconClassName: "fas fa-map-marker-alt font-size-20",
-                        actClassName: "text-warning",
-                        text: "",
-                        onClick: () => {
-                          handleClickDetailMaps(
-                            response.result.data[i].consumer.latitude,
-                            response.result.data[i].consumer.longitude
-                          );
-                        },
-                      },
-                    ],
+                    actions: (
+                      <UncontrolledDropdown>
+                        <DropdownToggle href="#" className="card-drop" tag="i">
+                          <i
+                            style={{ cursor: "pointer" }}
+                            className="mdi mdi-dots-horizontal font-size-18"
+                          />
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-end">
+                          <DropdownItem
+                            onClick={() =>
+                              handleClickDetailTransaction(
+                                response.result.data[i].code
+                              )
+                            }
+                          >
+                            <i className="mdi mdi-eye font-size-16 text-info me-1" />{" "}
+                            Lihat Detail
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
+                    ),
+                    // actions: [
+                    //   {
+                    //     iconClassName: "fas fa-eye font-size-20",
+                    //     actClassName: "text-primary",
+                    //     text: "",
+                    //     onClick: () => {
+                    //       handleClickDetailTransaction(
+                    //         response.result.data[i].code
+                    //       );
+                    //     },
+                    //   },
+                    //   {
+                    //     iconClassName: "fas fa-map-marker-alt font-size-20",
+                    //     actClassName: "text-warning",
+                    //     text: "",
+                    //     onClick: () => {
+                    //       handleClickDetailMaps(
+                    //         response.result.data[i].consumer.latitude,
+                    //         response.result.data[i].consumer.longitude
+                    //       );
+                    //     },
+                    //   },
+                    // ],
                   });
                 } else {
                   dataArrAll.push({
@@ -301,29 +349,51 @@ const Index = ({ history }) => {
                     ).format("Do MMMM YYYY")} Pkl ${moment(
                       response.result.data[i].date_transaction
                     ).format("H:mm:ss")}`,
-                    actions: [
-                      {
-                        iconClassName: "fas fa-eye font-size-20",
-                        actClassName: "text-primary",
-                        text: "",
-                        onClick: () => {
-                          handleClickDetailTransaction(
-                            response.result.data[i].code
-                          );
-                        },
-                      },
-                      {
-                        iconClassName: "fas fa-map-marker-alt font-size-20",
-                        actClassName: "text-warning",
-                        text: "",
-                        onClick: () => {
-                          handleClickDetailMaps(
-                            response.result.data[i].consumer.latitude,
-                            response.result.data[i].consumer.longitude
-                          );
-                        },
-                      },
-                    ],
+                    actions: (
+                      <UncontrolledDropdown>
+                        <DropdownToggle href="#" className="card-drop" tag="i">
+                          <i
+                            style={{ cursor: "pointer" }}
+                            className="mdi mdi-dots-horizontal font-size-18"
+                          />
+                        </DropdownToggle>
+                        <DropdownMenu className="dropdown-menu-end">
+                          <DropdownItem
+                            onClick={() =>
+                              handleClickDetailTransaction(
+                                response.result.data[i].code
+                              )
+                            }
+                          >
+                            <i className="mdi mdi-eye font-size-16 text-info me-1" />{" "}
+                            Lihat Detail
+                          </DropdownItem>
+                        </DropdownMenu>
+                      </UncontrolledDropdown>
+                    ),
+                    // actions: [
+                    //   {
+                    //     iconClassName: "fas fa-eye font-size-20",
+                    //     actClassName: "text-primary",
+                    //     text: "",
+                    //     onClick: () => {
+                    //       handleClickDetailTransaction(
+                    //         response.result.data[i].code
+                    //       );
+                    //     },
+                    //   },
+                    //   {
+                    //     iconClassName: "fas fa-map-marker-alt font-size-20",
+                    //     actClassName: "text-warning",
+                    //     text: "",
+                    //     onClick: () => {
+                    //       handleClickDetailMaps(
+                    //         response.result.data[i].consumer.latitude,
+                    //         response.result.data[i].consumer.longitude
+                    //       );
+                    //     },
+                    //   },
+                    // ],
                   });
                 }
               }
@@ -427,7 +497,7 @@ const Index = ({ history }) => {
       </MetaTags>
 
       <div className="container-fluid">
-        <h4>Transaksi</h4>
+        <Breadcrumbs title="" breadcrumbItem="Transaksi" />
 
         <Row>
           <Col className="col-12">
@@ -445,7 +515,7 @@ const Index = ({ history }) => {
                       }/transaction/create`}
                       className="btn btn-primary"
                     >
-                      Add New Transaction
+                      <i className="fas fa-plus"></i> Tambah Data Transaksi
                     </Link>
                   </Col>
                 </Row>

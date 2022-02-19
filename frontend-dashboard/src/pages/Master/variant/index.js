@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-import { Row, Col, Card, CardBody } from "reactstrap";
+import {
+  Row,
+  Col,
+  Card,
+  CardBody,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
 import MetaTags from "react-meta-tags";
 
 //Import Breadcrumb
@@ -99,24 +108,56 @@ const Index = ({ history }) => {
                 dataArr.push({
                   category: response.result.data[i].category.name,
                   name: response.result.data[i].name,
-                  actions: [
-                    {
-                      iconClassName: "mdi mdi-pencil font-size-18",
-                      actClassName: "text-warning",
-                      text: "",
-                      onClick: () => {
-                        handleClickUpdate(response.result.data[i].variant_id);
-                      },
-                    },
-                    {
-                      iconClassName: "mdi mdi-delete font-size-18",
-                      actClassName: "text-danger",
-                      text: "",
-                      onClick: () => {
-                        handleClickDelete(response.result.data[i].variant_id);
-                      },
-                    },
-                  ],
+                  actions: (
+                    <UncontrolledDropdown>
+                      <DropdownToggle href="#" className="card-drop" tag="i">
+                        <i
+                          style={{ cursor: "pointer" }}
+                          className="mdi mdi-dots-horizontal font-size-18"
+                        />
+                      </DropdownToggle>
+                      <DropdownMenu className="dropdown-menu-end">
+                        <DropdownItem
+                          onClick={() =>
+                            handleClickUpdate(
+                              response.result.data[i].variant_id
+                            )
+                          }
+                        >
+                          <i className="mdi mdi-pencil font-size-16 text-warning me-1" />{" "}
+                          Edit Data
+                        </DropdownItem>
+                        <DropdownItem
+                          onClick={() =>
+                            handleClickDelete(
+                              response.result.data[i].variant_id
+                            )
+                          }
+                        >
+                          <i className="mdi mdi-trash-can font-size-16 text-danger me-1" />{" "}
+                          Hapus Data
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </UncontrolledDropdown>
+                  ),
+                  // actions: [
+                  //   {
+                  //     iconClassName: "mdi mdi-pencil font-size-18",
+                  //     actClassName: "text-warning",
+                  //     text: "",
+                  //     onClick: () => {
+                  //       handleClickUpdate(response.result.data[i].variant_id);
+                  //     },
+                  //   },
+                  //   {
+                  //     iconClassName: "mdi mdi-delete font-size-18",
+                  //     actClassName: "text-danger",
+                  //     text: "",
+                  //     onClick: () => {
+                  //       handleClickDelete(response.result.data[i].variant_id);
+                  //     },
+                  //   },
+                  // ],
                 });
               }
 
@@ -210,10 +251,10 @@ const Index = ({ history }) => {
   return (
     <div className="page-content">
       <MetaTags>
-        <title>Variant</title>
+        <title>Varian</title>
       </MetaTags>
       <div className="container-fluid">
-        <Breadcrumbs title="Master" breadcrumbItem="Variant" />
+        <Breadcrumbs title="Master" breadcrumbItem="Varian" />
 
         <Row>
           <Col className="col-12">
@@ -225,14 +266,18 @@ const Index = ({ history }) => {
                       to="/admin/master/variant/create"
                       className="btn btn-primary"
                     >
-                      Add New Variant
+                      <i className="fas fa-plus"></i> Tambah Data Varian
                     </Link>
                   </Col>
                 </Row>
 
                 <Row className="mb-2">
                   <Col md="12">
-                    <InputSearch value={search} onChange={handleChangeSearch} placeholder="variant name.."/>
+                    <InputSearch
+                      value={search}
+                      onChange={handleChangeSearch}
+                      placeholder="nama varian..."
+                    />
                   </Col>
                 </Row>
 
@@ -246,7 +291,7 @@ const Index = ({ history }) => {
                       toggle={handleCloseAlert}
                     />
                     <Table
-                      column={["Category Name", "Variant Name", "Actions"]}
+                      column={["Nama Kategori", "Nama Varian", "Aksi"]}
                       row={dataVariant}
                       isLoading={isLoading}
                     />

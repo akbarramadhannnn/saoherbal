@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-import { Row, Col, Card, CardBody } from "reactstrap";
+import {
+  Row,
+  Col,
+  Card,
+  CardBody,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
 import MetaTags from "react-meta-tags";
 
 //Import Breadcrumb
@@ -91,6 +100,16 @@ const Index = ({ history }) => {
     [history]
   );
 
+  const handleClickDetailMaps = useCallback(
+    (lat, long) => {
+      window.open(
+        `https://www.google.com/maps/search/?api=1&query=${lat},${long}`
+      );
+      // history.push(`/transaction/detail/${transactionCode}`);
+    },
+    [history]
+  );
+
   const handleGetData = useCallback(
     (search, page) => {
       if (isSubscribe) {
@@ -103,28 +122,71 @@ const Index = ({ history }) => {
                   name: response.result.data[i].name,
                   provinsi: response.result.data[i].provinsi.name,
                   kabupaten: response.result.data[i].kabupaten.name,
-                  actions: [
-                    {
-                      iconClassName: "mdi mdi-pencil font-size-18",
-                      actClassName: "text-warning",
-                      text: "",
-                      onClick: () => {
-                        handleClickUpdate(
-                          response.result.data[i].distributor_id
-                        );
-                      },
-                    },
-                    {
-                      iconClassName: "mdi mdi-delete font-size-18",
-                      actClassName: "text-danger",
-                      text: "",
-                      onClick: () => {
-                        handleClickDelete(
-                          response.result.data[i].distributor_id
-                        );
-                      },
-                    },
-                  ],
+                  actions: (
+                    <UncontrolledDropdown>
+                      <DropdownToggle href="#" className="card-drop" tag="i">
+                        <i
+                          style={{ cursor: "pointer" }}
+                          className="mdi mdi-dots-horizontal font-size-18"
+                        />
+                      </DropdownToggle>
+                      <DropdownMenu className="dropdown-menu-end">
+                        <DropdownItem
+                          onClick={() =>
+                            handleClickUpdate(
+                              response.result.data[i].distributor_id
+                            )
+                          }
+                        >
+                          <i className="mdi mdi-pencil font-size-16 text-warning me-1" />{" "}
+                          Edit Data
+                        </DropdownItem>
+                        <DropdownItem
+                          onClick={() =>
+                            handleClickDelete(
+                              response.result.data[i].distributor_id
+                            )
+                          }
+                        >
+                          <i className="mdi mdi-trash-can font-size-16 text-danger me-1" />{" "}
+                          Hapus Data
+                        </DropdownItem>
+                        <DropdownItem
+                          onClick={() =>
+                            handleClickDetailMaps(
+                              response.result.data[i].latitude,
+                              response.result.data[i].longitude
+                            )
+                          }
+                        >
+                          <i className="mdi mdi-map-marker font-size-16 text-info me-1" />{" "}
+                          Lihat Lokasi
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </UncontrolledDropdown>
+                  ),
+                  // actions: [
+                  //   {
+                  //     iconClassName: "mdi mdi-pencil font-size-18",
+                  //     actClassName: "text-warning",
+                  //     text: "",
+                  //     onClick: () => {
+                  //       handleClickUpdate(
+                  //         response.result.data[i].distributor_id
+                  //       );
+                  //     },
+                  //   },
+                  //   {
+                  //     iconClassName: "mdi mdi-delete font-size-18",
+                  //     actClassName: "text-danger",
+                  //     text: "",
+                  //     onClick: () => {
+                  //       handleClickDelete(
+                  //         response.result.data[i].distributor_id
+                  //       );
+                  //     },
+                  //   },
+                  // ],
                 });
               }
 
@@ -176,7 +238,7 @@ const Index = ({ history }) => {
         });
       }
     },
-    [handleClickUpdate, handleClickDelete, isSubscribe]
+    [handleClickUpdate, handleClickDelete, handleClickDetailMaps, isSubscribe]
   );
 
   const handleCloseModal = useCallback(() => {
@@ -233,7 +295,7 @@ const Index = ({ history }) => {
                       to="/admin/konsumen/distributor/create"
                       className="btn btn-primary"
                     >
-                      Add New Distributor
+                      <i className="fas fa-plus"></i> Tambah Data Distributor
                     </Link>
                   </Col>
                 </Row>
@@ -243,7 +305,7 @@ const Index = ({ history }) => {
                     <InputSearch
                       value={search}
                       onChange={handleChangeSearch}
-                      placeholder="distributor name.."
+                      placeholder="nama distributor.."
                     />
                   </Col>
                 </Row>
@@ -259,10 +321,10 @@ const Index = ({ history }) => {
                     />
                     <Table
                       column={[
-                        "Distributor Name",
+                        "Nama Distributor",
                         "Provinsi",
                         "Kabupaten",
-                        "Actions",
+                        "Aksi",
                       ]}
                       row={dataDistributor}
                       isLoading={isLoading}

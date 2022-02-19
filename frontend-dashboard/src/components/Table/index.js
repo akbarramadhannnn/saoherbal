@@ -38,22 +38,28 @@ const Index = ({ column = [], row = [], isLoading = false, col = [] }) => {
                             key={id}
                             className={col.length > 0 ? col[id] : ""}
                           >
-                            <div className="d-flex gap-3 justify-content-center">
-                              {r[obj].map((act, actId) => (
-                                <Link
-                                  key={actId}
-                                  to="#"
-                                  className={act.actClassName}
-                                  onClick={act.onClick}
-                                >
-                                  {act.text ? (
-                                    <Fragment>{act.text}</Fragment>
-                                  ) : (
-                                    <i className={act.iconClassName} />
-                                  )}
-                                </Link>
-                              ))}
-                            </div>
+                            {Array.isArray(r[obj]) && (
+                              <div className="d-flex gap-3 justify-content-center">
+                                {r[obj].map((act, actId) => (
+                                  <Link
+                                    key={actId}
+                                    to="#"
+                                    className={act.actClassName}
+                                    onClick={act.onClick}
+                                  >
+                                    {act.text ? (
+                                      <Fragment>{act.text}</Fragment>
+                                    ) : (
+                                      <i className={act.iconClassName} />
+                                    )}
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+
+                            {!Array.isArray(r[obj]) && (
+                              <Fragment>{r[obj]}</Fragment>
+                            )}
                           </td>
                         );
                       } else {

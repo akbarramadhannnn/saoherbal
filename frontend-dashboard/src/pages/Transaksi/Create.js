@@ -477,7 +477,7 @@ const Create = () => {
         <title>Transaksi</title>
       </MetaTags>
       <div className="container-fluid">
-        <Breadcrumbs title="Create" breadcrumbItem="Transaksi" />
+        <Breadcrumbs title="Tambah" breadcrumbItem="Transaksi" />
 
         <Row>
           <Col className="col-12">
@@ -775,7 +775,7 @@ const Create = () => {
                                 </Col>
 
                                 <Col md="3" className="mb-3">
-                                  <Label>Qty</Label>
+                                  <Label>Jumlah Barang</Label>
                                   <Input
                                     value={pl.qty}
                                     type="text"
@@ -864,7 +864,7 @@ const Create = () => {
                         }/transaction`}
                         className="btn btn-danger mb-2 me-2"
                       >
-                        cancel
+                        <i className="fas fa-arrow-left"></i> Kembali
                       </Link>
                       <Button
                         type="button"
@@ -873,7 +873,7 @@ const Create = () => {
                         onClick={handleSave}
                         disabled={isDisabledButton}
                       >
-                        save
+                        <i className="fas fa-save"></i> Simpan
                       </Button>
                     </div>
                   </Col>

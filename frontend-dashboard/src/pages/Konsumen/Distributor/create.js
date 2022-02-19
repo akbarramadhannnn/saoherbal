@@ -212,7 +212,7 @@ const Create = () => {
           <title>Distributor</title>
         </MetaTags>
         <div className="container-fluid">
-          <Breadcrumbs title="Create" breadcrumbItem="Distributor" />
+          <Breadcrumbs title="Tambah" breadcrumbItem="Distributor" />
 
           <Row>
             <Col className="col-12">
@@ -222,14 +222,14 @@ const Create = () => {
                     <Col className="mx-auto col-10">
                       <Form>
                         <div className="mb-3 ">
-                          <Label htmlFor="formrow-firstname-Input">Name</Label>
+                          <Label htmlFor="formrow-firstname-Input">Nama</Label>
                           <Input
                             value={name}
                             type="text"
                             className="form-control"
                             id="formrow-firstname-Input"
                             onChange={onChangeName}
-                            placeholder="Enter distributor name"
+                            placeholder="inputkan nama distributor"
                           />
                           {errorName && (
                             <p className="text-danger">{errorName}</p>
@@ -243,7 +243,7 @@ const Create = () => {
                             className="form-control"
                             id="formrow-firstname-Input"
                             onChange={onChangeEmail}
-                            placeholder="Enter email "
+                            placeholder="inputkan email"
                           />
                           {errorEmail && (
                             <p className="text-danger">{errorEmail}</p>
@@ -259,7 +259,7 @@ const Create = () => {
                             className="form-control"
                             id="formrow-firstname-Input"
                             onChange={onChangeTlp}
-                            placeholder="Enter telepon "
+                            placeholder="inputkan nomor telepon"
                           />
                           {errorTlp && (
                             <p className="text-danger">{errorTlp}</p>
@@ -274,7 +274,7 @@ const Create = () => {
                             className="form-select"
                             onChange={onChangeProvinsi}
                           >
-                            <option value="">Select Provinsi</option>
+                            <option value="">Pilih Provinsi</option>
                             {dataProvinsi.map((d, i) => (
                               <option key={i} value={d.provinsi_id}>
                                 {d.name}
@@ -294,7 +294,7 @@ const Create = () => {
                             className="form-select"
                             onChange={onChangeKabupaten}
                           >
-                            <option value="">Select Kabupaten</option>
+                            <option value="">Pilih Kabupaten</option>
                             {dataKabupaten.map((d, i) => (
                               <option key={i} value={d.kabupaten_id}>
                                 {d.name}
@@ -314,7 +314,7 @@ const Create = () => {
                             id="textarea"
                             // maxLength="225"
                             rows="4"
-                            placeholder="enter address"
+                            placeholder="inputkan alamat"
                             onChange={onChangeAlamat}
                           />
                           {errorAlamat && (
@@ -370,7 +370,7 @@ const Create = () => {
                           to="/admin/konsumen/distributor"
                           className="btn btn-danger me-2"
                         >
-                          cancel
+                          <i className="fas fa-arrow-left"></i> Kembali
                         </Link>
                         <Button
                           type="button"
@@ -378,7 +378,7 @@ const Create = () => {
                           disabled={isDisabled}
                           onClick={handleSave}
                         >
-                          save
+                          <i className="fas fa-save"></i> Simpan
                         </Button>
                       </div>
                     </Col>

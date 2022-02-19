@@ -28,8 +28,8 @@ exports.getEmployeeList = async (req, res) => {
   const endIndex = page * limit;
 
   try {
-    const resultTotalCategory = await getTotalDataEmployee(search);
-    const total = resultTotalCategory[0].total;
+    const resultTotalEmpolyee = await getTotalDataEmployee(search);
+    const total = resultTotalEmpolyee[0].total;
     if (endIndex < total) {
       pagination.next = {
         page: page + 1,

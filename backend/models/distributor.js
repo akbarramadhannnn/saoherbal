@@ -3,10 +3,10 @@ const poolConnection = require("../connection/mysql2");
 exports.getDataDistributorAll = async (start, limit, search) => {
   let result;
   if (start || limit || search) {
-    const sql = `SELECT distributor.distributor_id, distributor.name, email, no_tlp, address, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM distributor JOIN provinsi ON distributor.distributor_prov_id = provinsi.provinsi_id JOIN kabupaten ON distributor.distributor_kab_id = kabupaten.kabupaten_id WHERE distributor.name LIKE N? LIMIT ${limit} OFFSET ${start}`;
+    const sql = `SELECT distributor.distributor_id, distributor.name, email, no_tlp, address, latitude, longitude, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM distributor JOIN provinsi ON distributor.distributor_prov_id = provinsi.provinsi_id JOIN kabupaten ON distributor.distributor_kab_id = kabupaten.kabupaten_id WHERE distributor.name LIKE N? LIMIT ${limit} OFFSET ${start}`;
     result = await poolConnection.query(sql, `%${search}%`);
   } else {
-    const sql = `SELECT distributor.distributor_id, distributor.name, email, no_tlp, address, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM distributor JOIN provinsi ON distributor.distributor_prov_id = provinsi.provinsi_id JOIN kabupaten ON distributor.distributor_kab_id = kabupaten.kabupaten_id`;
+    const sql = `SELECT distributor.distributor_id, distributor.name, email, no_tlp, address, latitude, longitude, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM distributor JOIN provinsi ON distributor.distributor_prov_id = provinsi.provinsi_id JOIN kabupaten ON distributor.distributor_kab_id = kabupaten.kabupaten_id`;
     result = await poolConnection.query(sql);
   }
   return result[0];

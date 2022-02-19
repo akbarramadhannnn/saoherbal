@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-import { Row, Col, Card, CardBody } from "reactstrap";
+import {
+  Row,
+  Col,
+  Card,
+  CardBody,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
 import MetaTags from "react-meta-tags";
 
 //Import Breadcrumb
@@ -88,6 +97,16 @@ const Index = ({ history }) => {
     [history]
   );
 
+  const handleClickDetailMaps = useCallback(
+    (lat, long) => {
+      window.open(
+        `https://www.google.com/maps/search/?api=1&query=${lat},${long}`
+      );
+      // history.push(`/transaction/detail/${transactionCode}`);
+    },
+    [history]
+  );
+
   const handleGetData = useCallback(
     (search, page) => {
       if (isSubscribe) {
@@ -100,24 +119,63 @@ const Index = ({ history }) => {
                   name: response.result.data[i].name,
                   provinsi: response.result.data[i].provinsi.name,
                   kabupaten: response.result.data[i].kabupaten.name,
-                  actions: [
-                    {
-                      iconClassName: "mdi mdi-pencil font-size-18",
-                      actClassName: "text-warning",
-                      text: "",
-                      onClick: () => {
-                        handleClickUpdate(response.result.data[i].store_id);
-                      },
-                    },
-                    {
-                      iconClassName: "mdi mdi-delete font-size-18",
-                      actClassName: "text-danger",
-                      text: "",
-                      onClick: () => {
-                        handleClickDelete(response.result.data[i].store_id);
-                      },
-                    },
-                  ],
+                  actions: (
+                    <UncontrolledDropdown>
+                      <DropdownToggle href="#" className="card-drop" tag="i">
+                        <i
+                          style={{ cursor: "pointer" }}
+                          className="mdi mdi-dots-horizontal font-size-18"
+                        />
+                      </DropdownToggle>
+                      <DropdownMenu className="dropdown-menu-end">
+                        <DropdownItem
+                          onClick={() =>
+                            handleClickUpdate(response.result.data[i].store_id)
+                          }
+                        >
+                          <i className="mdi mdi-pencil font-size-16 text-warning me-1" />{" "}
+                          Edit Data
+                        </DropdownItem>
+                        <DropdownItem
+                          onClick={() =>
+                            handleClickDelete(response.result.data[i].store_id)
+                          }
+                        >
+                          <i className="mdi mdi-trash-can font-size-16 text-danger me-1" />{" "}
+                          Hapus Data
+                        </DropdownItem>
+                        <DropdownItem
+                          onClick={() =>
+                            handleClickDetailMaps(
+                              response.result.data[i].latitude,
+                              response.result.data[i].longitude
+                            )
+                          }
+                        >
+                          <i className="mdi mdi-map-marker font-size-16 text-info me-1" />{" "}
+                          Lihat Lokasi
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </UncontrolledDropdown>
+                  ),
+                  // actions: [
+                  //   {
+                  //     iconClassName: "mdi mdi-pencil font-size-18",
+                  //     actClassName: "text-warning",
+                  //     text: "",
+                  //     onClick: () => {
+                  //       handleClickUpdate(response.result.data[i].store_id);
+                  //     },
+                  //   },
+                  //   {
+                  //     iconClassName: "mdi mdi-delete font-size-18",
+                  //     actClassName: "text-danger",
+                  //     text: "",
+                  //     onClick: () => {
+                  //       handleClickDelete(response.result.data[i].store_id);
+                  //     },
+                  //   },
+                  // ],
                 });
               }
 
@@ -159,7 +217,7 @@ const Index = ({ history }) => {
                   totalPage: response.result.totalPage,
                 }));
               }
-              
+
               setDataStore(dataArr);
             } else if (response.status === 204) {
               setDataStore(dataArr);
@@ -169,7 +227,7 @@ const Index = ({ history }) => {
         });
       }
     },
-    [handleClickUpdate, handleClickDelete, isSubscribe]
+    [handleClickUpdate, handleClickDelete, handleClickDetailMaps, isSubscribe]
   );
 
   const handleCloseModal = useCallback(() => {
@@ -211,10 +269,10 @@ const Index = ({ history }) => {
   return (
     <div className="page-content">
       <MetaTags>
-        <title>Category</title>
+        <title>Toko</title>
       </MetaTags>
       <div className="container-fluid">
-        <Breadcrumbs title="Master" breadcrumbItem="Category" />
+        <Breadcrumbs title="Master" breadcrumbItem="Toko" />
 
         <Row>
           <Col className="col-12">
@@ -226,7 +284,7 @@ const Index = ({ history }) => {
                       to="/admin/konsumen/toko/create"
                       className="btn btn-primary"
                     >
-                      Add New Store
+                      <i className="fas fa-plus"></i> Tambah Data Toko
                     </Link>
                   </Col>
                 </Row>
@@ -236,7 +294,7 @@ const Index = ({ history }) => {
                     <InputSearch
                       value={search}
                       onChange={handleChangeSearch}
-                      placeholder="store name.."
+                      placeholder="nama toko.."
                     />
                   </Col>
                 </Row>
@@ -251,12 +309,7 @@ const Index = ({ history }) => {
                       toggle={handleCloseAlert}
                     />
                     <Table
-                      column={[
-                        "Store Name",
-                        "Provinsi",
-                        "Kabupaten",
-                        "Actions",
-                      ]}
+                      column={["Nama Toko", "Provinsi", "Kabupaten", "Aksi"]}
                       row={dataStore}
                       isLoading={isLoading}
                     />

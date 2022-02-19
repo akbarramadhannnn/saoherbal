@@ -298,10 +298,10 @@ const Update = props => {
     <React.Fragment>
       <div className="page-content">
         <MetaTags>
-          <title>Employee</title>
+          <title>Karyawan</title>
         </MetaTags>
         <div className="container-fluid">
-          <Breadcrumbs title="Create" breadcrumbItem="Employee" />
+          <Breadcrumbs title="Update" breadcrumbItem="Karyawan" />
 
           <Row>
             <Col className="col-12">
@@ -380,7 +380,7 @@ const Update = props => {
                               className="form-control"
                               id="formrow-firstname-Input"
                               onChange={onChangeNumberId}
-                              placeholder="Enter number id"
+                              placeholder="inputkan no identitas"
                             />
                             {errorNumberId && (
                               <p className="text-danger">{errorNumberId}</p>
@@ -388,7 +388,7 @@ const Update = props => {
                           </div>
                           <div className="mb-3 ">
                             <Label htmlFor="formrow-firstname-Input">
-                              Name
+                              Nama
                             </Label>
                             <Input
                               value={name}
@@ -396,7 +396,7 @@ const Update = props => {
                               className="form-control"
                               id="formrow-firstname-Input"
                               onChange={onChangeName}
-                              placeholder="Enter name"
+                              placeholder="inputkan nama karyawan"
                             />
                             {errorName && (
                               <p className="text-danger">{errorName}</p>
@@ -411,7 +411,7 @@ const Update = props => {
                               className="form-select"
                               onChange={onChangeGender}
                             >
-                              <option value="">Select Gender</option>
+                              <option value="">Pilih Jenis Kelamin</option>
                               <option value="0">Laki - Laki</option>
                               <option value="1">Perempuan</option>
                             </select>
@@ -430,7 +430,7 @@ const Update = props => {
                                   value={birth.place.value}
                                   type="text"
                                   name="place"
-                                  placeholder="enter place"
+                                  placeholder="inputkan tempat lahir"
                                   onChange={onChangeBirth}
                                 />
                                 {birth.place.error && (
@@ -447,7 +447,7 @@ const Update = props => {
                                   value={birth.date.value}
                                   type="date"
                                   name="date"
-                                  placeholder="enter date"
+                                  placeholder="inputkan tanggal lahir"
                                   onChange={onChangeBirth}
                                 />
                                 {birth.date.error && (
@@ -468,7 +468,7 @@ const Update = props => {
                               className="form-control"
                               id="formrow-firstname-Input"
                               onChange={onChangeTlp}
-                              placeholder="Enter telepon "
+                              placeholder="inputkan no telepon"
                             />
                             {errorTlp && (
                               <p className="text-danger">{errorTlp}</p>
@@ -484,7 +484,7 @@ const Update = props => {
                               className="form-control"
                               id="formrow-firstname-Input"
                               onChange={onChangeEmail}
-                              placeholder="Enter email "
+                              placeholder="inputkan email"
                             />
                             {errorEmail && (
                               <p className="text-danger">{errorEmail}</p>
@@ -499,7 +499,7 @@ const Update = props => {
                               className="form-select"
                               onChange={onChangePosition}
                             >
-                              <option value="">Select Position</option>
+                              <option value="">Pilih Posisi</option>
                               <option value="2">Sales</option>
                             </select>
                             {errorPosition && (
@@ -516,7 +516,7 @@ const Update = props => {
                               className="form-select"
                               onChange={onChangeProvinsi}
                             >
-                              <option value="">Select Provinsi</option>
+                              <option value="">Pilih Provinsi</option>
                               {dataProvinsi.map((d, i) => (
                                 <option key={i} value={d.provinsi_id}>
                                   {d.name}
@@ -536,7 +536,7 @@ const Update = props => {
                               className="form-select"
                               onChange={onChangeKabupaten}
                             >
-                              <option value="">Select Kabupaten</option>
+                              <option value="">Pilih Kabupaten</option>
                               {dataKabupaten.map((d, i) => (
                                 <option key={i} value={d.kabupaten_id}>
                                   {d.name}
@@ -556,7 +556,7 @@ const Update = props => {
                               id="textarea"
                               // maxLength="225"
                               rows="4"
-                              placeholder="enter address"
+                              placeholder="inputkan alamat tempat tinggal"
                               onChange={onChangeAlamat}
                             />
                             {errorAlamat && (
@@ -573,7 +573,7 @@ const Update = props => {
                               type="date"
                               className="form-control"
                               onChange={onChangeJoinDate}
-                              placeholder="Enter date"
+                              placeholder="inputkan tanggal bergabung"
                             />
                             {errorJoinDate && (
                               <p className="text-danger">{errorJoinDate}</p>
@@ -588,7 +588,7 @@ const Update = props => {
                             to="/admin/master/employee"
                             className="btn btn-danger me-2"
                           >
-                            cancel
+                            <i className="fas fa-arrow-left"></i> Kembali
                           </Link>
                           <Button
                             type="button"
@@ -596,7 +596,7 @@ const Update = props => {
                             disabled={isDisabled}
                             onClick={handleSave}
                           >
-                            save
+                            <i className="fas fa-save"></i> Simpan
                           </Button>
                         </div>
                       </Col>

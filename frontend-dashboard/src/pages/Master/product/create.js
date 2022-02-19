@@ -304,10 +304,10 @@ const Create = () => {
     <React.Fragment>
       <div className="page-content">
         <MetaTags>
-          <title>Product</title>
+          <title>Produk</title>
         </MetaTags>
         <div className="container-fluid">
-          <Breadcrumbs title="Create" breadcrumbItem="product" />
+          <Breadcrumbs title="Tambah" breadcrumbItem="Produk" />
 
           <Row>
             <Col className="col-12">
@@ -318,14 +318,14 @@ const Create = () => {
                       <Form id="form-add-product">
                         <div className="mb-3 ">
                           <Label htmlFor="formrow-firstname-Input">
-                            Category
+                            Kategori
                           </Label>
                           <select
                             value={category}
                             className="form-select"
                             onChange={onChangeCategory}
                           >
-                            <option value="">Select Category</option>
+                            <option value="">Pilih Kategori Produk</option>
                             {dataCategory.map((category, i) => (
                               <option value={category.category_id} key={i}>
                                 {category.name}
@@ -338,14 +338,14 @@ const Create = () => {
                         </div>
                         <div className="mb-3 ">
                           <Label htmlFor="formrow-firstname-Input">
-                            Variant
+                            Varian
                           </Label>
                           <select
                             value={variant}
                             className="form-select"
                             onChange={onChangeVariant}
                           >
-                            <option value="">Select Variant</option>
+                            <option value="">Pilih Varian Produk</option>
                             {dataVariant.map((variant, i) => (
                               <option value={variant.variant_id} key={i}>
                                 {variant.name}
@@ -357,14 +357,14 @@ const Create = () => {
                           )}
                         </div>
                         <div className="mb-3 ">
-                          <Label htmlFor="formrow-firstname-Input">Name</Label>
+                          <Label htmlFor="formrow-firstname-Input">Nama</Label>
                           <Input
                             value={name}
                             type="text"
                             className="form-control"
                             id="formrow-firstname-Input"
                             onChange={onChangeName}
-                            placeholder="Enter product Name"
+                            placeholder="inputkan nama produk"
                           />
                           {errorName && (
                             <p className="text-danger">{errorName}</p>
@@ -416,7 +416,7 @@ const Create = () => {
                                             name="unit"
                                           >
                                             <option value="">
-                                              Select Jenis
+                                              Pilih Jenis
                                             </option>
                                             {DataJenis.map((s, idx) => {
                                               return (
@@ -442,7 +442,7 @@ const Create = () => {
                                               type="text"
                                               className="form-control"
                                               id="formrow-firstname-Input"
-                                              placeholder="Enter satuan"
+                                              placeholder="inputkan satuan produk"
                                               onChange={e =>
                                                 onChangePriceList(e, idx)
                                               }
@@ -466,7 +466,7 @@ const Create = () => {
                                               type="text"
                                               className="form-control"
                                               id="formrow-firstname-Input"
-                                              placeholder="Enter price"
+                                              placeholder="inputkan harga produk"
                                               onChange={e =>
                                                 onChangePriceList(e, idx)
                                               }
@@ -499,13 +499,13 @@ const Create = () => {
                         </div>
 
                         <div className="mb-3 ">
-                          <Label>Description</Label>
+                          <Label>Deskripsi</Label>
                           <Input
                             value={desc}
                             type="textarea"
                             id="textarea"
                             rows="4"
-                            placeholder="Enter product description"
+                            placeholder="inputkan deskirpsi produk"
                             onChange={onChangeDesc}
                           />
                           {errorDesc && (
@@ -547,7 +547,7 @@ const Create = () => {
                           to="/admin/master/product"
                           className="btn btn-danger me-2"
                         >
-                          cancel
+                          <i className="fas fa-arrow-left"></i> Kembali
                         </Link>
                         <Button
                           type="button"
@@ -555,7 +555,7 @@ const Create = () => {
                           disabled={isDisabledButton}
                           onClick={handleSave}
                         >
-                          save
+                          <i className="fas fa-save"></i> Simpan
                         </Button>
                       </div>
                     </Col>

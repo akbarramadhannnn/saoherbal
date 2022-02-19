@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-import { Row, Col, Card, CardBody } from "reactstrap";
+import {
+  Row,
+  Col,
+  Card,
+  CardBody,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
 import MetaTags from "react-meta-tags";
 
 //Import Breadcrumb
@@ -100,24 +109,54 @@ const Index = ({ history }) => {
                   category: response.result.data[i].category.name,
                   variant: response.result.data[i].variant.name,
                   name: response.result.data[i].product_name,
-                  actions: [
-                    {
-                      iconClassName: "mdi mdi-pencil font-size-18",
-                      actClassName: "text-warning",
-                      text: "",
-                      onClick: () => {
-                        handleClickUpdate(response.result.data[i].product_id);
-                      },
-                    },
-                    {
-                      iconClassName: "mdi mdi-delete font-size-18",
-                      actClassName: "text-danger",
-                      text: "",
-                      onClick: () => {
-                        handleClickDelete(response.result.data[i].product_id);
-                      },
-                    },
-                  ],
+                  actions: (
+                    <UncontrolledDropdown>
+                      <DropdownToggle href="#" className="card-drop" tag="i">
+                        <i
+                          style={{ cursor: "pointer" }}
+                          className="mdi mdi-dots-horizontal font-size-18"
+                        />
+                      </DropdownToggle>
+                      <DropdownMenu className="dropdown-menu-end">
+                        <DropdownItem
+                          onClick={() =>
+                            handleClickUpdate(
+                              response.result.data[i].product_id
+                            )
+                          }
+                        >
+                          <i className="mdi mdi-pencil font-size-16 text-warning me-1" />{" "}
+                          Edit Data
+                        </DropdownItem>
+                        <DropdownItem
+                          onClick={() =>
+                            handleClickDelete(
+                              response.result.data[i].product_id
+                            )
+                          }
+                        >
+                          <i className="mdi mdi-trash-can font-size-16 text-danger me-1" />{" "}
+                          Hapus Data
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </UncontrolledDropdown>
+                    // {
+                    //   iconClassName: "mdi mdi-pencil font-size-18",
+                    //   actClassName: "text-warning",
+                    //   text: "",
+                    //   onClick: () => {
+                    //     handleClickUpdate(response.result.data[i].product_id);
+                    //   },
+                    // },
+                    // {
+                    //   iconClassName: "mdi mdi-delete font-size-18",
+                    //   actClassName: "text-danger",
+                    //   text: "",
+                    //   onClick: () => {
+                    //     handleClickDelete(response.result.data[i].product_id);
+                    //   },
+                    // },
+                  ),
                 });
               }
 
@@ -211,10 +250,10 @@ const Index = ({ history }) => {
   return (
     <div className="page-content">
       <MetaTags>
-        <title>Product</title>
+        <title>Produk</title>
       </MetaTags>
       <div className="container-fluid">
-        <Breadcrumbs title="Master" breadcrumbItem="Product" />
+        <Breadcrumbs title="Master" breadcrumbItem="Produk" />
 
         <Row>
           <Col className="col-12">
@@ -226,7 +265,7 @@ const Index = ({ history }) => {
                       to="/admin/master/product/create"
                       className="btn btn-primary"
                     >
-                      Add New Product
+                      <i className="fas fa-plus"></i> Tambah Data Produk
                     </Link>
                   </Col>
                 </Row>
@@ -236,7 +275,7 @@ const Index = ({ history }) => {
                     <InputSearch
                       value={search}
                       onChange={handleChangeSearch}
-                      placeholder="product name.."
+                      placeholder="nama produk.."
                     />
                   </Col>
                 </Row>
@@ -252,10 +291,10 @@ const Index = ({ history }) => {
                     />
                     <Table
                       column={[
-                        "Category",
-                        "Variant",
-                        "Product Name",
-                        "Actions",
+                        "Nama Kategori",
+                        "Nama Varian",
+                        "Nama Produk",
+                        "Aksi",
                       ]}
                       row={dataProduct}
                       isLoading={isLoading}

@@ -73,7 +73,7 @@ const SidebarContent = props => {
             <li>
               <Link to="/admin/dashboard">
                 <i className="bx bx-home-circle" />
-                <span>{props.t("Dashboards")}</span>
+                <span>{props.t("Dashboard")}</span>
               </Link>
             </li>
             <li>
@@ -83,16 +83,16 @@ const SidebarContent = props => {
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/admin/master/category">{props.t("Category")}</Link>
+                  <Link to="/admin/master/category">{props.t("Kategori")}</Link>
                 </li>
                 <li>
-                  <Link to="/admin/master/variant">{props.t("Variant")}</Link>
+                  <Link to="/admin/master/variant">{props.t("Varian")}</Link>
                 </li>
                 <li>
-                  <Link to="/admin/master/product">{props.t("Product ")}</Link>
+                  <Link to="/admin/master/product">{props.t("Produk")}</Link>
                 </li>
                 <li>
-                  <Link to="/admin/master/employee">{props.t("Employee ")}</Link>
+                  <Link to="/admin/master/employee">{props.t("Karyawan")}</Link>
                 </li>
               </ul>
             </li>
@@ -135,7 +135,7 @@ const SidebarContent = props => {
             <li>
               <Link to="/sales/dashboard">
                 <i className="bx bx-home-circle" />
-                <span>{props.t("Dashboards")}</span>
+                <span>{props.t("Dashboard")}</span>
               </Link>
             </li>
 

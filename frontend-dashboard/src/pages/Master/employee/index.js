@@ -10,6 +10,10 @@ import {
   Form,
   InputGroup,
   InputGroupText,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
 } from "reactstrap";
 import MetaTags from "react-meta-tags";
 
@@ -262,34 +266,66 @@ const Index = ({ history }) => {
                   created_at: moment(response.result.data[i].created_at).format(
                     "Do MMMM YYYY H:mm:ss"
                   ),
-                  actions: [
-                    {
-                      iconClassName: "mdi mdi-pencil font-size-18",
-                      actClassName: "text-warning",
-                      text: "",
-                      onClick: () => {
-                        handleClickUpdate(response.result.data[i].employee_id);
-                      },
-                    },
-                    {
-                      iconClassName: "mdi mdi-account-lock font-size-18",
-                      actClassName: "text-info",
-                      text: "",
-                      onClick: () => {
-                        handleClickShowModalAuth(
-                          response.result.data[i].employee_id
-                        );
-                      },
-                    },
-                    // {
-                    //   iconClassName: "mdi mdi-delete font-size-18",
-                    //   actClassName: "text-danger",
-                    //   text: "",
-                    //   onClick: () => {
-                    //     handleClickDelete(response.result[i].distributor_id);
-                    //   },
-                    // },
-                  ],
+                  actions: (
+                    <UncontrolledDropdown>
+                      <DropdownToggle href="#" className="card-drop" tag="i">
+                        <i
+                          style={{ cursor: "pointer" }}
+                          className="mdi mdi-dots-horizontal font-size-18"
+                        />
+                      </DropdownToggle>
+                      <DropdownMenu className="dropdown-menu-end">
+                        <DropdownItem
+                          onClick={() =>
+                            handleClickUpdate(
+                              response.result.data[i].employee_id
+                            )
+                          }
+                        >
+                          <i className="mdi mdi-pencil font-size-16 text-warning me-1" />{" "}
+                          Edit Data
+                        </DropdownItem>
+                        <DropdownItem
+                          onClick={() =>
+                            handleClickShowModalAuth(
+                              response.result.data[i].employee_id
+                            )
+                          }
+                        >
+                          <i className="mdi mdi-account-lock font-size-16 text-info me-1" />{" "}
+                          Lihat Akun Login
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </UncontrolledDropdown>
+                  ),
+                  // actions: [
+                  //   {
+                  //     iconClassName: "mdi mdi-pencil font-size-18",
+                  //     actClassName: "text-warning",
+                  //     text: "",
+                  //     onClick: () => {
+                  //       handleClickUpdate(response.result.data[i].employee_id);
+                  //     },
+                  //   },
+                  //   {
+                  //     iconClassName: "mdi mdi-account-lock font-size-18",
+                  //     actClassName: "text-info",
+                  //     text: "",
+                  //     onClick: () => {
+                  // handleClickShowModalAuth(
+                  //   response.result.data[i].employee_id
+                  // );
+                  //     },
+                  //   },
+                  //   {
+                  //     iconClassName: "mdi mdi-delete font-size-18",
+                  //     actClassName: "text-danger",
+                  //     text: "",
+                  //     onClick: () => {
+                  //       handleClickDelete(response.result[i].distributor_id);
+                  //     },
+                  //   },
+                  // ],
                 });
               }
 
@@ -458,10 +494,10 @@ const Index = ({ history }) => {
   return (
     <div className="page-content">
       <MetaTags>
-        <title>Employee</title>
+        <title>Karyawan</title>
       </MetaTags>
       <div className="container-fluid">
-        <Breadcrumbs title="Master" breadcrumbItem="Employee" />
+        <Breadcrumbs title="Master" breadcrumbItem="Karyawan" />
 
         <Row>
           <Col className="col-12">
@@ -473,14 +509,18 @@ const Index = ({ history }) => {
                       to="/admin/master/employee/create"
                       className="btn btn-primary"
                     >
-                      Add New Employee
+                      <i className="fas fa-plus"></i> Tambah Data Karyawan
                     </Link>
                   </Col>
                 </Row>
 
                 <Row className="mb-2">
                   <Col md="12">
-                    <InputSearch value={search} onChange={handleChangeSearch} placeholder="employee name.."/>
+                    <InputSearch
+                      value={search}
+                      onChange={handleChangeSearch}
+                      placeholder="nama karyawan..."
+                    />
                   </Col>
                 </Row>
 
@@ -495,7 +535,7 @@ const Index = ({ history }) => {
                         "Tanggal Masuk",
                         "Aktif",
                         "Tanggal Dibuat",
-                        "Actions",
+                        "Aksi",
                       ]}
                       row={dataEmployee}
                       isLoading={isLoading}

@@ -88,10 +88,10 @@ const Update = props => {
   return (
     <div className="page-content">
       <MetaTags>
-        <title>Category</title>
+        <title>Kategori</title>
       </MetaTags>
       <div className="container-fluid">
-        <Breadcrumbs title="Update" breadcrumbItem="Category" />
+        <Breadcrumbs title="Edit" breadcrumbItem="Kategori" />
 
         <Row>
           <Col className="col-12">
@@ -116,14 +116,16 @@ const Update = props => {
 
                       <Form>
                         <div className="mb-3 ">
-                          <Label htmlFor="formrow-firstname-Input">Name</Label>
+                          <Label htmlFor="formrow-firstname-Input">
+                            Nama Kategori
+                          </Label>
                           <Input
                             value={name}
                             type="text"
                             className="form-control"
                             id="formrow-firstname-Input"
                             onChange={handleChangeInput}
-                            placeholder="Enter category name"
+                            placeholder="inputkan nama kategori"
                           />
                           {errorName && (
                             <p className="text-danger">{errorName}</p>
@@ -138,7 +140,7 @@ const Update = props => {
                           to="/admin/master/category"
                           className="btn btn-danger mb-2 me-2"
                         >
-                          cancel
+                          <i className="fas fa-arrow-left"></i> Kembali
                         </Link>
                         <Button
                           type="button"
@@ -147,7 +149,7 @@ const Update = props => {
                           onClick={handleSave}
                           disabled={isDisabledButton}
                         >
-                          save
+                          <i className="fas fa-save"></i> Simpan
                         </Button>
                       </div>
                     </Col>
