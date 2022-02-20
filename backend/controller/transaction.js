@@ -118,8 +118,8 @@ exports.getTransaction = async (req, res) => {
         result[i].consumer = {
           consumer_id: resultStore[0].store_id,
           name: resultStore[0].name,
-          latitude: resultDistributor[0].latitude,
-          longitude: resultDistributor[0].longitude,
+          latitude: resultStore[0].latitude,
+          longitude: resultStore[0].longitude,
         };
       }
 
