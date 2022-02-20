@@ -1,10 +1,16 @@
 const poolConnection = require("../connection/mysql2");
 
 exports.getDataTransactionAll = async (start, limit) => {
+  let result;
+  if (start || limit) {
+    const sql = `SELECT * FROM transaction LIMIT ${limit} OFFSET ${start}`;
+    result = await poolConnection.query(sql);
+  } else {
+    const sql = `SELECT * FROM transaction`;
+    result = await poolConnection.query(sql);
+  }
   // const sql = `SELECT * FROM transaction`;
   // const sql = `SELECT transaction.transaction_id, code, consumer_type, store_id_transaction, distributor_id_transaction, qty, subtotal, date_transaction, JSON_OBJECT('product_id', product.product_id, 'name', product.name) AS product, JSON_OBJECT('price_id', price.price_id, 'weight', price.weight, 'prices', price.prices, 'unit', price.unit) AS price FROM transaction JOIN product ON transaction.product_id_transaction = product.product_id JOIN price ON transaction.price_id_transaction = price.price_id`;
-  const sql = `SELECT * FROM transaction LIMIT ${limit} OFFSET ${start}`;
-  const result = await poolConnection.query(sql);
   return result[0];
 };
 
@@ -88,5 +94,15 @@ exports.getDetailTransactionProductById = async (id) => {
 exports.updateTotalLefDetailProductById = async (id, totalLeft) => {
   const sql = `UPDATE transaction_product_detail SET total_left = ${totalLeft} WHERE transaction_product_detail_id = ${id}`;
   const result = await poolConnection.query(sql);
+  return result[0];
+};
+
+exports.getDataTransactionByDate = async (periodType, date) => {
+  let result;
+  if (periodType === "today") {
+    // const sql = `SELECT transaction.transaction_id, consumer_type, status, transaction_product_detail.transaction_product_detail_id, transaction_product_detail.qty FROM transaction LEFT JOIN transaction_product_detail ON transaction_product_detail.transaction_id_transaction_product_detail = transaction.transaction_id WHERE DATE(created_at) = '${date}'`;
+    const sql = `SELECT transaction.transaction_id, status, created_at, JSON_ARRAYAGG(JSON_OBJECT('detailId', transaction_product_detail.transaction_product_detail_id, 'productId', transaction_product_detail.product_id_transaction_product_detail, 'name', product.name, 'qty', transaction_product_detail.qty)) AS product FROM transaction LEFT JOIN transaction_product_detail ON transaction_product_detail.transaction_id_transaction_product_detail = transaction.transaction_id JOIN product ON transaction_product_detail.product_id_transaction_product_detail = product.product_id WHERE DATE(created_at) = '${date}' GROUP BY transaction.transaction_id`;
+    result = await poolConnection.query(sql);
+  }
   return result[0];
 };

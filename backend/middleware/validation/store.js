@@ -1,5 +1,9 @@
 const { check } = require("express-validator");
-const { RegexLatitude, RegexLongitude } = require("../../utils/regex");
+const {
+  RegexLatitude,
+  RegexLongitude,
+  RegexEmail,
+} = require("../../utils/regex");
 
 exports.validationAddStore = [
   check("name").custom(async (value) => {
@@ -8,8 +12,14 @@ exports.validationAddStore = [
     }
   }),
   check("email").custom(async (value) => {
+    const cekRegexEmail = RegexEmail(value);
+
     if (!value) {
       throw new Error("Email is Required");
+    }
+
+    if (cekRegexEmail === false) {
+      throw new Error("Email Not Valid");
     }
   }),
   check("no_tlp").custom(async (value) => {

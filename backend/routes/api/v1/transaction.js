@@ -16,7 +16,8 @@ const {
   addDueDateTransaction,
   updateStatusTransaction,
   addTitipTransaction,
-  checkDueDateStatus
+  checkDueDateStatus,
+  getTotalSaleTransaction,
 } = require("../../../controller/transaction");
 
 router.get("/", getToken, getTransaction);
@@ -57,5 +58,6 @@ router.post(
   RunValidation,
   addTitipTransaction
 );
+router.get("/total-sale-product", getToken, getTotalSaleTransaction);
 
 module.exports = router;

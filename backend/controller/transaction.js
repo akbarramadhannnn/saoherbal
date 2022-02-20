@@ -12,6 +12,7 @@ const {
   updateTotalLefDetailProductById,
   updateTotalPaidPriceTransaction,
   getTotalDataTransaction,
+  getDataTransactionByDate,
 } = require("../models/transaction");
 const {
   getDataDueDateTransactionByTransactionId,
@@ -878,6 +879,50 @@ exports.checkDueDateStatus = async (req, res) => {
     }
     return res.json(
       Response(true, 201, `Updated Due Date Status Successfully`, {})
+    );
+  } catch (err) {
+    console.log("err", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
+};
+
+exports.getTotalSaleTransaction = async (req, res) => {
+  const { periodType } = req.query;
+  try {
+    // let resultAllTransaction = await getDataTransactionAll();
+    let resultGetData;
+    if (periodType === "today") {
+      const date = moment(new Date()).format("YYYY-MM-DD");
+      resultGetData = await getDataTransactionByDate(periodType, date);
+    } else if (periodType === "weekly") {
+      console.log("weekly");
+    } else if (periodType === "monthly") {
+      console.log("monthly");
+    } else if (periodType === "yearly") {
+      console.log("yearly");
+    }
+
+    const series = [];
+    for (let i = 0; i < resultGetData.length; i++) {
+      for (let j = 0; j < resultGetData[i].product.length; j++) {
+        series.push(resultGetData[i].product[j])
+        // if (
+        //   series
+        //     .map((d) => d.name)
+        //     .indexOf(resultGetData[i].product[j].name) === -1
+        // ) {
+        //   series.push({
+        //     name: resultGetData[i].product[j].name,
+        //     data: [],
+        //   });
+        // }
+      }
+    }
+    console.log("series", series);
+
+    return res.json(
+      Response(true, 201, `Total Sale Transaction Successfully`, resultGetData)
     );
   } catch (err) {
     console.log("err", err);

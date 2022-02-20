@@ -1,11 +1,21 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import MetaTags from "react-meta-tags";
-import { Container, Row, Col, Card, CardBody } from "reactstrap";
+import { Container, Row, Col, Card, CardBody, Label } from "reactstrap";
+import DataTransactionType from "../../data/transactionType";
+import { ReplaceToStartUpperCase } from "../../utils/replace";
 import classNames from "classnames";
 import ReactApexChart from "react-apexcharts";
 
 const Dashboard = () => {
+  // const [periodData, setPeriodData] = useState([]);
+  const [periodType, setPeriodType] = useState("monthly");
+  const [transactionType, setTransactionType] = useState("");
+
+  useEffect(() => {
+    setTransactionType(DataTransactionType[0]);
+  }, []);
+
   const reports = [
     {
       title: "Total Transaksi",
@@ -22,16 +32,16 @@ const Dashboard = () => {
 
   const series = [
     {
-      name: "Net Profit",
-      data: [46, 57, 59, 54, 62, 58, 64, 60, 66],
+      name: "Sao 1",
+      data: [46, 57, 59, 54, 62, 58, 64, 60, 66, 10, 11, 12],
     },
     {
-      name: "Revenue",
-      data: [74, 83, 102, 97, 86, 106, 93, 114, 94],
+      name: "Sao 2",
+      data: [74, 83, 102, 97, 86, 106, 93, 114, 94, 10, 11, 12],
     },
     {
-      name: "Free Cash Flow",
-      data: [37, 42, 38, 26, 47, 50, 54, 55, 43],
+      name: "Sao 3",
+      data: [37, 42, 38, 26, 47, 50, 54, 55, 43, 10, 11, 12],
     },
   ];
   const options = {
@@ -59,20 +69,23 @@ const Dashboard = () => {
     colors: ["#34c38f", "#556ee6", "#f46a6a"],
     xaxis: {
       categories: [
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember",
       ],
     },
     yaxis: {
       title: {
-        text: "Grafik Total Penjualan Produk",
+        text: "Grafik Jumlah Total Transaksi Produk",
       },
     },
     grid: {
@@ -84,18 +97,25 @@ const Dashboard = () => {
     tooltip: {
       y: {
         formatter: function (val) {
-          return "Total :" + val;
+          return val + " Barang";
         },
       },
     },
   };
 
-  // const [periodData, setPeriodData] = useState([]);
-  const [periodType, setPeriodType] = useState("weekly");
-
   const onChangeChartPeriod = pType => {
     setPeriodType(pType);
   };
+
+  const handleChangeInput = useCallback(e => {
+    let { name, value } = e.target;
+
+    if (name === "transactionType") {
+      setTransactionType(value);
+    } else if (name === "periodType") {
+      setPeriodType(value);
+    }
+  }, []);
 
   return (
     <React.Fragment>
@@ -139,24 +159,50 @@ const Dashboard = () => {
               <Card>
                 <CardBody>
                   <div className="">
-                    <h4 className="card-title mb-4">Total Penjualan Produk</h4>
-                    <div className="">
-                      <ul className="nav nav-pills">
-                        <li className="nav-item">
-                          <Link
-                            to="#"
-                            className={classNames(
-                              { active: periodType === "weekly" },
-                              "nav-link"
-                            )}
-                            onClick={() => {
-                              onChangeChartPeriod("weekly");
-                            }}
-                            id="one_month"
-                          >
-                            Week
-                          </Link>{" "}
-                        </li>
+                    <h4 className="card-title mb-4">
+                      Jumlah Total Transaksi Product
+                    </h4>
+                    <div className="row mb-3">
+                      <div className="col-md-3">
+                        <Label>Jenis Transaksi</Label>
+                        <select
+                          name="transactionType"
+                          value={transactionType}
+                          className="form-select"
+                          onChange={handleChangeInput}
+                        >
+                          {DataTransactionType.map((d, i) => (
+                            <option key={i} value={d}>
+                              {ReplaceToStartUpperCase(d)}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="col-md-3">
+                        <Label>Tipe Periode</Label>
+                        <select
+                          value={periodType}
+                          name="periodType"
+                          className="form-select"
+                          onChange={() => {}}
+                        >
+                          <option value="monthly">Bulanan</option>
+                          <option value="yearly">Tahunan</option>
+                        </select>
+                      </div>
+                      <div className="col-md-3">
+                        <Label>Waktu Periode</Label>
+                        <select
+                          value={""}
+                          className="form-select"
+                          onChange={() => {}}
+                        >
+                          <option value="">Pilih Waktu Periode</option>
+                          <option value="monthly">Bulanan</option>
+                          <option value="yearly">Tahunan</option>
+                        </select>
+                      </div>
+                      {/* <ul className="nav nav-pills">
                         <li className="nav-item">
                           <Link
                             to="#"
@@ -169,7 +215,7 @@ const Dashboard = () => {
                             }}
                             id="one_month"
                           >
-                            Month
+                            Bulanan
                           </Link>
                         </li>
                         <li className="nav-item">
@@ -184,10 +230,10 @@ const Dashboard = () => {
                             }}
                             id="one_month"
                           >
-                            Year
+                            Tahunan
                           </Link>
                         </li>
-                      </ul>
+                      </ul> */}
                     </div>
                   </div>
                   <div className="clearfix"></div>
