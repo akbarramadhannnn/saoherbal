@@ -22,12 +22,13 @@ import {
   InputGroupText,
   InputGroup,
 } from "reactstrap";
-import Breadcrumbs from "./../../components/Common/Breadcrumb";
-import Modal from "./../../components/Modal";
-import ModalMessage from "./../../components/Modal/ModalMessage";
-import Toast from "./../../components/Toast";
+import Breadcrumbs from "../../components/Common/Breadcrumb";
+import Modal from "../../components/Modal";
+import ModalMessage from "../../components/Modal/ModalMessage";
+import Toast from "../../components/Toast";
+import Alert from "../../components/Alert";
 import { MetaTags } from "react-meta-tags";
-import TableComponents from "./../../components/Table";
+import TableComponents from "../../components/Table";
 
 import {
   ApiDetailListTransaction,
@@ -88,9 +89,18 @@ const DetailTransaction = props => {
     bgColor: "",
   });
 
+  const [alert, setAlert] = useState({
+    isOpen: false,
+    title: "",
+    color: "",
+    message: "",
+  });
+
   useEffect(() => {
     if ("geolocation" in navigator) {
+      console.log("geolocation");
       navigator.geolocation.getCurrentPosition(function (position) {
+        console.log("Available");
         setUserCoordinate({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
@@ -222,6 +232,13 @@ const DetailTransaction = props => {
       title: "",
     }));
     setFormEditModal({});
+    setAlert(oldState => ({
+      ...oldState,
+      isOpen: false,
+      title: "",
+      color: "",
+      message: ``,
+    }));
   }, []);
 
   const handleChangeInputEditModalTempo = useCallback(e => {
@@ -306,13 +323,20 @@ const DetailTransaction = props => {
                 },
               }));
             } else if (response.result.name === "distance") {
-              setToast(oldState => ({
+              setAlert(oldState => ({
                 ...oldState,
                 isOpen: true,
                 title: "Location",
+                color: "danger",
                 message: `Please check your location. ${response.message}`,
-                bgColor: "danger",
               }));
+              // setToast(oldState => ({
+              //   ...oldState,
+              //   isOpen: true,
+              //   title: "Location",
+              //   message: `Please check your location. ${response.message}`,
+              //   bgColor: "danger",
+              // }));
             }
           } else if (response.status === 201) {
             setModalMessage({
@@ -379,6 +403,13 @@ const DetailTransaction = props => {
       title: ``,
     }));
     setFormAddModal({});
+    setAlert(oldState => ({
+      ...oldState,
+      isOpen: false,
+      title: "",
+      color: "",
+      message: ``,
+    }));
   }, []);
 
   const handleChangeWaktuTempo = useCallback(e => {
@@ -529,6 +560,13 @@ const DetailTransaction = props => {
     setListInputEditTitip([]);
     setSubtotalTitipPrice(0);
     setIdDueDate(0);
+    setAlert(oldState => ({
+      ...oldState,
+      isOpen: false,
+      title: "",
+      color: "",
+      message: ``,
+    }));
   }, [dataDueDate]);
 
   const handleChangeInputEditTitip = useCallback(
@@ -603,13 +641,20 @@ const DetailTransaction = props => {
         if (response) {
           if (response.status === 400) {
             if (response.result.name === "distance") {
-              setToast(oldState => ({
+              setAlert(oldState => ({
                 ...oldState,
                 isOpen: true,
                 title: "Location",
+                color: "danger",
                 message: `Please check your location. ${response.message}`,
-                bgColor: "danger",
               }));
+              // setToast(oldState => ({
+              //   ...oldState,
+              //   isOpen: true,
+              //   title: "Location",
+              //   message: `Please check your location. ${response.message}`,
+              //   bgColor: "danger",
+              // }));
             }
           } else if (response.status === 201) {
             setModalMessage({
@@ -1266,6 +1311,21 @@ const DetailTransaction = props => {
           isDisabledButtonRight={isDisabledButtonModal}
         >
           <Form>
+            <Alert
+              isOpen={alert.isOpen}
+              title={alert.title}
+              message={alert.message}
+              color={alert.color}
+              toggle={() => {
+                setAlert(oldState => ({
+                  ...oldState,
+                  isOpen: false,
+                  title: "",
+                  color: "",
+                  message: ``,
+                }));
+              }}
+            />
             <div className="mb-3 ">
               <Label htmlFor="formrow-firstname-Input">Deskripsi</Label>
               <Input
@@ -1441,7 +1501,7 @@ const DetailTransaction = props => {
         />
       )}
 
-      {toast.isOpen && (
+      {/* {toast.isOpen && (
         <Toast
           isOpen={toast.isOpen}
           title={toast.title}
@@ -1457,7 +1517,7 @@ const DetailTransaction = props => {
             }));
           }}
         />
-      )}
+      )} */}
     </div>
   );
 };
