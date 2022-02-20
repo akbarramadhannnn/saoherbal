@@ -400,8 +400,8 @@ exports.getDetailTransaction = async (req, res) => {
         address: resultStore[0].address,
         provinsiId: resultStore[0].store_prov_id,
         kabupatenId: resultStore[0].store_kab_id,
-        latitude: resultDistributor[0].latitude,
-        longitude: resultDistributor[0].longitude,
+        latitude: resultStore[0].latitude,
+        longitude: resultStore[0].longitude,
       };
     }
 
