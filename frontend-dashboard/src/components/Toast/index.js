@@ -10,8 +10,8 @@ const Index = ({
   onClose = () => {},
 }) => {
   return (
-    // <div className="position-fixed top-0 end-0 p-3" style={{ zIndex: 9999 }}>
-    <div style={{ zIndex: 9999, position: "fixed", right: 10, top: 10 }}>
+    <div className="position-fixed top-0 end-0 p-3" style={{ zIndex: 9999 }}>
+    {/* <div style={{ zIndex: 9999, position: "fixed", right: 10, top: 10 }}> */}
       <Toast isOpen={isOpen}>
         <ToastHeader
           className={`${
