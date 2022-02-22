@@ -598,27 +598,27 @@ exports.updateTempoTransaction = async (req, res) => {
       );
     }
 
-    // const resultConfigure = await getDataConfigureByModuleAndKey(
-    //   "TRANSACTION",
-    //   "radius"
-    // );
-    // if (
-    //   resultDistance >
-    //   parseFloat(ReplaceToRupiah(resultConfigure[0].value)).toFixed(1)
-    // ) {
-    //   return res.json(
-    //     Response(
-    //       false,
-    //       400,
-    //       `max distance ${parseFloat(
-    //         ReplaceToRupiah(resultConfigure[0].value)
-    //       )}km`,
-    //       {
-    //         name: "distance",
-    //       }
-    //     )
-    //   );
-    // }
+    const resultConfigure = await getDataConfigureByModuleAndKey(
+      "TRANSACTION",
+      "radius"
+    );
+    if (
+      resultDistance >
+      parseFloat(ReplaceToRupiah(resultConfigure[0].value)).toFixed(1)
+    ) {
+      return res.json(
+        Response(
+          false,
+          400,
+          `max distance ${parseFloat(
+            ReplaceToRupiah(resultConfigure[0].value)
+          )}km`,
+          {
+            name: "distance",
+          }
+        )
+      );
+    }
 
     const resultTotalPaidTempo = listDueDate
       .filter((d) => d.paid_price !== null)
@@ -788,27 +788,27 @@ exports.addTitipTransaction = async (req, res) => {
       );
     }
 
-    // const resultConfigure = await getDataConfigureByModuleAndKey(
-    //   "TRANSACTION",
-    //   "radius"
-    // );
-    // if (
-    //   resultDistance >
-    //   parseFloat(ReplaceToRupiah(resultConfigure[0].value)).toFixed(1)
-    // ) {
-    //   return res.json(
-    //     Response(
-    //       false,
-    //       400,
-    //       `max distance ${parseFloat(
-    //         ReplaceToRupiah(resultConfigure[0].value)
-    //       )}km`,
-    //       {
-    //         name: "distance",
-    //       }
-    //     )
-    //   );
-    // }
+    const resultConfigure = await getDataConfigureByModuleAndKey(
+      "TRANSACTION",
+      "radius"
+    );
+    if (
+      resultDistance >
+      parseFloat(ReplaceToRupiah(resultConfigure[0].value)).toFixed(1)
+    ) {
+      return res.json(
+        Response(
+          false,
+          400,
+          `max distance ${parseFloat(
+            ReplaceToRupiah(resultConfigure[0].value)
+          )}km`,
+          {
+            name: "distance",
+          }
+        )
+      );
+    }
 
     const arrListTitip = [];
     for (let i = 0; i < listSell.length; i++) {
