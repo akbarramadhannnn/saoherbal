@@ -28,25 +28,15 @@ exports.getDataDueDateById = async (id) => {
   return result[0];
 };
 
-// exports.getDataCategoryByNameNotById = async (name, id) => {
-//   const sql = `SELECT * FROM category WHERE name = '${name}' AND NOT category_id = ${id}`;
-//   const result = await poolConnection.query(sql);
-//   return result[0];
-// };
-
-// exports.getDataCategoryById = async (id) => {
-//   const sql = `SELECT * FROM category WHERE category_id = ${id}`;
-//   const result = await poolConnection.query(sql);
-//   return result[0];
-// };
-
-exports.updateDataDueDateById = async (id, description, paid, status) => {
-  let sql;
-  if (description === "" || paid === "") {
-    sql = `UPDATE transaction_due_date SET status_transaction_due_date = '${status}' WHERE transaction_due_date_id = ${id}`;
-  } else {
-    sql = `UPDATE transaction_due_date SET description = '${description}', paid = ${paid}, status_transaction_due_date = '${status}' WHERE transaction_due_date_id = ${id}`;
-  }
+exports.updateDataDueDateById = async (id, visitDate, status) => {
+  // let sql;
+  // if (description === "" || paid === "") {
+  //   sql = `UPDATE transaction_due_date SET status_transaction_due_date = '${status}' WHERE transaction_due_date_id = ${id}`;
+  // } else {
+  //   sql = `UPDATE transaction_due_date SET description = '${description}', paid = ${paid}, status_transaction_due_date = '${status}' WHERE transaction_due_date_id = ${id}`;
+  // }
+  //   sql = `UPDATE transaction_due_date SET description = '${description}', paid = ${paid}, status_transaction_due_date = '${status}' WHERE transaction_due_date_id = ${id}`;
+  const sql = `UPDATE transaction_due_date SET status_transaction_due_date = '${status}', visit_date = '${visitDate}' WHERE transaction_due_date_id = ${id}`;
   const result = await poolConnection.query(sql);
   return result[0];
 };

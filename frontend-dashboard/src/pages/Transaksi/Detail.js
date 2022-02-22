@@ -683,6 +683,7 @@ const DetailTransaction = props => {
               .indexOf(idDueDate);
             stateDueDate[indexDataDueDate].product = arrListDueDateProduct;
             stateDueDate[indexDataDueDate].status_transaction_due_date = "2";
+            stateDueDate[indexDataDueDate].visit_date = response.result.visitDate;
             setDataDueDate(stateDueDate);
             setDataDetail(oldState => ({
               ...oldState,
@@ -702,6 +703,8 @@ const DetailTransaction = props => {
     handleCloseModalEditTitip,
     userCoordinate,
   ]);
+
+  console.log("dueaDate", dataDueDate);
 
   return (
     <div className="page-content">
@@ -1132,6 +1135,28 @@ const DetailTransaction = props => {
                                                   </span>
                                                 )}
                                               </Col>
+                                            </Row>
+                                          </Col>
+                                          <Col md="3" className="mb-2">
+                                            <Row>
+                                              <Col md="12">Waktu Kunjungan</Col>
+                                              {d.visit_date === null && (
+                                                <div className="text-muted">
+                                                  Belum Tersedia
+                                                </div>
+                                              )}
+
+                                              {d.visit_date !== null && (
+                                                <div className="text-muted">
+                                                  {moment(d.visit_date).format(
+                                                    "Do MMMM YYYY"
+                                                  )}{" "}
+                                                  Pkl{" "}
+                                                  {moment(d.visit_date).format(
+                                                    "H:mm:ss"
+                                                  )}
+                                                </div>
+                                              )}
                                             </Row>
                                           </Col>
                                         </Row>

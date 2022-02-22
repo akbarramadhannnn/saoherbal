@@ -598,27 +598,27 @@ exports.updateTempoTransaction = async (req, res) => {
       );
     }
 
-    const resultConfigure = await getDataConfigureByModuleAndKey(
-      "TRANSACTION",
-      "radius"
-    );
-    if (
-      resultDistance >
-      parseFloat(ReplaceToRupiah(resultConfigure[0].value)).toFixed(1)
-    ) {
-      return res.json(
-        Response(
-          false,
-          400,
-          `max distance ${parseFloat(
-            ReplaceToRupiah(resultConfigure[0].value)
-          )}km`,
-          {
-            name: "distance",
-          }
-        )
-      );
-    }
+    // const resultConfigure = await getDataConfigureByModuleAndKey(
+    //   "TRANSACTION",
+    //   "radius"
+    // );
+    // if (
+    //   resultDistance >
+    //   parseFloat(ReplaceToRupiah(resultConfigure[0].value)).toFixed(1)
+    // ) {
+    //   return res.json(
+    //     Response(
+    //       false,
+    //       400,
+    //       `max distance ${parseFloat(
+    //         ReplaceToRupiah(resultConfigure[0].value)
+    //       )}km`,
+    //       {
+    //         name: "distance",
+    //       }
+    //     )
+    //   );
+    // }
 
     const resultTotalPaidTempo = listDueDate
       .filter((d) => d.paid_price !== null)
@@ -788,27 +788,27 @@ exports.addTitipTransaction = async (req, res) => {
       );
     }
 
-    const resultConfigure = await getDataConfigureByModuleAndKey(
-      "TRANSACTION",
-      "radius"
-    );
-    if (
-      resultDistance >
-      parseFloat(ReplaceToRupiah(resultConfigure[0].value)).toFixed(1)
-    ) {
-      return res.json(
-        Response(
-          false,
-          400,
-          `max distance ${parseFloat(
-            ReplaceToRupiah(resultConfigure[0].value)
-          )}km`,
-          {
-            name: "distance",
-          }
-        )
-      );
-    }
+    // const resultConfigure = await getDataConfigureByModuleAndKey(
+    //   "TRANSACTION",
+    //   "radius"
+    // );
+    // if (
+    //   resultDistance >
+    //   parseFloat(ReplaceToRupiah(resultConfigure[0].value)).toFixed(1)
+    // ) {
+    //   return res.json(
+    //     Response(
+    //       false,
+    //       400,
+    //       `max distance ${parseFloat(
+    //         ReplaceToRupiah(resultConfigure[0].value)
+    //       )}km`,
+    //       {
+    //         name: "distance",
+    //       }
+    //     )
+    //   );
+    // }
 
     const arrListTitip = [];
     for (let i = 0; i < listSell.length; i++) {
@@ -841,7 +841,11 @@ exports.addTitipTransaction = async (req, res) => {
     }
 
     await addMultipleTransactionTitip(arrListTitip);
-    await updateDataDueDateById(dueDateId, "", "", "2");
+    await updateDataDueDateById(
+      dueDateId,
+      moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+      "2"
+    );
 
     const resultDataTitip = await getDataTransactionTitipDetailByTransactionId(
       transactionId
@@ -850,11 +854,14 @@ exports.addTitipTransaction = async (req, res) => {
       return a + b.total_price;
     }, 0);
 
+    const resultDataDueDate = await getDataDueDateById(dueDateId);
+
     await updateTotalPaidPriceTransaction(transactionId, totalPaidPrice);
 
     return res.json(
-      Response(true, 201, `Added Transaction In Out Product Successfully`, {
+      Response(true, 201, `Added Transaction Titip Detail Successfully`, {
         totalPaidPrice,
+        visitDate: resultDataDueDate[0].visit_date,
       })
     );
   } catch (err) {
@@ -906,7 +913,7 @@ exports.getTotalSaleTransaction = async (req, res) => {
     const series = [];
     for (let i = 0; i < resultGetData.length; i++) {
       for (let j = 0; j < resultGetData[i].product.length; j++) {
-        series.push(resultGetData[i].product[j])
+        series.push(resultGetData[i].product[j]);
         // if (
         //   series
         //     .map((d) => d.name)
