@@ -75,7 +75,7 @@ exports.getTransaction = async (req, res) => {
 
   try {
     // const resultTotalTransaction = await getTotalDataTransaction(search);
-    const total = await getTotalDataTransaction(search, transactionType);
+    const total = await getTotalDataTransaction(userId, search, transactionType);
 
     if (endIndex < total) {
       pagination.next = {
@@ -94,10 +94,11 @@ exports.getTransaction = async (req, res) => {
     const totalPage = Math.ceil(total / limit);
 
     let result = await getDataTransactionAll(
+      userId,
       search,
       transactionType.toLowerCase(),
       startIndex,
-      limit
+      limit,
     );
 
     if (!result.length > 0) {

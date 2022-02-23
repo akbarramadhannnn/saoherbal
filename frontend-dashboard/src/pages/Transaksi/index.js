@@ -82,7 +82,7 @@ const Index = ({ history }) => {
     const { value } = e.target;
     setPagination(oldState => ({
       ...oldState,
-      totalPage: 1,
+      totalPage: 0,
       currentPage: 1,
       nextPage: 0,
       prevPage: 0,
@@ -115,7 +115,7 @@ const Index = ({ history }) => {
   const handleClickTab = useCallback(value => {
     setPagination(oldState => ({
       ...oldState,
-      totalPage: 1,
+      totalPage: 0,
       currentPage: 1,
       nextPage: 0,
       prevPage: 0,

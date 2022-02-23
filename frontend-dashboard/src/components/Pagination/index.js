@@ -50,6 +50,8 @@ const Index = ({
           );
         }
       }
+    } else {
+      setPages([]);
     }
   }, [totalPage, currentPage]);
 
