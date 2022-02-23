@@ -1,24 +1,67 @@
 const poolConnection = require("../connection/mysql2");
 
-exports.getDataTransactionAll = async (start, limit) => {
-  let result;
-  if (start || limit) {
-    const sql = `SELECT * FROM transaction LIMIT ${limit} OFFSET ${start}`;
-    result = await poolConnection.query(sql);
+exports.getDataTransactionAll = async (
+  search,
+  transactionType,
+  start,
+  limit
+) => {
+  if (search || transactionType || start || limit) {
+    let sql;
+    // let sqlStore;
+    if (transactionType === "all") {
+      // sql = `SELECT * FROM transaction WHERE status = '1' LIMIT ${limit} OFFSET ${start}`;
+      // sqlDistributor = `SELECT transaction_id, distributor_id_transaction, store_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, total_paid_price, total_bill_price, subtotal_price, status, transaction.created_at, JSON_OBJECT('consumer_id', distributor.distributor_id, 'name', distributor.name, 'latitude', distributor.latitude, 'longitude', distributor.longitude) AS consumer FROM transaction INNER JOIN distributor ON transaction.distributor_id_transaction = distributor.distributor_id WHERE distributor.name LIKE N? AND status = '1' GROUP BY transaction.transaction_id LIMIT ${limit} OFFSET ${start}`;
+      // sqlStore = `SELECT transaction_id, distributor_id_transaction, store_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, total_paid_price, total_bill_price, subtotal_price, status, transaction.created_at, JSON_OBJECT('consumer_id', store.store_id, 'name', store.name, 'latitude', store.latitude, 'longitude', store.longitude) AS consumer FROM transaction INNER JOIN store ON transaction.store_id_transaction = store.store_id WHERE store.name LIKE N? AND status = '1' GROUP BY transaction.transaction_id LIMIT ${limit} OFFSET ${start}`;
+      sql = `SELECT transaction_id, distributor_id_transaction, store_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, total_paid_price, total_bill_price, subtotal_price, status, transaction.created_at, store.store_id AS storeId, distributor.distributor_id AS distributorId FROM transaction LEFT JOIN distributor ON transaction.distributor_id_transaction = distributor.distributor_id LEFT JOIN store ON transaction.store_id_transaction = store.store_id WHERE status = '1' AND (distributor.name LIKE N'%${search}%' OR store.name LIKE N'%${search}%') GROUP BY transaction.transaction_id LIMIT ${limit} OFFSET ${start}`;
+    } else {
+      // sql = `SELECT * FROM transaction WHERE transaction_type = '${transactionType}' AND status = '0' LIMIT ${limit} OFFSET ${start}`;
+      // sqlDistributor = `SELECT transaction_id, distributor_id_transaction, store_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, total_paid_price, total_bill_price, subtotal_price, status, transaction.created_at, JSON_OBJECT('consumer_id', distributor.distributor_id, 'name', distributor.name, 'latitude', distributor.latitude, 'longitude', distributor.longitude) AS consumer FROM transaction INNER JOIN distributor ON transaction.distributor_id_transaction = distributor.distributor_id WHERE distributor.name LIKE N? AND transaction_type = '${transactionType}' AND status = '0' GROUP BY transaction.transaction_id LIMIT ${limit} OFFSET ${start}`;
+      // sqlStore = `SELECT transaction_id, distributor_id_transaction, store_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, total_paid_price, total_bill_price, subtotal_price, status, transaction.created_at, JSON_OBJECT('consumer_id', store.store_id, 'name', store.name, 'latitude', store.latitude, 'longitude', store.longitude) AS consumer FROM transaction INNER JOIN store ON transaction.store_id_transaction = store.store_id WHERE store.name LIKE N? AND transaction_type = '${transactionType}' AND status = '0' GROUP BY transaction.transaction_id LIMIT ${limit} OFFSET ${start}`;
+      sql = `SELECT transaction_id, distributor_id_transaction, store_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, total_paid_price, total_bill_price, subtotal_price, status, transaction.created_at, store.store_id AS storeId, distributor.distributor_id AS distributorId FROM transaction LEFT JOIN distributor ON transaction.distributor_id_transaction = distributor.distributor_id LEFT JOIN store ON transaction.store_id_transaction = store.store_id WHERE transaction_type = '${transactionType}' AND status = '0' AND (distributor.name LIKE N'%${search}%' OR store.name LIKE N'%${search}%') GROUP BY transaction.transaction_id LIMIT ${limit} OFFSET ${start}`;
+    }
+    const result = await poolConnection.query(sql);
+    // const resultStore = await poolConnection.query(sqlStore, `%${search}%`);
+    // console.log("resultDistributor", resultDistributor[0]);
+    // console.log("resultStore", resultStore[0].length);
+    // let result = [...resultDistributor[0]];
+    // let result = [...resultDistributor[0], ...resultStore[0]];
+    return result[0];
   } else {
     const sql = `SELECT * FROM transaction`;
-    result = await poolConnection.query(sql);
+    const result = await poolConnection.query(sql);
+    return result[0];
   }
   // const sql = `SELECT * FROM transaction`;
   // const sql = `SELECT transaction.transaction_id, code, consumer_type, store_id_transaction, distributor_id_transaction, qty, subtotal, date_transaction, JSON_OBJECT('product_id', product.product_id, 'name', product.name) AS product, JSON_OBJECT('price_id', price.price_id, 'weight', price.weight, 'prices', price.prices, 'unit', price.unit) AS price FROM transaction JOIN product ON transaction.product_id_transaction = product.product_id JOIN price ON transaction.price_id_transaction = price.price_id`;
-  return result[0];
 };
 
-exports.getTotalDataTransaction = async (search) => {
-  const sql = `SELECT COUNT(*) AS total FROM transaction`;
-  const result = await poolConnection.query(sql);
-  return result[0];
+exports.getTotalDataTransaction = async (search, transactionType) => {
+  let sqlDistributor;
+  let sqlStore;
+  if (transactionType === "all") {
+    sqlDistributor = `SELECT distributor.name AS name FROM transaction INNER JOIN distributor ON transaction.distributor_id_transaction = distributor.distributor_id WHERE name LIKE N? AND status = '1'`;
+    sqlStore = `SELECT store.name AS name FROM transaction INNER JOIN store ON transaction.store_id_transaction = store.store_id WHERE name LIKE N? AND status = '1'`;
+  } else {
+    sqlDistributor = `SELECT distributor.name AS name FROM transaction INNER JOIN distributor ON transaction.distributor_id_transaction = distributor.distributor_id WHERE name LIKE N? AND transaction_type = '${transactionType}' AND status = '0'`;
+    sqlStore = `SELECT store.name AS name FROM transaction INNER JOIN store ON transaction.store_id_transaction = store.store_id WHERE name LIKE N? AND transaction_type = '${transactionType}' AND status = '0'`;
+  }
+  const resultDistributor = await poolConnection.query(
+    sqlDistributor,
+    `%${search}%`
+  );
+  const resultStore = await poolConnection.query(sqlStore, `%${search}%`);
+  const combine = [...resultDistributor[0], ...resultStore[0]];
+  return combine.length;
 };
+
+// exports.getTotalDataTransaction = async (search) => {
+//   // const sql = `SELECT COUNT(*) AS total FROM category WHERE name LIKE N?`;
+//   // const result = await poolConnection.query(sql, `%${search}%`);
+//   const sql = `SELECT COUNT(*) AS total FROM transaction`;
+//   const result = await poolConnection.query(sql);
+//   return result[0];
+// };
 
 exports.addDataTransaction = async (
   storeId,

@@ -60,6 +60,9 @@ const { ReplaceToRupiah } = require("../utils/replace");
 const CalculateDistance = require("../utils/calculateDistance");
 
 exports.getTransaction = async (req, res) => {
+  let search = req.query.search || "";
+  let transactionType = req.query.transactionType || "all";
+
   const userId = req.userId;
   const position = req.position;
 
@@ -71,8 +74,9 @@ exports.getTransaction = async (req, res) => {
   const endIndex = page * limit;
 
   try {
-    const resultTotalCategory = await getTotalDataTransaction();
-    const total = resultTotalCategory[0].total;
+    // const resultTotalTransaction = await getTotalDataTransaction(search);
+    const total = await getTotalDataTransaction(search, transactionType);
+
     if (endIndex < total) {
       pagination.next = {
         page: page + 1,
@@ -89,7 +93,12 @@ exports.getTransaction = async (req, res) => {
 
     const totalPage = Math.ceil(total / limit);
 
-    let result = await getDataTransactionAll(startIndex, limit);
+    let result = await getDataTransactionAll(
+      search,
+      transactionType.toLowerCase(),
+      startIndex,
+      limit
+    );
 
     if (!result.length > 0) {
       return res.json(Response(true, 204, `Transaction Not Found`, {}));
@@ -99,8 +108,9 @@ exports.getTransaction = async (req, res) => {
       result = result.filter((d) => d.employee_id_transaction === userId);
     }
 
-    // Get Data Dsitributor
+    //Mapping Data
     for (let i = 0; i < result.length; i++) {
+      // Data Konsumen
       if (result[i].distributor_id_transaction) {
         const resultDistributor = await getDataDistributorById(
           result[i].distributor_id_transaction
@@ -123,6 +133,7 @@ exports.getTransaction = async (req, res) => {
         };
       }
 
+      // Data Employee
       const resultEmployee = await getDataEmployeeById(
         result[i].employee_id_transaction
       );
@@ -132,6 +143,7 @@ exports.getTransaction = async (req, res) => {
         name: resultEmployee[0].name,
       };
 
+      // Data Titip Or Tempo
       if (
         result[i].transaction_type === "tempo" ||
         result[i].transaction_type === "titip"
@@ -142,6 +154,17 @@ exports.getTransaction = async (req, res) => {
         result[i].dueDate = resultDueDate[resultDueDate.length - 1];
       }
     }
+
+    // // Filter Search
+    // if (search) {
+    //   result = result.filter((item) => {
+    //     const lowerCase = search.toLowerCase();
+    //     const name = item.consumer.name.toLowerCase();
+    //     return Object.keys(name).some((key) =>
+    //       name.toLowerCase().includes(lowerCase)
+    //     );
+    //   });
+    // }
 
     return res.json(
       Response(true, 200, `Get Transaction Successfully`, {

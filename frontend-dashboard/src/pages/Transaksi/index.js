@@ -20,6 +20,7 @@ import {
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import Table from "../../components/Table";
 import ModalLoading from "../../components/Modal/ModalLoading";
+import InputSearch from "../../components/Input/InputSearch";
 import Pagination from "../../components/Pagination";
 import { ConvertToRupiah } from "./../../utils/convert";
 
@@ -43,7 +44,8 @@ const Index = ({ history }) => {
   const [dataTransactionTempo, setDataTransactionTempo] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalLoading, setIsModalLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("1");
+  const [activeTab, setActiveTab] = useState("all");
+  const [search, setSearch] = useState("");
   const [pagination, setPagination] = useState({
     totalPage: 0,
     currentPage: 1,
@@ -62,11 +64,11 @@ const Index = ({ history }) => {
 
   useEffect(() => {
     setIsLoading(true);
-    if (pagination.currentPage) {
+    if (search || activeTab || pagination.currentPage) {
       let timeout;
       timeout = setTimeout(() => {
         setIsSubscribe(true);
-        handleGetData(pagination.currentPage);
+        handleGetData(search, activeTab, pagination.currentPage);
       }, 500);
       return () => {
         clearTimeout(timeout);
@@ -74,7 +76,19 @@ const Index = ({ history }) => {
     } else {
       handleGetData();
     }
-  }, [pagination.currentPage]);
+  }, [search, activeTab, pagination.currentPage]);
+
+  const handleChangeSearch = useCallback(e => {
+    const { value } = e.target;
+    setPagination(oldState => ({
+      ...oldState,
+      totalPage: 1,
+      currentPage: 1,
+      nextPage: 0,
+      prevPage: 0,
+    }));
+    setSearch(value);
+  }, []);
 
   const handleClickCetakTransaction = useCallback(code => {
     setIsModalLoading(true);
@@ -96,6 +110,17 @@ const Index = ({ history }) => {
         }
       }
     });
+  }, []);
+
+  const handleClickTab = useCallback(value => {
+    setPagination(oldState => ({
+      ...oldState,
+      totalPage: 1,
+      currentPage: 1,
+      nextPage: 0,
+      prevPage: 0,
+    }));
+    setActiveTab(value);
   }, []);
 
   const handleClickDetailTransaction = useCallback(
@@ -120,9 +145,9 @@ const Index = ({ history }) => {
   );
 
   const handleGetData = useCallback(
-    page => {
+    (search, transactionType, page) => {
       if (isSubscribe) {
-        ApiGetListTransaction(page).then(response => {
+        ApiGetListTransaction(search, transactionType, page).then(response => {
           if (response) {
             const dataArrAll = [];
             const dataArrTitip = [];
@@ -464,8 +489,8 @@ const Index = ({ history }) => {
       nextPage: 0,
       prevPage: 0,
     }));
-    handleGetData(page);
-  }, []);
+    handleGetData(search, activeTab, page);
+  }, [search, activeTab]);
 
   const listColAll = [
     "col-2",
@@ -503,7 +528,7 @@ const Index = ({ history }) => {
           <Col className="col-12">
             <Card>
               <CardBody>
-                <Row className="mb-2">
+                <Row className="mb-4">
                   <Col md="12" sm="12" className="d-flex justify-content-end">
                     <Link
                       to={`${
@@ -520,6 +545,16 @@ const Index = ({ history }) => {
                   </Col>
                 </Row>
 
+                <Row className="mb-2">
+                  <Col md="4">
+                    <InputSearch
+                      value={search}
+                      onChange={handleChangeSearch}
+                      placeholder="nama konsumen..."
+                    />
+                  </Col>
+                </Row>
+
                 <Row className="mb-3 mt-4 align-items-center">
                   <Col md="10">
                     <Nav pills className="navtab-bg">
@@ -527,10 +562,10 @@ const Index = ({ history }) => {
                         <NavLink
                           style={{ cursor: "pointer" }}
                           className={classnames({
-                            active: activeTab === "1",
+                            active: activeTab === "all",
                           })}
                           onClick={() => {
-                            setActiveTab("1");
+                            handleClickTab("all");
                           }}
                         >
                           Semua
@@ -540,10 +575,10 @@ const Index = ({ history }) => {
                         <NavLink
                           style={{ cursor: "pointer" }}
                           className={classnames({
-                            active: activeTab === "2",
+                            active: activeTab === "titip",
                           })}
                           onClick={() => {
-                            setActiveTab("2");
+                            handleClickTab("titip");
                           }}
                         >
                           Titip
@@ -553,10 +588,10 @@ const Index = ({ history }) => {
                         <NavLink
                           style={{ cursor: "pointer" }}
                           className={classnames({
-                            active: activeTab === "3",
+                            active: activeTab === "tempo",
                           })}
                           onClick={() => {
-                            setActiveTab("3");
+                            handleClickTab("tempo");
                           }}
                         >
                           Tempo
@@ -574,7 +609,7 @@ const Index = ({ history }) => {
 
                 <Row>
                   <Col xl="12">
-                    {activeTab === "1" && (
+                    {activeTab === "all" && (
                       <Table
                         column={[
                           "Jenis Transaksi",
@@ -592,7 +627,7 @@ const Index = ({ history }) => {
                       />
                     )}
 
-                    {activeTab === "2" && (
+                    {activeTab === "titip" && (
                       <Table
                         column={[
                           "Jenis Transaksi",
@@ -611,7 +646,7 @@ const Index = ({ history }) => {
                       />
                     )}
 
-                    {activeTab === "3" && (
+                    {activeTab === "tempo" && (
                       <Table
                         column={[
                           "Jenis Transaksi",

@@ -1,7 +1,11 @@
 import axios from "../lib/axiosDefault";
 
-export const ApiGetListTransaction = async page => {
-  const response = await axios.get(`/transaction?page=${page || ""}`);
+export const ApiGetListTransaction = async (search, transactionType, page) => {
+  const response = await axios.get(
+    `/transaction?search=${search || ""}&transactionType=${
+      transactionType || ""
+    }&page=${page || ""}`
+  );
   return response;
 };
 
