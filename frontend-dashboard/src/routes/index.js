@@ -51,6 +51,9 @@ import DetailTransaksi from "../pages/Transaksi/Detail";
 import Tagihan from "../pages/Tagihan";
 import DetailTagihan from "../pages/Tagihan/detail";
 
+//konfigurasi
+import Konfigurasi from "../pages/Konfigurasi";
+
 const authProtectedRoutes = selectorAuth => {
   let result = [];
   if (selectorAuth.isAuth) {
@@ -117,6 +120,9 @@ const authProtectedRoutes = selectorAuth => {
         // tagihan
         { path: "/admin/tagihan", exact: true, component: Tagihan },
         { path: "/admin/tagihan/detail/:billNumber", component: DetailTagihan },
+
+        // tagihan
+        { path: "/admin/configure", exact: true, component: Konfigurasi },
         // this route should be at the end of all other routes
         // eslint-disable-next-line react/display-name
         {

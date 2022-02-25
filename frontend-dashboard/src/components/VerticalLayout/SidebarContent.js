@@ -121,6 +121,13 @@ const SidebarContent = props => {
               </Link>
             </li>
 
+            <li>
+              <Link to="/admin/configure">
+                <i className="bx bx-cog" />
+                <span>{props.t("Konfigurasi")}</span>
+              </Link>
+            </li>
+
             {/* <li>
               <Link to="/admin/tagihan">
                 <i className="bx bx-receipt" />

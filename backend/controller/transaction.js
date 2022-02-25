@@ -58,6 +58,7 @@ const Response = require("../helpers/response");
 const { getFirstDayDate, getLastDayDate } = require("../utils/date");
 const { ReplaceToRupiah } = require("../utils/replace");
 const CalculateDistance = require("../utils/calculateDistance");
+const { ConvertMetertoKilometer } = require("../utils/convert");
 
 exports.getTransaction = async (req, res) => {
   let search = req.query.search || "";
@@ -75,7 +76,11 @@ exports.getTransaction = async (req, res) => {
 
   try {
     // const resultTotalTransaction = await getTotalDataTransaction(search);
-    const total = await getTotalDataTransaction(userId, search, transactionType);
+    const total = await getTotalDataTransaction(
+      userId,
+      search,
+      transactionType
+    );
 
     if (endIndex < total) {
       pagination.next = {
@@ -98,7 +103,7 @@ exports.getTransaction = async (req, res) => {
       search,
       transactionType.toLowerCase(),
       startIndex,
-      limit,
+      limit
     );
 
     if (!result.length > 0) {
@@ -623,24 +628,15 @@ exports.updateTempoTransaction = async (req, res) => {
     }
 
     const resultConfigure = await getDataConfigureByModuleAndKey(
-      "TRANSACTION",
+      "TRANSAKSI",
       "radius"
     );
-    if (
-      resultDistance >
-      parseFloat(ReplaceToRupiah(resultConfigure[0].value)).toFixed(1)
-    ) {
+
+    if (resultDistance > ConvertMetertoKilometer(resultConfigure[0].value)) {
       return res.json(
-        Response(
-          false,
-          400,
-          `max distance ${parseFloat(
-            ReplaceToRupiah(resultConfigure[0].value)
-          )}km`,
-          {
-            name: "distance",
-          }
-        )
+        Response(false, 400, `max distance ${resultConfigure[0].value}m`, {
+          name: "distance",
+        })
       );
     }
 
@@ -813,24 +809,16 @@ exports.addTitipTransaction = async (req, res) => {
     }
 
     const resultConfigure = await getDataConfigureByModuleAndKey(
-      "TRANSACTION",
+      "TRANSAKSI",
       "radius"
     );
-    if (
-      resultDistance >
-      parseFloat(ReplaceToRupiah(resultConfigure[0].value)).toFixed(1)
-    ) {
+
+    // parseFloat(ReplaceToRupiah(resultConfigure[0].value)).toFixed(1)
+    if (resultDistance > ConvertMetertoKilometer(resultConfigure[0].value)) {
       return res.json(
-        Response(
-          false,
-          400,
-          `max distance ${parseFloat(
-            ReplaceToRupiah(resultConfigure[0].value)
-          )}km`,
-          {
-            name: "distance",
-          }
-        )
+        Response(false, 400, `max distance ${resultConfigure[0].value}m`, {
+          name: "distance",
+        })
       );
     }
 

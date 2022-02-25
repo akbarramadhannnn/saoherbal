@@ -9,6 +9,7 @@ const distributor = require("./distributor");
 const transaction = require("./transaction");
 const bill = require("./bill");
 const employee = require("./employee");
+const configure = require("./configure");
 const Response = require("../../../helpers/response");
 
 router.get("/", (req, res) => {
@@ -24,5 +25,6 @@ router.use("/distributor", distributor);
 router.use("/transaction", transaction);
 router.use("/bill", bill);
 router.use("/employee", employee);
+router.use("/configure", configure);
 
 module.exports = router;
