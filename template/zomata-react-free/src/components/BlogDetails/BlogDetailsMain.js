@@ -127,6 +127,7 @@ const mapStateToProps = (state) => {
     return { newsDetails }
 };
   
-export default connect(mapStateToProps)(BlogDetailsMain);
+// export default connect(mapStateToProps)(BlogDetailsMain);
+export default BlogDetailsMain;
 
 

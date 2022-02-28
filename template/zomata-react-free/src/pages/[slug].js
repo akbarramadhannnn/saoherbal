@@ -17,7 +17,7 @@ class Blog extends React.Component {
         return (
             <React.Fragment>
                 <HeaderStyleTwo />
-                <BlogDetailsMain />
+                {/* <BlogDetailsMain /> */}
                 <Footer />
             </React.Fragment>
         );
@@ -30,5 +30,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Blog);
+// export default connect(mapStateToProps, mapDispatchToProps)(Blog);
+export default Blog;
 
