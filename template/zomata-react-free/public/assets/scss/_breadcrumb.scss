@@ -1,0 +1,40 @@
+
+/* 19. Breadcrumb */
+.breadcrumb-area {
+    background-position: center center;
+    background-size: cover;
+  }
+  .breadcrumb-text {
+      position: relative;
+      z-index: 1;
+  }
+  .breadcrumb-text > h1 {
+      font-size: 80px;
+      margin-bottom: 15px;
+      text-transform: capitalize;
+      line-height: 90px;
+      font-weight: 300;
+  }
+  .breadcrumb-menu li {
+      display: inline-block;
+      position: relative;
+      padding: 0 15px;
+  }
+  .breadcrumb-menu li.breadcrumb-menu-arrow {
+      padding: 0px;
+      color: #222;
+  }
+  .breadcrumb-menu li a {
+      color: #408858;
+      font-size: 26px;
+      font-weight: 400;
+      text-transform: capitalize;
+      transition: all 0.3s ease 0s;
+  }
+  .breadcrumb-menu span {
+      color: #677b8a;
+      font-size: 26px;
+      font-weight: 400;
+      text-transform: capitalize;
+  }
+  
