@@ -81,7 +81,9 @@ exports.getUser = async (req, res) => {
 };
 
 exports.addAuth = async (req, res) => {
-  const { employeeId, username, password } = req.body;
+  let { employeeId, username, password } = req.body;
+
+  username = username.toLowerCase();
 
   try {
     const resultEmployee = await getDataEmployeeById(employeeId);
@@ -144,8 +146,10 @@ exports.detailAuth = async (req, res) => {
 };
 
 exports.updateAuth = async (req, res) => {
-  const { username, password } = req.body;
+  let { username, password } = req.body;
   const { id } = req.params;
+  
+  username = username.toLowerCase();
 
   try {
     const resultAuthById = await getDataAuthByAuthId(id);
