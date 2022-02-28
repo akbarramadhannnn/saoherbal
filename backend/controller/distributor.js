@@ -13,6 +13,7 @@ const {
   getDataDistributorByNoTlpNotById,
   getTotalDataDistributor,
 } = require("../models/distributor");
+const { getDataEmployeeById } = require("../models/employee");
 const {
   getDataProvinsiById,
   getDataKabupatenById,
@@ -23,6 +24,8 @@ const { ReplaceToStartUpperCase } = require("../utils/replace");
 
 exports.getDistributorList = async (req, res) => {
   let search = req.query.search || "";
+  const userId = req.userId;
+  const position = req.position;
 
   // Pagination
   const pagination = {};
@@ -32,7 +35,11 @@ exports.getDistributorList = async (req, res) => {
   const endIndex = page * limit;
 
   try {
-    const resultTotalCategory = await getTotalDataDistributor(search);
+    const resultTotalCategory = await getTotalDataDistributor(
+      search,
+      userId,
+      position
+    );
     const total = resultTotalCategory[0].total;
     if (endIndex < total) {
       pagination.next = {
@@ -50,10 +57,28 @@ exports.getDistributorList = async (req, res) => {
 
     const totalPage = Math.ceil(total / limit);
 
-    const result = await getDataDistributorAll(startIndex, limit, search);
+    const result = await getDataDistributorAll(
+      startIndex,
+      limit,
+      search,
+      userId,
+      position
+    );
 
     if (!result.length > 0) {
       return res.json(Response(true, 204, `Get Distributor Successfully`, {}));
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      // Data Employee
+      const resultEmployee = await getDataEmployeeById(
+        result[i].distributor_employee_id
+      );
+
+      result[i].employee = {
+        employeeId: resultEmployee[0].employee_id,
+        name: resultEmployee[0].name,
+      };
     }
 
     return res.json(
@@ -71,8 +96,11 @@ exports.getDistributorList = async (req, res) => {
 };
 
 exports.getDistributorListAll = async (req, res) => {
+  const userId = req.userId;
+  const position = req.position;
+
   try {
-    const result = await getDataDistributorAll();
+    const result = await getDataDistributorAll("", "", "", userId, position);
     if (!result.length > 0) {
       return res.json(Response(true, 204, `Distributor Not Found`, {}));
     }
@@ -104,6 +132,8 @@ exports.addDistributorList = async (req, res) => {
     latitude,
     longitude,
   } = req.body;
+  const userId = req.userId;
+
   name = ReplaceToStartUpperCase(name);
 
   try {
@@ -167,6 +197,7 @@ exports.addDistributorList = async (req, res) => {
     await addDataDistributor(
       provinsi_id,
       kabupaten_id,
+      userId,
       name,
       email,
       no_tlp,

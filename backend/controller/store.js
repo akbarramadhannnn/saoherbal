@@ -13,6 +13,7 @@ const {
   getDataStoreByNoTlpNotById,
   getTotalDataStore,
 } = require("../models/store");
+const { getDataEmployeeById } = require("../models/employee");
 const {
   getDataProvinsiById,
   getDataKabupatenById,
@@ -23,6 +24,8 @@ const { ReplaceToStartUpperCase } = require("../utils/replace");
 
 exports.getStoreList = async (req, res) => {
   let search = req.query.search || "";
+  const userId = req.userId;
+  const position = req.position;
 
   // Pagination
   const pagination = {};
@@ -32,7 +35,11 @@ exports.getStoreList = async (req, res) => {
   const endIndex = page * limit;
 
   try {
-    const resultTotalCategory = await getTotalDataStore(search);
+    const resultTotalCategory = await getTotalDataStore(
+      search,
+      userId,
+      position
+    );
     const total = resultTotalCategory[0].total;
     if (endIndex < total) {
       pagination.next = {
@@ -50,10 +57,28 @@ exports.getStoreList = async (req, res) => {
 
     const totalPage = Math.ceil(total / limit);
 
-    const result = await getDataStoreAll(startIndex, limit, search);
-    
+    const result = await getDataStoreAll(
+      startIndex,
+      limit,
+      search,
+      userId,
+      position
+    );
+
     if (!result.length > 0) {
       return res.json(Response(true, 204, `Get Store Successfully`, {}));
+    }
+
+    for (let i = 0; i < result.length; i++) {
+      // Data Employee
+      const resultEmployee = await getDataEmployeeById(
+        result[i].store_employee_id
+      );
+
+      result[i].employee = {
+        employeeId: resultEmployee[0].employee_id,
+        name: resultEmployee[0].name,
+      };
     }
 
     return res.json(
@@ -71,8 +96,11 @@ exports.getStoreList = async (req, res) => {
 };
 
 exports.getStoreListAll = async (req, res) => {
+  const userId = req.userId;
+  const position = req.position;
+
   try {
-    const result = await getDataStoreAll();
+    const result = await getDataStoreAll("", "", "", userId, position);
     if (!result.length > 0) {
       return res.json(Response(true, 204, `Store Not Found`, {}));
     }
@@ -104,6 +132,7 @@ exports.addStoreList = async (req, res) => {
     latitude,
     longitude,
   } = req.body;
+  const userId = req.userId;
   name = ReplaceToStartUpperCase(name);
 
   try {
@@ -167,6 +196,7 @@ exports.addStoreList = async (req, res) => {
     await addDataStore(
       provinsi_id,
       kabupaten_id,
+      userId,
       name,
       email,
       no_tlp,

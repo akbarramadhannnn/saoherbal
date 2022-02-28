@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import {
   Row,
@@ -25,6 +26,8 @@ import { Link } from "react-router-dom";
 import { ApiGetListStore, ApiDeleteListStore } from "../../../api/store";
 
 const Index = ({ history }) => {
+  const selectorAuth = useSelector(({ Auth }) => Auth);
+  const position = selectorAuth.user.position;
   const [isSubscribe, setIsSubscribe] = useState(true);
   const [dataStore, setDataStore] = useState([]);
   const [storeId, setStoreId] = useState([]);
@@ -92,7 +95,11 @@ const Index = ({ history }) => {
 
   const handleClickUpdate = useCallback(
     id => {
-      history.push(`/admin/konsumen/toko/update/${id}`);
+      history.push(
+        `${
+          position === "0" ? "/admin" : position === "2" ? "/sales" : ""
+        }/konsumen/toko/update/${id}`
+      );
     },
     [history]
   );
@@ -119,6 +126,7 @@ const Index = ({ history }) => {
                   name: response.result.data[i].name,
                   provinsi: response.result.data[i].provinsi.name,
                   kabupaten: response.result.data[i].kabupaten.name,
+                  createdBy: response.result.data[i].employee.name,
                   actions: (
                     <UncontrolledDropdown>
                       <DropdownToggle href="#" className="card-drop" tag="i">
@@ -281,7 +289,13 @@ const Index = ({ history }) => {
                 <Row className="mb-4">
                   <Col md="12" sm="12" className="d-flex justify-content-end">
                     <Link
-                      to="/admin/konsumen/toko/create"
+                      to={`${
+                        position === "0"
+                          ? "/admin"
+                          : position === "2"
+                          ? "/sales"
+                          : ""
+                      }/konsumen/toko/create`}
                       className="btn btn-primary"
                     >
                       <i className="fas fa-plus"></i> Tambah Data Toko
@@ -309,7 +323,13 @@ const Index = ({ history }) => {
                       toggle={handleCloseAlert}
                     />
                     <Table
-                      column={["Nama Toko", "Provinsi", "Kabupaten", "Aksi"]}
+                      column={[
+                        "Nama Toko",
+                        "Provinsi",
+                        "Kabupaten",
+                        "Dibuat Oleh",
+                        "Aksi",
+                      ]}
                       row={dataStore}
                       isLoading={isLoading}
                     />

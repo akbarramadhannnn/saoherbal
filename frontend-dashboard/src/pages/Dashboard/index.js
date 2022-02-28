@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import MetaTags from "react-meta-tags";
 import { Container, Row, Col, Card, CardBody, Label } from "reactstrap";
 import DataTransactionType from "../../data/transactionType";
+import { ListMonth } from "../../data/periodeTime";
+import { ApiGetTransactionTotalSaleProduct } from "../../api/transaction";
 import { ReplaceToStartUpperCase } from "../../utils/replace";
 import classNames from "classnames";
 import ReactApexChart from "react-apexcharts";
@@ -10,41 +12,10 @@ import ReactApexChart from "react-apexcharts";
 const Dashboard = () => {
   // const [periodData, setPeriodData] = useState([]);
   const [periodType, setPeriodType] = useState("monthly");
+  const [selectedPeriodMonth, setSelectedPeriodMonth] = useState("0");
   const [transactionType, setTransactionType] = useState("");
-
-  useEffect(() => {
-    setTransactionType(DataTransactionType[0]);
-  }, []);
-
-  const reports = [
-    {
-      title: "Total Transaksi",
-      iconClass: "bx-copy-alt",
-      description: "1,235",
-    },
-    { title: "Total Karyawan", iconClass: "bx-user", description: "1,235" },
-    {
-      title: "Average Price",
-      iconClass: "bx-purchase-tag-alt",
-      description: "$16.2",
-    },
-  ];
-
-  const series = [
-    {
-      name: "Sao 1",
-      data: [46, 57, 59, 54, 62, 58, 64, 60, 66, 10, 11, 12],
-    },
-    {
-      name: "Sao 2",
-      data: [74, 83, 102, 97, 86, 106, 93, 114, 94, 10, 11, 12],
-    },
-    {
-      name: "Sao 3",
-      data: [37, 42, 38, 26, 47, 50, 54, 55, 43, 10, 11, 12],
-    },
-  ];
-  const options = {
+  const [series, setSeries] = useState([]);
+  const [options, setOptions] = useState({
     chart: {
       toolbar: {
         show: false,
@@ -65,23 +36,9 @@ const Dashboard = () => {
       width: 2,
       colors: ["transparent"],
     },
-
     colors: ["#34c38f", "#556ee6", "#f46a6a"],
     xaxis: {
-      categories: [
-        "Januari",
-        "Februari",
-        "Maret",
-        "April",
-        "Mei",
-        "Juni",
-        "Juli",
-        "Agustus",
-        "September",
-        "Oktober",
-        "November",
-        "Desember",
-      ],
+      categories: [],
     },
     yaxis: {
       title: {
@@ -101,7 +58,27 @@ const Dashboard = () => {
         },
       },
     },
-  };
+  });
+  useEffect(() => {
+    // setTransactionType(DataTransactionType[0]);
+    if (selectedPeriodMonth) {
+      handleGetDataChart("2022", selectedPeriodMonth);
+    }
+  }, [selectedPeriodMonth]);
+
+  const reports = [
+    {
+      title: "Total Transaksi",
+      iconClass: "bx-copy-alt",
+      description: "1,235",
+    },
+    { title: "Total Karyawan", iconClass: "bx-user", description: "1,235" },
+    {
+      title: "Average Price",
+      iconClass: "bx-purchase-tag-alt",
+      description: "$16.2",
+    },
+  ];
 
   const onChangeChartPeriod = pType => {
     setPeriodType(pType);
@@ -114,7 +91,35 @@ const Dashboard = () => {
       setTransactionType(value);
     } else if (name === "periodType") {
       setPeriodType(value);
+    } else if (name === "periodeMonth") {
+      setSelectedPeriodMonth(value);
     }
+  }, []);
+
+  const handleGetDataChart = useCallback((years, month) => {
+    ApiGetTransactionTotalSaleProduct(years, month).then(response => {
+      if (response) {
+        if (response.status === 200) {
+          setSeries(response.result.groups);
+          setOptions(oldState => ({
+            ...oldState,
+            xaxis: {
+              ...oldState.xaxis,
+              categories: response.result.listTime,
+            },
+          }));
+        } else {
+          setSeries([]);
+          setOptions(oldState => ({
+            ...oldState,
+            xaxis: {
+              ...oldState.xaxis,
+              categories: response.result.listTime,
+            },
+          }));
+        }
+      }
+    });
   }, []);
 
   return (
@@ -193,13 +198,17 @@ const Dashboard = () => {
                       <div className="col-md-3">
                         <Label>Waktu Periode</Label>
                         <select
-                          value={""}
+                          value={selectedPeriodMonth}
+                          name="periodeMonth"
                           className="form-select"
-                          onChange={() => {}}
+                          onChange={handleChangeInput}
                         >
                           <option value="">Pilih Waktu Periode</option>
-                          <option value="monthly">Bulanan</option>
-                          <option value="yearly">Tahunan</option>
+                          {ListMonth.map((d, i) => (
+                            <option key={i} value={d.value}>
+                              {d.label}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       {/* <ul className="nav nav-pills">

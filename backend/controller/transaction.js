@@ -1,4 +1,5 @@
 const moment = require("moment");
+moment.locale("id");
 const GenerateCodeTransaction = require("../utils/generateCodeTransaction");
 const {
   getDataTransactionAll,
@@ -59,6 +60,7 @@ const { getFirstDayDate, getLastDayDate } = require("../utils/date");
 const { ReplaceToRupiah } = require("../utils/replace");
 const CalculateDistance = require("../utils/calculateDistance");
 const { ConvertMetertoKilometer } = require("../utils/convert");
+const { getDaysInMonth } = require("../utils/date");
 
 exports.getTransaction = async (req, res) => {
   let search = req.query.search || "";
@@ -78,6 +80,7 @@ exports.getTransaction = async (req, res) => {
     // const resultTotalTransaction = await getTotalDataTransaction(search);
     const total = await getTotalDataTransaction(
       userId,
+      position,
       search,
       transactionType
     );
@@ -100,6 +103,7 @@ exports.getTransaction = async (req, res) => {
 
     let result = await getDataTransactionAll(
       userId,
+      position,
       search,
       transactionType.toLowerCase(),
       startIndex,
@@ -108,10 +112,6 @@ exports.getTransaction = async (req, res) => {
 
     if (!result.length > 0) {
       return res.json(Response(true, 204, `Transaction Not Found`, {}));
-    }
-
-    if (position === "2") {
-      result = result.filter((d) => d.employee_id_transaction === userId);
     }
 
     //Mapping Data
@@ -907,41 +907,156 @@ exports.checkDueDateStatus = async (req, res) => {
 };
 
 exports.getTotalSaleTransaction = async (req, res) => {
-  const { periodType } = req.query;
+  const { periodType, years, month } = req.query;
   try {
+    const listTime = [];
+    // if (periodType === "monthly") {
+    const getDays = getDaysInMonth(Number(years), Number(month));
+    for (let i = 0; i < getDays.length; i++) {
+      listTime.push(moment(getDays[i]).format("YYYY-MM-DD"));
+    }
+    // }
     // let resultAllTransaction = await getDataTransactionAll();
-    let resultGetData;
-    if (periodType === "today") {
-      const date = moment(new Date()).format("YYYY-MM-DD");
-      resultGetData = await getDataTransactionByDate(periodType, date);
-    } else if (periodType === "weekly") {
-      console.log("weekly");
-    } else if (periodType === "monthly") {
-      console.log("monthly");
-    } else if (periodType === "yearly") {
-      console.log("yearly");
+    // let resultGetData;
+    const date = moment(new Date()).format("YYYY-MM-DD");
+    const resultGetData = await getDataTransactionByDate();
+
+    let groups = [];
+    for (let i = 0; i < resultGetData.length; i++) {
+      resultGetData[i].created_at = moment(resultGetData[i].created_at).format(
+        "YYYY-MM-DD"
+      );
+      if (
+        groups.map((d) => d.name).indexOf(resultGetData[i].name) === -1
+        // data.map((d) => d.date).indexOf(resultGetData[i].created_at) === -1
+      ) {
+        groups.push({
+          name: resultGetData[i].name,
+          // date: resultGetData[i].created_at,
+          date: listTime,
+          data: [],
+        });
+      }
+
+      // const createdAt = moment(resultGetData[i].created_at).format(
+      //   "YYYY-MM-DD"
+      // );
+      // const indexName = groups
+      //   .map((d) => d.name)
+      //   .indexOf(resultGetData[i].name);
+      // const indexDate = groups[indexName].date.map((d) => d).indexOf(createdAt);
+
+      // if (resultGetData[i].name === groups[indexName].name) {
+      //   if (indexDate === -1) {
+      //     groups[indexName].date.push(createdAt);
+      //     groups[indexName].data.push([]);
+      //   }
+      // }
     }
 
-    const series = [];
     for (let i = 0; i < resultGetData.length; i++) {
-      for (let j = 0; j < resultGetData[i].product.length; j++) {
-        series.push(resultGetData[i].product[j]);
-        // if (
-        //   series
-        //     .map((d) => d.name)
-        //     .indexOf(resultGetData[i].product[j].name) === -1
-        // ) {
-        //   series.push({
-        //     name: resultGetData[i].product[j].name,
-        //     data: [],
-        //   });
-        // }
+      const createdAt = moment(resultGetData[i].created_at).format(
+        "YYYY-MM-DD"
+      );
+      const indexName = groups
+        .map((d) => d.name)
+        .indexOf(resultGetData[i].name);
+      const indexDate = groups[indexName].date.map((d) => d).indexOf(createdAt);
+      for (let j = 0; j < groups[indexName].date.length; j++) {
+        if (groups[indexName].date[j] === createdAt) {
+          console.log(indexName, indexDate, resultGetData[i].qty);
+          groups[indexName].data[j] = [];
+        } else {
+          groups[indexName].data[j] = [0];
+        }
+      }
+
+      // if (groups[indexName].date[indexDate] === createdAt) {
+      // console.log(indexName, indexDate, resultGetData[i].qty);
+      // groups[indexName].data[indexDate] = [...groups[indexName].data[indexDate],resultGetData[i].qty]
+      // groups[indexName].data[indexDate].push(resultGetData[i].qty);
+      // }
+    }
+
+    for (let i = 0; i < resultGetData.length; i++) {
+      const createdAt = moment(resultGetData[i].created_at).format(
+        "YYYY-MM-DD"
+      );
+      const indexName = groups
+        .map((d) => d.name)
+        .indexOf(resultGetData[i].name);
+      const indexDate = groups[indexName].date.map((d) => d).indexOf(createdAt);
+      if (groups[indexName].date[indexDate] === createdAt) {
+        console.log(indexName, indexDate, resultGetData[i].qty);
+        groups[indexName].data[indexDate].push(resultGetData[i].qty);
       }
     }
-    console.log("series", series);
+
+    // for (let i = 0; i < resultGetData.length; i++) {
+    // const createdAt = moment(resultGetData[i].created_at).format(
+    //   "YYYY-MM-DD"
+    // );
+    // const indexName = groups.map((d) => d.name);
+    // const indexDate = groups[indexName];
+    // console.log('indexDate', indexDate)
+    // if (groups[indexName].date[indexDate] === createdAt) {
+    //   // console.log("if", groups[indexName].date[indexDate]);
+    //   groups[indexName].data[indexDate].push(resultGetData[i].qty);
+    // }
+    // }
+
+    // for (let i = 0; i < groups.length; i++) {
+    //   if (groups[i].date[groups[i].date.length - groups.length] === undefined) {
+    //     groups[i].date.push("");
+    //     groups[i].data.push([0]);
+    //   }
+    // }
+
+    for (let i = 0; i < groups.length; i++) {
+      for (let j = 0; j < groups[i].data.length; j++) {
+        groups[i].data[j] = groups[i].data[j].reduce(
+          (previousValue, currentValue) => {
+            return previousValue + currentValue;
+          }
+        );
+      }
+      delete groups[i].date;
+    }
+
+    // console.log("data", data);
+    // var groups = {};
+    // let listTime = [];
+    // for (var i = 0; i < resultGetData.length; i++) {
+    //   var groupName = resultGetData[i].name;
+    //   if (!groups[groupName]) {
+    //     groups[groupName] = {
+    //       date: resultGetData[i].created_at,
+    //       data: [],
+    //     };
+    //   }
+    //   groups[groupName].data.push(resultGetData[i].qty);
+
+    //   // const date = moment(resultGetData[i].created_at).format("YYYY-MM-DD");
+    //   // if (
+    //   //   listTime
+    //   //     .map((d) => d)
+    //   //     .indexOf(moment(resultGetData[i].created_at).format("YYYY-MM-DD")) ===
+    //   //   -1
+    //   // ) {
+    //   //   listTime.push(date);
+    //   // }
+    // }
+
+    // myArray = [];
+    // for (var groupName in groups) {
+    //   myArray.push({ name: groupName, data: groups[groupName] });
+    // }
 
     return res.json(
-      Response(true, 201, `Total Sale Transaction Successfully`, resultGetData)
+      Response(true, 200, `Total Sale Transaction Successfully`, {
+        groups: groups,
+        listTime,
+      })
     );
   } catch (err) {
     console.log("err", err);

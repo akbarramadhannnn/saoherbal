@@ -39,6 +39,13 @@ export const ApiAddTransactionTitipDetail = async payload => {
   return response;
 };
 
+export const ApiGetTransactionTotalSaleProduct = async (years, month) => {
+  const response = await axios.get(
+    `/transaction/total-sale-product?periodType=monthly&years=${years}&month=${month}`
+  );
+  return response;
+};
+
 // export const ApiUpdateListCategory = async (id, payload) => {
 //   const response = axios.put(`/category/${id}`, payload);
 //   return response;

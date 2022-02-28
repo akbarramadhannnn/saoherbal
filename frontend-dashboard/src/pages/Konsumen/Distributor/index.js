@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import {
   Row,
@@ -28,6 +29,8 @@ import {
 } from "../../../api/distributor";
 
 const Index = ({ history }) => {
+  const selectorAuth = useSelector(({ Auth }) => Auth);
+  const position = selectorAuth.user.position;
   const [isSubscribe, setIsSubscribe] = useState(true);
   const [dataDistributor, setDataDistributor] = useState([]);
   const [distributorId, setDstributorId] = useState([]);
@@ -95,9 +98,14 @@ const Index = ({ history }) => {
 
   const handleClickUpdate = useCallback(
     id => {
-      history.push(`/admin/konsumen/distributor/update/${id}`);
+      // history.push(`/admin/konsumen/distributor/update/${id}`);
+      history.push(
+        `${
+          position === "0" ? "/admin" : position === "2" ? "/sales" : ""
+        }/konsumen/distributor/update/${id}`
+      );
     },
-    [history]
+    [history, position]
   );
 
   const handleClickDetailMaps = useCallback(
@@ -122,6 +130,7 @@ const Index = ({ history }) => {
                   name: response.result.data[i].name,
                   provinsi: response.result.data[i].provinsi.name,
                   kabupaten: response.result.data[i].kabupaten.name,
+                  createdBy: response.result.data[i].employee.name,
                   actions: (
                     <UncontrolledDropdown>
                       <DropdownToggle href="#" className="card-drop" tag="i">
@@ -292,7 +301,13 @@ const Index = ({ history }) => {
                 <Row className="mb-4">
                   <Col md="12" sm="12" className="d-flex justify-content-end">
                     <Link
-                      to="/admin/konsumen/distributor/create"
+                      to={`${
+                        position === "0"
+                          ? "/admin"
+                          : position === "2"
+                          ? "/sales"
+                          : ""
+                      }/konsumen/distributor/create`}
                       className="btn btn-primary"
                     >
                       <i className="fas fa-plus"></i> Tambah Data Distributor
@@ -324,6 +339,7 @@ const Index = ({ history }) => {
                         "Nama Distributor",
                         "Provinsi",
                         "Kabupaten",
+                        "Dibuat Oleh",
                         "Aksi",
                       ]}
                       row={dataDistributor}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import {
   Card,
@@ -20,6 +21,8 @@ import { ApiGetListProvinsi, ApiGetListKabupaten } from "../../../api/wilayah";
 import { ApiUpdateListStore, ApiDetailListStore } from "../../../api/store";
 
 const Update = props => {
+  const selectorAuth = useSelector(({ Auth }) => Auth);
+  const position = selectorAuth.user.position;
   const id = props.match.params.id;
   const [dataProvinsi, setDataProvinsi] = useState([]);
   const [dataKabupaten, setDataKabupaten] = useState([]);
@@ -388,7 +391,13 @@ const Update = props => {
                       <Col className="mx-auto col-10">
                         <div className="d-flex justify-content-end">
                           <Link
-                            to="/admin/konsumen/toko"
+                            to={`${
+                              position === "0"
+                                ? "/admin"
+                                : position === "2"
+                                ? "/sales"
+                                : ""
+                            }/konsumen/toko`}
                             className="btn btn-danger me-2"
                           >
                             <i className="fas fa-arrow-left"></i> Kembali

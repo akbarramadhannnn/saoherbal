@@ -139,6 +139,27 @@ const authProtectedRoutes = selectorAuth => {
     } else if (position === "2") {
       result = [
         { path: "/sales/dashboard", component: Dashboard },
+        //konsumen
+        //distributor
+        {
+          path: "/sales/konsumen/distributor",
+          exact: true,
+          component: Distributor,
+        },
+        {
+          path: "/sales/konsumen/distributor/create",
+          component: CreateDistributor,
+        },
+        {
+          path: "/sales/konsumen/distributor/update/:id",
+          component: UpdateDistributor,
+        },
+
+        //toko
+        { path: "/sales/konsumen/toko", exact: true, component: Toko },
+        { path: "/sales/konsumen/toko/create", component: CreateToko },
+        { path: "/sales/konsumen/toko/update/:id", component: UpdateToko },
+
         //transaction
         { path: "/sales/transaction", exact: true, component: Transaksi },
         { path: "/sales/transaction/create", component: CreateTransaksi },
