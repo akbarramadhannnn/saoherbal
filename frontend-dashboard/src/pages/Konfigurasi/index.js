@@ -26,6 +26,7 @@ import {
   ApiGetListConfigureDetail,
   ApiAddConfigure,
   ApiAddConfigureDetail,
+  ApiUpdateConfigureDetail,
 } from "../../api/configure";
 
 import { ReplaceToStartUpperCase } from "../../utils/replace";
@@ -42,17 +43,17 @@ const Index = () => {
     title: "",
   });
   const [formAddModalConfigure, setFormAddModalConfigure] = useState({});
-  const [modalAddConfigureDetail, setModalAddConfigureDetail] = useState({
+  const [modalConfigureDetail, setModalConfigureDetail] = useState({
     isOpen: false,
     title: "",
   });
-  const [formAddModalConfigureDetail, setFormAddModalConfigureDetail] =
-    useState({});
+  const [formModalConfigureDetail, setFormModalConfigureDetail] = useState({});
   const [modalMessage, setModalMessage] = useState({
     isOpen: false,
     message: "",
     params: "",
   });
+  const [configureDetailId, setConfigureDetailId] = useState("");
   const [isDisabledButton, setIsDisabledButton] = useState(false);
 
   useEffect(() => {
@@ -207,7 +208,7 @@ const Index = () => {
   }, [formAddModalConfigure, handleCloseModalConfigure]);
 
   const handleShowModalAddConfigureDetail = useCallback(() => {
-    setFormAddModalConfigureDetail({
+    setFormModalConfigureDetail({
       name: {
         value: "",
         error: "",
@@ -221,24 +222,25 @@ const Index = () => {
         error: "",
       },
     });
-    setModalAddConfigureDetail({
+    setModalConfigureDetail({
       isOpen: true,
       title: "Tambah Konfigurasi Detail",
     });
   }, []);
 
   const handleCloseModalConfigureDetail = useCallback(() => {
-    setModalAddConfigureDetail({
+    setModalConfigureDetail({
       isOpen: false,
       title: "",
     });
-    setFormAddModalConfigureDetail({});
+    setFormModalConfigureDetail({});
+    setConfigureDetailId("");
   }, []);
 
   const handleChangeModalConfigureDetail = useCallback(e => {
     const { name, value } = e.target;
     if (name === "name") {
-      setFormAddModalConfigureDetail(oldState => ({
+      setFormModalConfigureDetail(oldState => ({
         ...oldState,
         name: {
           ...oldState.name,
@@ -247,7 +249,7 @@ const Index = () => {
         },
       }));
     } else if (name === "value") {
-      setFormAddModalConfigureDetail(oldState => ({
+      setFormModalConfigureDetail(oldState => ({
         ...oldState,
         value: {
           ...oldState.value,
@@ -256,7 +258,7 @@ const Index = () => {
         },
       }));
     } else if (name === "description") {
-      setFormAddModalConfigureDetail(oldState => ({
+      setFormModalConfigureDetail(oldState => ({
         ...oldState,
         description: {
           ...oldState.description,
@@ -268,12 +270,13 @@ const Index = () => {
   }, []);
 
   const handleSubmitAddConfigureDetail = useCallback(() => {
-    const name = formAddModalConfigureDetail.name.value;
-    const value = formAddModalConfigureDetail.value.value;
-    const description = formAddModalConfigureDetail.description.value;
+    const name = formModalConfigureDetail.name.value;
+    const value = formModalConfigureDetail.value.value;
+    const description = formModalConfigureDetail.description.value;
+    const id = configureDetailId;
 
     if (name === "") {
-      setFormAddModalConfigureDetail(oldState => ({
+      setFormModalConfigureDetail(oldState => ({
         ...oldState,
         name: {
           ...oldState.name,
@@ -281,7 +284,7 @@ const Index = () => {
         },
       }));
     } else if (value === "") {
-      setFormAddModalConfigureDetail(oldState => ({
+      setFormModalConfigureDetail(oldState => ({
         ...oldState,
         value: {
           ...oldState.value,
@@ -289,7 +292,7 @@ const Index = () => {
         },
       }));
     } else if (description === "") {
-      setFormAddModalConfigureDetail(oldState => ({
+      setFormModalConfigureDetail(oldState => ({
         ...oldState,
         description: {
           ...oldState.description,
@@ -304,30 +307,87 @@ const Index = () => {
         value,
         description,
       };
-      ApiAddConfigureDetail(payload).then(response => {
-        if (response) {
-          if (response.status === 201) {
-            handleCloseModalConfigureDetail();
-            setListConfigureDetail(oldState => [
-              ...oldState,
-              response.result.data,
-            ]);
-            setModalMessage({
-              isOpen: true,
-              message: response.message,
-              params: "success",
-            });
-            setIsDisabledButton(false);
+      if (id === "") {
+        ApiAddConfigureDetail(payload).then(response => {
+          if (response) {
+            if (response.status === 201) {
+              handleCloseModalConfigureDetail();
+              setListConfigureDetail(oldState => [
+                ...oldState,
+                response.result.data,
+              ]);
+              setModalMessage({
+                isOpen: true,
+                message: response.message,
+                params: "success",
+              });
+              setIsDisabledButton(false);
+            }
           }
-        }
-      });
+        });
+      } else {
+        const payload = {
+          configureId : activeTab,
+          name,
+          value,
+          description,
+        };
+        ApiUpdateConfigureDetail(id, payload).then(response => {
+          if (response) {
+            if (response.status === 201) {
+              const index = listConfigureDetail
+                .map(d => d.configure_detail_id)
+                .indexOf(id);
+              handleCloseModalConfigureDetail();
+              setListConfigureDetail(oldState => {
+                const state = [...oldState];
+                state[index] = response.result.data;
+                return state;
+              });
+              setModalMessage({
+                isOpen: true,
+                message: response.message,
+                params: "success",
+              });
+              setIsDisabledButton(false);
+            }
+          }
+        });
+      }
     }
   }, [
-    formAddModalConfigureDetail,
+    formModalConfigureDetail,
     handleCloseModalConfigureDetail,
     activeTab,
     listConfigureDetail,
+    configureDetailId,
   ]);
+
+  const handleShowModalEditConfigureDetail = useCallback(
+    id => {
+      setConfigureDetailId(id);
+      const find = listConfigureDetail.find(d => d.configure_detail_id === id);
+      setFormModalConfigureDetail({
+        name: {
+          value: find.name,
+          error: "",
+        },
+        value: {
+          value: find.value,
+          error: "",
+        },
+        description: {
+          value: find.description,
+          error: "",
+        },
+      });
+      setModalConfigureDetail({
+        isOpen: true,
+        title: "Edit Konfigurasi Detail",
+      });
+    },
+    [listConfigureDetail]
+  );
 
   return (
     <React.Fragment>
@@ -408,8 +468,9 @@ const Index = () => {
                     {(tabMenuConfigure.length > 0 ||
                       listConfigureDetail.length > 0) && (
                       <Fragment>
-                        <h4 className="card-title mb-3">{title}</h4>
-                        <div className="d-flex justify-content-end">
+                        <div className="d-flex justify-content-between">
+                          <h2 className="card-title mb-3">{title}</h2>
+
                           <button
                             className="btn btn-primary"
                             onClick={handleShowModalAddConfigureDetail}
@@ -418,34 +479,48 @@ const Index = () => {
                           </button>
                         </div>
 
-                        <Row className="mt-3">
+                        <Row>
                           {listConfigureDetail.length > 0 && (
                             <Col md="12">
                               {listConfigureDetail.map((d, i) => (
-                                <div className="mb-3" key={i}>
-                                  <Label htmlFor="formrow-firstname-Input">
-                                    {ReplaceToStartUpperCase(d.name)}
-                                  </Label>
-                                  <Input
-                                    value={d.value}
-                                    type="text"
-                                    className="form-control"
-                                    onChange={e => handleChangeInput(e, i)}
-                                  />
-                                </div>
-                              ))}
+                                <Fragment key={i}>
+                                  <hr />
+                                  <div className="mb-4">
+                                    <div className="d-flex justify-content-between align-items-center mb-3">
+                                      <div>
+                                        <Label>
+                                          {ReplaceToStartUpperCase(d.name)}
+                                        </Label>
+                                        <p className="text-muted m-0">
+                                          {d.description}
+                                        </p>
+                                      </div>
 
-                              <div className="d-flex justify-content-end mt-4">
-                                <button
-                                  className="btn btn-warning"
-                                  onClick={() => {
-                                    // setmodal(!modal);
-                                  }}
-                                >
-                                  <i className="fas fa-save"></i> Simpan
-                                  Perubahan
-                                </button>
-                              </div>
+                                      <div>
+                                        <button
+                                          className="btn btn-warning btn-sm"
+                                          onClick={() =>
+                                            handleShowModalEditConfigureDetail(
+                                              d.configure_detail_id
+                                            )
+                                          }
+                                        >
+                                          <i className="fas fa-pencil-alt"></i>{" "}
+                                          Edit Kolom
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                    <Input
+                                      value={d.value}
+                                      type="text"
+                                      className="form-control"
+                                      onChange={e => handleChangeInput(e, i)}
+                                      disabled={true}
+                                    />
+                                  </div>
+                                </Fragment>
+                              ))}
                             </Col>
                           )}
                         </Row>
@@ -509,10 +584,10 @@ const Index = () => {
         </Modal>
       )}
 
-      {modalAddConfigureDetail.isOpen && (
+      {modalConfigureDetail.isOpen && (
         <Modal
-          isOpen={modalAddConfigureDetail.isOpen}
-          title={modalAddConfigureDetail.title}
+          isOpen={modalConfigureDetail.isOpen}
+          title={modalConfigureDetail.title}
           onClose={handleCloseModalConfigureDetail}
           tetxButtonLeft="Batal"
           tetxButtonRight="Simpan"
@@ -525,13 +600,13 @@ const Index = () => {
             <Input
               type="text"
               name="name"
-              value={formAddModalConfigureDetail.name.value}
+              value={formModalConfigureDetail.name.value}
               onChange={handleChangeModalConfigureDetail}
               placeholder="inputkan nama"
             />
-            {formAddModalConfigureDetail.name.error && (
+            {formModalConfigureDetail.name.error && (
               <p className="text-danger">
-                {formAddModalConfigureDetail.name.error}
+                {formModalConfigureDetail.name.error}
               </p>
             )}
           </div>
@@ -541,13 +616,13 @@ const Index = () => {
             <Input
               type="text"
               name="value"
-              value={formAddModalConfigureDetail.value.value}
+              value={formModalConfigureDetail.value.value}
               onChange={handleChangeModalConfigureDetail}
               placeholder="inputkan value"
             />
-            {formAddModalConfigureDetail.value.error && (
+            {formModalConfigureDetail.value.error && (
               <p className="text-danger">
-                {formAddModalConfigureDetail.value.error}
+                {formModalConfigureDetail.value.error}
               </p>
             )}
           </div>
@@ -557,13 +632,13 @@ const Index = () => {
             <Input
               type="text"
               name="description"
-              value={formAddModalConfigureDetail.description.value}
+              value={formModalConfigureDetail.description.value}
               onChange={handleChangeModalConfigureDetail}
               placeholder="inputkan deskripsi"
             />
-            {formAddModalConfigureDetail.description.error && (
+            {formModalConfigureDetail.description.error && (
               <p className="text-danger">
-                {formAddModalConfigureDetail.description.error}
+                {formModalConfigureDetail.description.error}
               </p>
             )}
           </div>

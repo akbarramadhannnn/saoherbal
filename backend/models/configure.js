@@ -50,3 +50,15 @@ exports.getDataConfigureDetailByIdAndConfigureId = async (
   const result = await poolConnection.query(sql);
   return result[0];
 };
+
+exports.getDataConfigureDetailById = async (id) => {
+  const sql = `SELECT * FROM configure_detail WHERE configure_detail_id = '${id}'`;
+  const result = await poolConnection.query(sql);
+  return result[0];
+};
+
+exports.updateDataConfigureDetail = async (id, name, value, description) => {
+  const sql = `UPDATE configure_detail SET name = '${name}', value = '${value}', description = '${description}' WHERE configure_detail_id = ${id}`;
+  const result = await poolConnection.query(sql);
+  return result[0];
+};
