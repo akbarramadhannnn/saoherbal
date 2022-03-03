@@ -298,7 +298,7 @@ const Update = props => {
     <React.Fragment>
       <div className="page-content">
         <MetaTags>
-          <title>Karyawan</title>
+          <title>Update Karyawan | SAO Herbal</title>
         </MetaTags>
         <div className="container-fluid">
           <Breadcrumbs title="Update" breadcrumbItem="Karyawan" />

@@ -101,7 +101,7 @@ const Detail = ({ match }) => {
   return (
     <div className="page-content">
       <MetaTags>
-        <title>Tagihan | Sao</title>
+        <title>Detail Tagihan | SAO Herbal</title>
       </MetaTags>
       <Container fluid>
         <Breadcrumbs title="Tagihan" breadcrumbItem="Detail Tagihan" />

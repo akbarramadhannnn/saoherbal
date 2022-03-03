@@ -393,7 +393,7 @@ const Index = () => {
     <React.Fragment>
       <div className="page-content">
         <MetaTags>
-          <title>Konfigurasi | Sao</title>
+          <title>Konfigurasi | SAO Herbal</title>
         </MetaTags>
         <Container fluid>
           <Breadcrumbs title="" breadcrumbItem="Konfigurasi" />

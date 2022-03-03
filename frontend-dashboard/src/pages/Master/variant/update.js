@@ -111,7 +111,7 @@ const Update = props => {
   return (
     <div className="page-content">
       <MetaTags>
-        <title>Varian</title>
+        <title>Update Varian | SAO Herbal</title>
       </MetaTags>
       <div className="container-fluid">
         <Breadcrumbs title="Edit" breadcrumbItem="Varian" />
