@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { Fragment, useEffect, useCallback } from "react";
+import React, { Fragment, useEffect, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 
 //Simple bar
@@ -12,31 +12,71 @@ import { Link } from "react-router-dom";
 
 //i18n
 import { withTranslation } from "react-i18next";
+import { GeneratePrefixUrl } from "../../../utils/generate";
+
+// List Menu
+import {
+  MenuDashboard,
+  MenuMaster,
+  MenuKonsumen,
+  MenuTransaction,
+  MenuConfigure,
+} from "./ListMenu";
 
 const SidebarContent = props => {
   const selectorAuth = useSelector(({ Auth }) => Auth);
   const position = selectorAuth.user.position;
+  const [contentMenu, setContentMenu] = useState([]);
 
   useEffect(() => {
-    var pathName = props.location.pathname;
+    let arrMenu = [];
+    if (position === "0") {
+      arrMenu = [
+        ...MenuDashboard(position),
+        ...MenuMaster(position),
+        ...MenuKonsumen(position),
+        ...MenuTransaction(position),
+      ];
+    } else if (position === "2") {
+      arrMenu = [
+        ...MenuDashboard(position),
+        ...MenuKonsumen(position),
+        ...MenuTransaction(position),
+      ];
+    } else if (position === "9") {
+      arrMenu = [
+        ...MenuDashboard(position),
+        ...MenuMaster(position),
+        ...MenuKonsumen(position),
+        ...MenuTransaction(position),
+        ...MenuConfigure(position),
+      ];
+    }
+    setContentMenu(arrMenu);
+  }, [position]);
 
-    const initMenu = () => {
-      new MetisMenu("#side-menu");
-      var matchingMenuItem = null;
-      var ul = document.getElementById("side-menu");
-      var items = ul.getElementsByTagName("a");
-      for (var i = 0; i < items.length; ++i) {
-        if (pathName === items[i].pathname) {
-          matchingMenuItem = items[i];
-          break;
+  useEffect(() => {
+    if (contentMenu.length > 0) {
+      var pathName = props.location.pathname;
+
+      const initMenu = () => {
+        var ul = document.getElementById("side-menu");
+        new MetisMenu("#side-menu");
+        var matchingMenuItem = null;
+        var items = ul.getElementsByTagName("a");
+        for (var i = 0; i < items.length; ++i) {
+          if (pathName === items[i].pathname) {
+            matchingMenuItem = items[i];
+            break;
+          }
         }
-      }
-      if (matchingMenuItem) {
-        activateParentDropdown(matchingMenuItem);
-      }
-    };
-    initMenu();
-  }, [props.location.pathname]);
+        if (matchingMenuItem) {
+          activateParentDropdown(matchingMenuItem);
+        }
+      };
+      initMenu();
+    }
+  }, [props.location.pathname, contentMenu]);
 
   const activateParentDropdown = useCallback(item => {
     item.classList.add("active");
@@ -68,14 +108,49 @@ const SidebarContent = props => {
   return (
     <Fragment>
       <div id="sidebar-menu">
-        {position === "0" && (
+        {contentMenu.length > 0 && (
+          <ul className="metismenu list-unstyled" id="side-menu">
+            {contentMenu.map((m, im) => (
+              <Fragment key={im}>
+                {!m.sub.length > 0 && (
+                  <li>
+                    <Link to={m.link}>
+                      <i className={m.icon} />
+                      <span>{m.name}</span>
+                    </Link>
+                  </li>
+                )}
+
+                {m.sub.length > 0 && (
+                  <li>
+                    <Link to="/#" className="has-arrow">
+                      <i className={m.icon} />
+                      <span>{m.name}</span>
+                    </Link>
+                    <ul className="sub-menu" aria-expanded="false">
+                      {m.sub.map((s, is) => (
+                        <li key={is}>
+                          <Link to={s.link}>
+                            <span>{s.name}</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                )}
+              </Fragment>
+            ))}
+          </ul>
+        )}
+        {/* {(position === "0" || position === "9") && (
           <ul className="metismenu list-unstyled" id="side-menu">
             <li>
-              <Link to="/admin/dashboard">
+              <Link to={`${GeneratePrefixUrl(position)}/dashboard`}>
                 <i className="bx bx-home-circle" />
                 <span>{props.t("Dashboard")}</span>
               </Link>
             </li>
+
             <li>
               <Link to="/#" className="has-arrow">
                 <i className="bx bx-data" />
@@ -83,16 +158,24 @@ const SidebarContent = props => {
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/admin/master/category">{props.t("Kategori")}</Link>
+                  <Link to={`${GeneratePrefixUrl(position)}/master/category`}>
+                    {props.t("Kategori")}
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/admin/master/variant">{props.t("Varian")}</Link>
+                  <Link to={`${GeneratePrefixUrl(position)}/master/variant`}>
+                    {props.t("Varian")}
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/admin/master/product">{props.t("Produk")}</Link>
+                  <Link to={`${GeneratePrefixUrl(position)}/master/product`}>
+                    {props.t("Produk")}
+                  </Link>
                 </li>
                 <li>
-                  <Link to="/admin/master/employee">{props.t("Karyawan")}</Link>
+                  <Link to={`${GeneratePrefixUrl(position)}/master/employee`}>
+                    {props.t("Karyawan")}
+                  </Link>
                 </li>
               </ul>
             </li>
@@ -104,43 +187,42 @@ const SidebarContent = props => {
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/admin/konsumen/distributor">
+                  <Link
+                    to={`${GeneratePrefixUrl(position)}/konsumen/distributor`}
+                  >
                     {props.t("Distributor")}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/admin/konsumen/toko">{props.t("Toko")}</Link>
+                  <Link to={`${GeneratePrefixUrl(position)}/konsumen/toko`}>
+                    {props.t("Toko")}
+                  </Link>
                 </li>
               </ul>
             </li>
 
             <li>
-              <Link to="/admin/transaction">
+              <Link to={`${GeneratePrefixUrl(position)}/transaction`}>
                 <i className="bx bx-money" />
                 <span>{props.t("Transaksi")}</span>
               </Link>
             </li>
 
-            <li>
-              <Link to="/admin/configure">
-                <i className="bx bx-cog" />
-                <span>{props.t("Konfigurasi")}</span>
-              </Link>
-            </li>
-
-            {/* <li>
-              <Link to="/admin/tagihan">
-                <i className="bx bx-receipt" />
-                <span>{props.t("Tagihan")}</span>
-              </Link>
-            </li> */}
+            {position === "9" && (
+              <li>
+                <Link to={`${GeneratePrefixUrl(position)}/configure`}>
+                  <i className="bx bx-cog" />
+                  <span>{props.t("Konfigurasi")}</span>
+                </Link>
+              </li>
+            )}
           </ul>
         )}
 
         {position === "2" && (
           <ul className="metismenu list-unstyled" id="side-menu">
             <li>
-              <Link to="/sales/dashboard">
+              <Link to={`${GeneratePrefixUrl(position)}/dashboard`}>
                 <i className="bx bx-home-circle" />
                 <span>{props.t("Dashboard")}</span>
               </Link>
@@ -153,24 +235,28 @@ const SidebarContent = props => {
               </Link>
               <ul className="sub-menu" aria-expanded="false">
                 <li>
-                  <Link to="/sales/konsumen/distributor">
+                  <Link
+                    to={`${GeneratePrefixUrl(position)}/konsumen/distributor`}
+                  >
                     {props.t("Distributor")}
                   </Link>
                 </li>
                 <li>
-                  <Link to="/sales/konsumen/toko">{props.t("Toko")}</Link>
+                  <Link to={`${GeneratePrefixUrl(position)}/konsumen/toko`}>
+                    {props.t("Toko")}
+                  </Link>
                 </li>
               </ul>
             </li>
 
             <li>
-              <Link to="/sales/transaction">
+              <Link to={`${GeneratePrefixUrl(position)}/transaction`}>
                 <i className="bx bx-money" />
                 <span>{props.t("Transaksi")}</span>
               </Link>
             </li>
           </ul>
-        )}
+        )} */}
       </div>
     </Fragment>
   );
