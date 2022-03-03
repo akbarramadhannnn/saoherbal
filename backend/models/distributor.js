@@ -10,7 +10,7 @@ exports.getDataDistributorAll = async (
   let result;
   if (start || limit || search) {
     let sql;
-    if (position === "0") {
+    if (position === "0" || position === "9") {
       sql = `SELECT distributor.distributor_id, distributor.name, email, no_tlp, address, latitude, longitude, distributor_employee_id, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM distributor JOIN provinsi ON distributor.distributor_prov_id = provinsi.provinsi_id JOIN kabupaten ON distributor.distributor_kab_id = kabupaten.kabupaten_id WHERE distributor.name LIKE N? LIMIT ${limit} OFFSET ${start}`;
     } else {
       sql = `SELECT distributor.distributor_id, distributor.name, email, no_tlp, address, latitude, longitude, distributor_employee_id, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM distributor JOIN provinsi ON distributor.distributor_prov_id = provinsi.provinsi_id JOIN kabupaten ON distributor.distributor_kab_id = kabupaten.kabupaten_id WHERE distributor.name LIKE N? AND distributor_employee_id = ${userId} LIMIT ${limit} OFFSET ${start}`;
@@ -18,7 +18,7 @@ exports.getDataDistributorAll = async (
     result = await poolConnection.query(sql, `%${search}%`);
   } else {
     let sql;
-    if (position === "0") {
+    if (position === "0" || position === "9") {
       sql = `SELECT distributor.distributor_id, distributor.name, email, no_tlp, address, latitude, longitude, distributor_employee_id, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM distributor JOIN provinsi ON distributor.distributor_prov_id = provinsi.provinsi_id JOIN kabupaten ON distributor.distributor_kab_id = kabupaten.kabupaten_id`;
     } else {
       sql = `SELECT distributor.distributor_id, distributor.name, email, no_tlp, address, latitude, longitude, distributor_employee_id, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM distributor JOIN provinsi ON distributor.distributor_prov_id = provinsi.provinsi_id JOIN kabupaten ON distributor.distributor_kab_id = kabupaten.kabupaten_id WHERE distributor_employee_id = ${userId}`;
@@ -30,7 +30,7 @@ exports.getDataDistributorAll = async (
 
 exports.getTotalDataDistributor = async (search, userId, position) => {
   let sql;
-  if (position === "0") {
+  if (position === "0" || position === "9") {
     sql = `SELECT COUNT(*) AS total FROM distributor WHERE name LIKE N?`;
   } else {
     sql = `SELECT COUNT(*) AS total FROM distributor WHERE name LIKE N? AND distributor_employee_id = ${userId}`;
