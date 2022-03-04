@@ -93,7 +93,7 @@ const Create = () => {
   return (
     <div className="page-content">
       <MetaTags>
-        <title>Varian</title>
+        <title>Create Varian | SAO Herbal</title>
       </MetaTags>
       <div className="container-fluid">
         <Breadcrumbs title="Tambah" breadcrumbItem="Varian" />

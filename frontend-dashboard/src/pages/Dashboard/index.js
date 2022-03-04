@@ -126,7 +126,7 @@ const Dashboard = () => {
     <React.Fragment>
       <div className="page-content">
         <MetaTags>
-          <title>Dashboard | Sao</title>
+          <title>Dashboard | SAO Herbal</title>
         </MetaTags>
         <Container fluid>
           <Row>

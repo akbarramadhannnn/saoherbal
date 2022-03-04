@@ -22,6 +22,11 @@ export const ApiAddConfigureDetail = async payload => {
   return response;
 };
 
+export const ApiUpdateConfigureDetail = async (id, payload) => {
+  const response = await axios.put(`/configure/detail/${id}`, payload);
+  return response;
+};
+
 // export const ApiUpdateListCategory = async (id, payload) => {
 //   const response = axios.put(`/category/${id}`, payload);
 //   return response;

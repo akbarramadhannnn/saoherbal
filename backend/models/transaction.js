@@ -12,7 +12,7 @@ exports.getDataTransactionAll = async (
     let sql;
     // let sqlStore;
     if (transactionType === "all") {
-      if (position === "0") {
+      if (position === "0" || position === "9") {
         sql = `SELECT transaction_id, distributor_id_transaction, store_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, total_paid_price, total_bill_price, subtotal_price, status, transaction.created_at, store.store_id AS storeId, distributor.distributor_id AS distributorId FROM transaction LEFT JOIN distributor ON transaction.distributor_id_transaction = distributor.distributor_id LEFT JOIN store ON transaction.store_id_transaction = store.store_id WHERE status = '1' AND (distributor.name LIKE N'%${search}%' OR store.name LIKE N'%${search}%') GROUP BY transaction.transaction_id LIMIT ${limit} OFFSET ${start}`;
       } else {
         sql = `SELECT transaction_id, distributor_id_transaction, store_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, total_paid_price, total_bill_price, subtotal_price, status, transaction.created_at, store.store_id AS storeId, distributor.distributor_id AS distributorId FROM transaction LEFT JOIN distributor ON transaction.distributor_id_transaction = distributor.distributor_id LEFT JOIN store ON transaction.store_id_transaction = store.store_id WHERE employee_id_transaction = ${userId} AND status = '1' AND (distributor.name LIKE N'%${search}%' OR store.name LIKE N'%${search}%') GROUP BY transaction.transaction_id LIMIT ${limit} OFFSET ${start}`;
@@ -21,7 +21,7 @@ exports.getDataTransactionAll = async (
       // sqlDistributor = `SELECT transaction_id, distributor_id_transaction, store_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, total_paid_price, total_bill_price, subtotal_price, status, transaction.created_at, JSON_OBJECT('consumer_id', distributor.distributor_id, 'name', distributor.name, 'latitude', distributor.latitude, 'longitude', distributor.longitude) AS consumer FROM transaction INNER JOIN distributor ON transaction.distributor_id_transaction = distributor.distributor_id WHERE distributor.name LIKE N? AND status = '1' GROUP BY transaction.transaction_id LIMIT ${limit} OFFSET ${start}`;
       // sqlStore = `SELECT transaction_id, distributor_id_transaction, store_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, total_paid_price, total_bill_price, subtotal_price, status, transaction.created_at, JSON_OBJECT('consumer_id', store.store_id, 'name', store.name, 'latitude', store.latitude, 'longitude', store.longitude) AS consumer FROM transaction INNER JOIN store ON transaction.store_id_transaction = store.store_id WHERE store.name LIKE N? AND status = '1' GROUP BY transaction.transaction_id LIMIT ${limit} OFFSET ${start}`;
     } else {
-      if (position === "0") {
+      if (position === "0" || position === "9") {
         sql = `SELECT transaction_id, distributor_id_transaction, store_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, total_paid_price, total_bill_price, subtotal_price, status, transaction.created_at, store.store_id AS storeId, distributor.distributor_id AS distributorId FROM transaction LEFT JOIN distributor ON transaction.distributor_id_transaction = distributor.distributor_id LEFT JOIN store ON transaction.store_id_transaction = store.store_id WHERE transaction_type = '${transactionType}' AND status = '0' AND (distributor.name LIKE N'%${search}%' OR store.name LIKE N'%${search}%') GROUP BY transaction.transaction_id LIMIT ${limit} OFFSET ${start}`;
       } else {
         sql = `SELECT transaction_id, distributor_id_transaction, store_id_transaction, bill_number_engineer_transaction, employee_id_transaction, code, consumer_type, transaction_type, total_paid_price, total_bill_price, subtotal_price, status, transaction.created_at, store.store_id AS storeId, distributor.distributor_id AS distributorId FROM transaction LEFT JOIN distributor ON transaction.distributor_id_transaction = distributor.distributor_id LEFT JOIN store ON transaction.store_id_transaction = store.store_id WHERE employee_id_transaction = ${userId} AND transaction_type = '${transactionType}' AND status = '0' AND (distributor.name LIKE N'%${search}%' OR store.name LIKE N'%${search}%') GROUP BY transaction.transaction_id LIMIT ${limit} OFFSET ${start}`;
@@ -55,7 +55,7 @@ exports.getTotalDataTransaction = async (
   let sqlDistributor;
   let sqlStore;
   if (transactionType === "all") {
-    if (position === "0") {
+    if (position === "0" || position === "9") {
       sqlDistributor = `SELECT distributor.name AS name FROM transaction INNER JOIN distributor ON transaction.distributor_id_transaction = distributor.distributor_id WHERE name LIKE N? AND status = '1'`;
       sqlStore = `SELECT store.name AS name FROM transaction INNER JOIN store ON transaction.store_id_transaction = store.store_id WHERE name LIKE N? AND status = '1'`;
     } else {
@@ -63,7 +63,7 @@ exports.getTotalDataTransaction = async (
       sqlStore = `SELECT store.name AS name FROM transaction INNER JOIN store ON transaction.store_id_transaction = store.store_id WHERE name LIKE N? AND employee_id_transaction = ${userId} AND status = '1'`;
     }
   } else {
-    if (position === "0") {
+    if (position === "0" || position === "9") {
       sqlDistributor = `SELECT distributor.name AS name FROM transaction INNER JOIN distributor ON transaction.distributor_id_transaction = distributor.distributor_id WHERE name LIKE N? AND transaction_type = '${transactionType}' AND status = '0'`;
       sqlStore = `SELECT store.name AS name FROM transaction INNER JOIN store ON transaction.store_id_transaction = store.store_id WHERE name LIKE N? AND transaction_type = '${transactionType}' AND status = '0'`;
     } else {

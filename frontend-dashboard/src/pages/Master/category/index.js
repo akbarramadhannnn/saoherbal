@@ -256,7 +256,7 @@ const Index = ({ history }) => {
   return (
     <div className="page-content">
       <MetaTags>
-        <title>Kategori</title>
+        <title>Kategori | SAO Herbal</title>
       </MetaTags>
       <div className="container-fluid">
         <Breadcrumbs title="Master" breadcrumbItem="Kategori" />

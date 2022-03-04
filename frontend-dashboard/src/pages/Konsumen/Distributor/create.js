@@ -212,7 +212,7 @@ const Create = () => {
     <React.Fragment>
       <div className="page-content">
         <MetaTags>
-          <title>Distributor</title>
+          <title>Create Distributor | SAO Herbal</title>
         </MetaTags>
         <div className="container-fluid">
           <Breadcrumbs title="Tambah" breadcrumbItem="Distributor" />

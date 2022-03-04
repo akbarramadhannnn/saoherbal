@@ -6,6 +6,8 @@ const {
   getDataConfigureById,
   getDataConfigureDetailAll,
   getDataConfigureDetailByIdAndConfigureId,
+  getDataConfigureDetailById,
+  updateDataConfigureDetail,
 } = require("../models/configure");
 const Response = require("../helpers/response");
 
@@ -117,6 +119,45 @@ exports.getAllConfigureDetail = async (req, res) => {
     return res.json(
       Response(true, 200, `Get Configure Detail Successfully`, {
         data: result,
+      })
+    );
+  } catch (err) {
+    console.log("errr", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
+};
+
+exports.updateConfigureDetail = async (req, res) => {
+  let { configureId, name, value, description } = req.body;
+  let { id } = req.params;
+  try {
+    const resultConfigure = await getDataConfigureById(configureId);
+    if (!resultConfigure.length > 0) {
+      return res.json(
+        Response(false, 400, `Configure Id Not Found`, {
+          name: "configureId",
+        })
+      );
+    }
+
+    const resultConfigureDetail = await getDataConfigureDetailById(id);
+    if (!resultConfigureDetail.length > 0) {
+      return res.json(
+        Response(false, 400, `Configure Detail Id Not Found`, {
+          name: "configureDetailId",
+        })
+      );
+    }
+
+    await updateDataConfigureDetail(id, name, value, description);
+    const resultGet = await getDataConfigureDetailByIdAndConfigureId(
+      id,
+      configureId
+    );
+    return res.json(
+      Response(true, 201, `Updated Configure Detail Successfully`, {
+        data: resultGet[0],
       })
     );
   } catch (err) {

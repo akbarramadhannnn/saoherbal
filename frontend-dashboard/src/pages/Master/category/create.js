@@ -70,7 +70,7 @@ const Create = () => {
   return (
     <div className="page-content">
       <MetaTags>
-        <title>Kategori</title>
+        <title>Create Kategori | SAO Herbal</title>
       </MetaTags>
       <div className="container-fluid">
         <Breadcrumbs title="Tambah" breadcrumbItem="Kategori" />

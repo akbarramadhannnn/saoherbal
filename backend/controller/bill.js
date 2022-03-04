@@ -5,6 +5,7 @@ const {
   getDataDetailByBillNumber,
   getDataBillEngineerByBillNumber,
   updateStatusPaymentBillEngineer,
+  getBillNumberByBillNumber,
 } = require("../models/bill_engineer");
 const Response = require("../helpers/response");
 const { getFirstDayDate, getLastDayDate } = require("../utils/date");
@@ -44,8 +45,15 @@ exports.addBill = async (req, res) => {
       const billNumber = `${moment(getFirstDayDate()).format(
         "YYYYMMDD"
       )}${moment(getLastDayDate()).format("YYYYMMDD")}`;
+
+      let result = await getBillNumberByBillNumber(billNumber);
+      if (result.length > 0) {
+        return res.json(Response(true, 400, `Bill Number Already`, {}));
+      }
+
       const convertFirstDay = moment(getFirstDayDate()).format("YYYY-MM-DD");
       const convertLastDay = moment(getLastDayDate()).format("YYYY-MM-DD");
+
       await addDataBillEngineer(billNumber, convertFirstDay, convertLastDay);
       return res.json(
         Response(true, 201, `Added Bill ${type} Successfully`, {})

@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Route, Redirect } from "react-router-dom";
+import { GeneratePrefixUrl } from "../utils/generate";
 
 const NonAuthmiddleware = ({
   component: Component,
@@ -11,25 +12,14 @@ const NonAuthmiddleware = ({
   <Route
     render={props => {
       if (isAuth === true) {
-        if (position === "0") {
-          return (
-            <Redirect
-              to={{
-                pathname: "/admin/dashboard",
-                state: { from: props.location },
-              }}
-            />
-          );
-        } else if (position === "2") {
-          return (
-            <Redirect
-              to={{
-                pathname: "/sales/dashboard",
-                state: { from: props.location },
-              }}
-            />
-          );
-        }
+        return (
+          <Redirect
+            to={{
+              pathname: `${GeneratePrefixUrl(position)}/dashboard`,
+              state: { from: props.location },
+            }}
+          />
+        );
       }
 
       if (isAuth === "") {

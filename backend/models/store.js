@@ -4,7 +4,7 @@ exports.getDataStoreAll = async (start, limit, search, userId, position) => {
   let result;
   if (start || limit || search) {
     let sql;
-    if (position === "0") {
+    if (position === "0" || position === "9") {
       sql = `SELECT store.store_id, store.name, email, no_tlp, address, latitude, longitude, store_employee_id, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM store JOIN provinsi ON store.store_prov_id = provinsi.provinsi_id JOIN kabupaten ON store.store_kab_id = kabupaten.kabupaten_id WHERE store.name LIKE N? LIMIT ${limit} OFFSET ${start}`;
     } else {
       sql = `SELECT store.store_id, store.name, email, no_tlp, address, latitude, longitude, store_employee_id, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM store JOIN provinsi ON store.store_prov_id = provinsi.provinsi_id JOIN kabupaten ON store.store_kab_id = kabupaten.kabupaten_id WHERE store.name LIKE N? AND store_employee_id = ${userId} LIMIT ${limit} OFFSET ${start}`;
@@ -12,7 +12,7 @@ exports.getDataStoreAll = async (start, limit, search, userId, position) => {
     result = await poolConnection.query(sql, `%${search}%`);
   } else {
     let sql;
-    if (position === "0") {
+    if (position === "0" || position === "9") {
       sql = `SELECT store.store_id, store.name, email, no_tlp, address, latitude, longitude, store_employee_id, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM store JOIN provinsi ON store.store_prov_id = provinsi.provinsi_id JOIN kabupaten ON store.store_kab_id = kabupaten.kabupaten_id`;
     } else {
       sql = `SELECT store.store_id, store.name, email, no_tlp, address, latitude, longitude, store_employee_id, JSON_OBJECT('provinsi_id', provinsi.provinsi_id, 'name', provinsi.name) AS provinsi, JSON_OBJECT('kabupaten_id', kabupaten.kabupaten_id, 'name', kabupaten.name) AS kabupaten FROM store JOIN provinsi ON store.store_prov_id = provinsi.provinsi_id JOIN kabupaten ON store.store_kab_id = kabupaten.kabupaten_id WHERE store_employee_id = ${userId}`;
@@ -24,7 +24,7 @@ exports.getDataStoreAll = async (start, limit, search, userId, position) => {
 
 exports.getTotalDataStore = async (search, userId, position) => {
   let sql;
-  if (position === "0") {
+  if (position === "0" || position === "9") {
     sql = `SELECT COUNT(*) AS total FROM store WHERE name LIKE N?`;
   } else {
     sql = `SELECT COUNT(*) AS total FROM store WHERE name LIKE N? AND store_employee_id = ${userId}`;

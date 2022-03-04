@@ -709,7 +709,7 @@ const DetailTransaction = props => {
   return (
     <div className="page-content">
       <MetaTags>
-        <title>Detail Transaksi</title>
+        <title>Detail Transaksi | SAO Herbal</title>
       </MetaTags>
       <div className="container-fluid">
         <Breadcrumbs title="Detail" breadcrumbItem="Transaksi" />

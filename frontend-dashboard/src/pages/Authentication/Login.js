@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
+import MetaTags from "react-meta-tags";
 import { Card, CardBody, Col, Container, Row, Label, Input } from "reactstrap";
 
 import { Link } from "react-router-dom";
@@ -89,6 +90,9 @@ const Login = () => {
 
   return (
     <div className="account-pages my-5 pt-sm-5">
+      <MetaTags>
+        <title>Login | SAO Herbal</title>
+      </MetaTags>
       <Container>
         <Row className="justify-content-center">
           <Col md={8} lg={6} xl={5}>

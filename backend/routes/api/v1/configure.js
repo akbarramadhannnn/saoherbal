@@ -4,12 +4,14 @@ const { getToken } = require("../../../middleware/auth");
 const {
   validationAddConfigure,
   validationAddConfigureDetail,
+  validationUpdateConfigureDetail,
 } = require("../../../middleware/validation/configure");
 const {
   getConfigureListAll,
   addConfigure,
   addConfigureDetail,
   getAllConfigureDetail,
+  updateConfigureDetail,
 } = require("../../../controller/configure");
 
 router.get("/", getToken, getConfigureListAll);
@@ -21,6 +23,13 @@ router.post(
   validationAddConfigureDetail,
   RunValidation,
   addConfigureDetail
+);
+router.put(
+  "/detail/:id",
+  getToken,
+  validationUpdateConfigureDetail,
+  RunValidation,
+  updateConfigureDetail
 );
 // router.put(
 //   "/:id",

@@ -287,7 +287,7 @@ const Create = () => {
     <React.Fragment>
       <div className="page-content">
         <MetaTags>
-          <title>Karyawan</title>
+          <title>Create Karyawan | SAO Herbal</title>
         </MetaTags>
         <div className="container-fluid">
           <Breadcrumbs title="Tambah" breadcrumbItem="Karyawan" />
