@@ -14,3 +14,19 @@ a {
 * {
   box-sizing: border-box;
 }
+
+
+.btn{
+  background-color: #fcbe11;
+  border-radius: 10px;
+}
+
+.accordion-wrapper .accordion__panel{
+        padding: 17px 54px 17px 40px !important;
+}
+
+/* font awesome */
+
+.icon-down{
+  color: "white"
+}

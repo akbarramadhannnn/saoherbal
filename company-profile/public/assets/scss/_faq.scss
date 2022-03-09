@@ -92,3 +92,55 @@
 	}
 .question-collapse  .btn-link.collapsed{border:none;}
 .question-collapse .card .card-header .btn-link::after {display:none;}
+
+
+// replace from about
+/* 4. About */
+
+.faq-us-area {
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+/* style-2 */
+.about-shape {
+    position: relative;
+}
+.about-shape::before {
+    background-image: url("../img/about/shape.png");
+    background-repeat: no-repeat;
+    content: "";
+    height: 260px;
+    position: absolute;
+    transition: all 0.3s ease 0s;
+    width: 239px;
+    right: 291px;
+    bottom: 59px;
+}
+
+.faq-img {
+    padding-left: 70px;
+}
+.faq-img img {
+    width: 100%;
+}
+.faq-info {
+    margin-top: 63px;
+}
+.faq-info h1 {
+    font-size: 48px;
+    line-height: 50px;
+    font-weight: 300;
+    margin-bottom: 34px;
+}
+.faq-info span {
+    font-size: 22px;
+    color: #7b8e9d;
+    text-transform: uppercase;
+    letter-spacing: 6px;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+.faq-info p {
+    margin-bottom: 0;
+}

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import BurgerMenus from "./BurgerMenus";
-// import TopHeader from "./TopBar";
 import Sidebar from "./Sidebar";
 import SearchBar from "./SearchBar";
 import Image from "next/image";
@@ -22,51 +21,52 @@ const Header = () => {
   return (
     <React.Fragment>
       <header className="header-transparent" id="header-wrap">
-        {/* <TopHeader /> */}
-
         <div id="sticky-header" className="main-menu-area">
           <div className="container">
             <div className="row align-items-center">
               <div className="col-xl-2 col-lg-2 col-md-4 col-6">
                 <div className="logo">
                   <Link href="/" as="/">
-                    <a>
-                      <Image
+                    <h3 className="text-white">
+                      {/* <Image
                         className="standard-logo"
                         src={require("../../public/assets/img/logo/logo.png")}
-                        alt="logo"
-                      />                      
-                    </a>
+                        alt="logo" */}
+                      SAO Herbal
+                    </h3>
                   </Link>
                 </div>
               </div>
               <div className="col-xl-10 col-lg-10 d-none d-xl-block d-lg-block">
-                <div className="header-right f-right">                  
-                </div>
+                <div className="header-right f-right"></div>
                 <div className="main-menu text-right f-right">
                   <nav id="mobile-menu">
                     <ul>
-                      <li>
+                      <li className={path === "/" ? "active" : ""}>
                         <Link href="/" as="/">
-                          <a>Home</a>
+                          <a className="text-white">Home</a>
                         </Link>
-                        
                       </li>
                       <li className={path === "/katalog" ? "active" : ""}>
                         <Link href="/katalog" as="/katalog">
-                          <a>Katalog</a>
+                          <a className="text-white">Katalog</a>
                         </Link>
                       </li>
                       <li className={path === "/tentang" ? "active" : ""}>
                         <Link href="/tentang" as="/tentang">
-                          <a>Tentang</a>
+                          <a className="text-white">Tentang</a>
                         </Link>
                       </li>
                       <li className={path === "/kontak" ? "active" : ""}>
                         <Link href="/kontak" as="/kontak">
-                          <a>Kontak</a>
+                          <a className="text-white">Kontak</a>
                         </Link>
-                      </li>                     
+                      </li>
+                      <li className={path === "/pertanyaan" ? "active" : ""}>
+                        <Link href="/pertanyaan" as="/pertanyaan">
+                          <a className="text-white">Pertanyaan</a>
+                        </Link>
+                      </li>
                     </ul>
                   </nav>
                 </div>

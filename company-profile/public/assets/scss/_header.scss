@@ -128,8 +128,8 @@
 	color: #374d5f;
 }
 .header-right ul li a:hover,.header-right ul li.active a {
-	background: #408858;
-	color: #fff;
+	background: #408858 ;
+	color: #fff ;
 	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.3);
 }
 
@@ -228,8 +228,11 @@
 	line-height: 1;
 	position: relative;
 }
-.main-menu nav > ul > li:hover > a, .main-menu nav > ul > li.active > a {
-	color: #112433;
+.main-menu nav > ul > li:hover > a{
+	color: #FFC300 !important;
+}
+.main-menu nav > ul > li.active > a {
+	color: #FFC300 !important;
 }
 /* sub-menu */
 .main-menu nav > ul > li .sub-menu {

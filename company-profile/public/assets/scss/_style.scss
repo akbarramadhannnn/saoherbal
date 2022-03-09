@@ -174,21 +174,21 @@ label {
     font-size: 14px;
     font-weight: 500;
     line-height: 1;
-    padding: 22px 45px;
+    padding: 16px 45px;
     position: relative;
     text-transform: capitalize;
     transform: perspective(1px) translateZ(0px);
     transition: 0.3s;
     vertical-align: middle;
-    background: #408858;
-    border-radius: 0;
+    background: #FFB72C;
+    border-radius: 20px !important;
     border: none;
 }
 .btn:hover {
     color: #fff;
 }
 .btn::before {
-    background: #fab522;
+    background: #FFD365;
     bottom: 0;
     content: "";
     left: 0;
@@ -201,10 +201,10 @@ label {
     transition-property: transform;
     transition-timing-function: ease-out;
     z-index: -1;
-    border-radius: 0;
+    border-radius: 20px !important;
 }
 .btn:hover::before {
-    transform: scaley(1);
+    // transform: scaley(1);
 }
 .breadcrumb > .active {
     color: #888;

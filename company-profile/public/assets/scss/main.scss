@@ -154,15 +154,15 @@
     outline: none;
     padding: 15px 45px 17px 40px;
     cursor: pointer;
-    background: #fff;
+    background: #65C18C;
     position: relative;
 }
 
 .accordion__heading .accordion__button h5 {
     margin: 0;
     font-size: 24px;
-    font-weight: 300;
-    color: #112433;
+    font-weight: 400;
+    color: #fafafa;
 }
 
 .accordion__heading .accordion__button:before{
@@ -192,4 +192,8 @@
 .accordion-wrapper .accordion__panel {
     padding: 0 54px 17px 40px;
     background: #fff;
+    box-shadow: 0px 4px 10px -5px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 4px 10px -5px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 4px 10px -5px rgba(0,0,0,0.75);
+    // box-shadow: 0 5px 4px -3px grey;
 }

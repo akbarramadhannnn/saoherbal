@@ -1,16 +1,19 @@
 import React from "react";
+import Head from "next/head";
 import Header from "./Header/Header";
+import Footer from "./Footer/Footer";
 import HeaderStyleTwo from "./Header/HeaderStyleTwo";
 import { useRouter } from "next/router";
+import FooterStyleTwo from "./Footer/FooterStyleTwo";
 
 const Index = (props) => {
   const router = useRouter();
 
   return (
-    <div>
+    <div>      
       {router.pathname === "/" ? <Header /> : <HeaderStyleTwo />}
-
       {props.children}
+      <Footer />
     </div>
   );
 };
