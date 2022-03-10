@@ -71,7 +71,7 @@ const Footer = () => {
                 <div className="copyright text-center">
                   <p>
                     Copyright <FontAwesomeIcon icon={["far", "copyright"]} />
-                    2022 PT.Serat Alam Organik Herbal
+                    2022 PT Serat Alam Organik Herbal
                   </p>
                 </div>
               </div>
