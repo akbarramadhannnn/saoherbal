@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import shape1 from "../../../public/static/assets/img/shape/1.png";
 import feature1 from "../../../public/static/assets/img/features/1.png";
