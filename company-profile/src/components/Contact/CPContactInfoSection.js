@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Image from "next/image";
-import shapeC from "../../public/assets/img/shape/c.png";
+import shapeC from "../../../public/assets/img/shape/c.png";
 
 class CPContactInfoSection extends Component {
   render() {

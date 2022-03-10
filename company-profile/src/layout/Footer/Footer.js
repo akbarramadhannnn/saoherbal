@@ -1,7 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import ShapeF from "../../public/assets/img/shape/f.png";
+import ShapeF from "../../../public/assets/img/shape/f.png";
 
 const Footer = () => {
   return (
