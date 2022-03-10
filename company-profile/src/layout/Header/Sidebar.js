@@ -14,7 +14,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
       <div className="logo-side mb-30">
         <a href="#">
           <img
-            src={require("../../../public/assets/img/logo/logo-white.png")}
+            src={require("../../../public/static/assets/img/logo/logo-white.png")}
             alt="logo"
           />
         </a>
@@ -38,37 +38,37 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
       <div className="instagram">
         <a href="#">
           <img
-            src={require("../../../public/assets/img/gallery/gallery1.jpg")}
+            src={require("../../../public/static/assets/img/gallery/gallery1.jpg")}
             alt="gallery"
           />
         </a>
         <a href="#">
           <img
-            src={require("../../../public/assets/img/gallery/gallery2.jpg")}
+            src={require("../../../public/static/assets/img/gallery/gallery2.jpg")}
             alt="gallery"
           />
         </a>
         <a href="#">
           <img
-            src={require("../../../public/assets/img/gallery/gallery3.jpg")}
+            src={require("../../../public/static/assets/img/gallery/gallery3.jpg")}
             alt="gallery"
           />
         </a>
         <a href="#">
           <img
-            src={require("../../../public/assets/img/gallery/gallery4.jpg")}
+            src={require("../../../public/static/assets/img/gallery/gallery4.jpg")}
             alt="gallery"
           />
         </a>
         <a href="#">
           <img
-            src={require("../../../public/assets/img/gallery/gallery5.jpg")}
+            src={require("../../../public/static/assets/img/gallery/gallery5.jpg")}
             alt="gallery"
           />
         </a>
         <a href="#">
           <img
-            src={require("../../../public/assets/img/gallery/gallery6.jpg")}
+            src={require("../../../public/static/assets/img/gallery/gallery6.jpg")}
             alt="gallery"
           />
         </a>

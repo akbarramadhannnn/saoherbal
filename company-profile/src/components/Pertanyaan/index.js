@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import feature3 from "../../../public/assets/img/about/2.jpg";
+import feature3 from "../../../public/static/assets/img/about/2.jpg";
 import Image from "next/image";
 
 import {

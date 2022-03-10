@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import Image from "next/image";
-import shape1 from "../../../public/assets/img/shape/1.png";
-import icon1 from "../../../public/assets/img/icon/icon1.png";
-import icon2 from "../../../public/assets/img/icon/icon2.png";
-import icon3 from "../../../public/assets/img/icon/icon3.png";
+import shape1 from "../../../public/static/assets/img/shape/1.png";
+import icon1 from "../../../public/static/assets/img/icon/icon1.png";
+import icon2 from "../../../public/static/assets/img/icon/icon2.png";
+import icon3 from "../../../public/static/assets/img/icon/icon3.png";
 
 class ApWhatWeDo2Section extends Component {
   render() {

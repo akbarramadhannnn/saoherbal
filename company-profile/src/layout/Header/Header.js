@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import BurgerMenus from "./BurgerMenus";
 import Sidebar from "./Sidebar";
 import SearchBar from "./SearchBar";
-import Image from "next/image";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);

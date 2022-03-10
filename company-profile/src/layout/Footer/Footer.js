@@ -1,14 +1,14 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import ShapeF from "../../../public/assets/img/shape/f.png";
+import ShapeF from "../../../public/static/assets/img/shape/f.png";
 
 const Footer = () => {
   return (
     <footer>
       <div
         className="footer-area pt-200"
-        style={{ backgroundImage: `url(${"assets/img/bg/bg6.jpg"})` }}
+        style={{ backgroundImage: `url(${"static/assets/img/bg/bg6.jpg"})` }}
       >
         <div className="container">
           <div className="footer-bg pb-50">

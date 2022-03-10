@@ -1,8 +1,8 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import shapef2 from "../../../public/assets/img/shape/f2.png";
-import footerImg from "../../../public/assets/img/footer/1.jpg";
+import shapef2 from "../../../public/static/assets/img/shape/f2.png";
+import footerImg from "../../../public/static/assets/img/footer/1.jpg";
 
 const FooterStyleTwo = () => {
   return (

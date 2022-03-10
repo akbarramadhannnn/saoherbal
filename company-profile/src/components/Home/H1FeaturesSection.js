@@ -1,9 +1,10 @@
 import React, { Component } from "react";
+import Link from "next/link";
 import Image from "next/image";
-import shape1 from "../../../public/assets/img/shape/1.png";
-import feature1 from "../../../public/assets/img/features/1.png";
-import feature2 from "../../../public/assets/img/features/2.png";
-import feature3 from "../../../public/assets/img/features/3.png";
+import shape1 from "../../../public/static/assets/img/shape/1.png";
+import feature1 from "../../../public/static/assets/img/features/1.png";
+import feature2 from "../../../public/static/assets/img/features/2.png";
+import feature3 from "../../../public/static/assets/img/features/3.png";
 
 
 class H1FeaturesSection extends Component {

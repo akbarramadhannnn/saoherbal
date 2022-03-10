@@ -28,7 +28,7 @@ const SliderDefault = () => {
       </button>
     );
   }
- 
+
   return (
     <div className="slider-area">
       <div className="single-slider">
@@ -36,20 +36,28 @@ const SliderDefault = () => {
           className="slider-height  d-flex align-items-center"
           // style={{ ...sliderImg }}
           style={{
-            backgroundImage: `url(${"assets/img/bg/bg9.jpg"})`,
-            backgroundRepeat: 'no-repeat'           
+            backgroundImage: `url(${"static/assets/img/bg/bg9.jpg"})`,
+            backgroundRepeat: "no-repeat",
           }}
         >
           <div className="container">
             <div className="row ">
               <div className="col-xl-12">
                 <div className="slider-content mt-85 ">
-                  <h1 data-animation="fadeInUp" data-delay=".6s" className="text-white">
+                  <h1
+                    data-animation="fadeInUp"
+                    data-delay=".6s"
+                    className="text-white"
+                  >
                     SAO Herbal Is <br /> Good For Plants
                   </h1>
-                  <p data-animation="fadeInUp" data-delay=".8s" className="text-white">
+                  <p
+                    data-animation="fadeInUp"
+                    data-delay=".8s"
+                    className="text-white"
+                  >
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                    sed do eiu  smod tempor incididunt ut labore et dolore magna
+                    sed do eiu smod tempor incididunt ut labore et dolore magna
                     aliqua. Ut enim ad minim veniam, quis nostrud exercitation
                     ullamco.
                   </p>

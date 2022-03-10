@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import Image from "next/image";
-import whyShape from "../../../public/assets/img/shape/why-shape.png";
-import chooseImage1 from "../../../public/assets/img/Choose/01.jpg";
-import icon1 from "../../../public/assets/img/icon/1.png";
-import icon2 from "../../../public/assets/img/icon/2.png";
-import icon3 from "../../../public/assets/img/icon/3.png";
+import whyShape from "../../../public/static/assets/img/shape/why-shape.png";
+import chooseImage1 from "../../../public/static/assets/img/Choose/01.jpg";
+import icon1 from "../../../public/static/assets/img/icon/1.png";
+import icon2 from "../../../public/static/assets/img/icon/2.png";
+import icon3 from "../../../public/static/assets/img/icon/3.png";
 
 class H1ChooseUsSection extends Component {
   render() {

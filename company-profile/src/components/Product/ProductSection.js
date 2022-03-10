@@ -2,17 +2,15 @@ import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Link from "next/link";
-import shape1 from "../../../public/assets/img/shape/shape1.png";
-import shape2 from "../../../public/assets/img/shape/shape2.png";
-import shape3 from "../../../public/assets/img/shape/shape3.png";
-import shape4 from "../../../public/assets/img/shape/shape4.png";
-import shapeimage1 from "../../../public/assets/img/shape/1.png";
-import product1 from "../../../public/assets/img/product/product1.jpg";
-import product2 from "../../../public/assets/img/product/product2.jpg";
-import product3 from "../../../public/assets/img/product/product3.jpg";
-import product4 from "../../../public/assets/img/product/product4.jpg";
-
-
+import shape1 from "../../../public/static/assets/img/shape/shape1.png";
+import shape2 from "../../../public/static/assets/img/shape/shape2.png";
+import shape3 from "../../../public/static/assets/img/shape/shape3.png";
+import shape4 from "../../../public/static/assets/img/shape/shape4.png";
+import shapeimage1 from "../../../public/static/assets/img/shape/1.png";
+import product1 from "../../../public/static/assets/img/product/product1.jpg";
+import product2 from "../../../public/static/assets/img/product/product2.jpg";
+import product3 from "../../../public/static/assets/img/product/product3.jpg";
+import product4 from "../../../public/static/assets/img/product/product4.jpg";
 import Image from "next/image";
 
 class ProductSection extends Component {
