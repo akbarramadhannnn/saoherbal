@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Image from "next/image";
 import WhyShape from "../../../public/static/assets/img/shape/why-shape.png";
-import Choose01 from "../../../public/static/assets/img/Choose/01.jpg";
+import Choose01 from "../../../public/static/assets/img/choose/01.jpg";
 import Icon1 from "../../../public/static/assets/img/icon/1.png";
 import Icon2 from "../../../public/static/assets/img/icon/2.png";
 import Icon3 from "../../../public/static/assets/img/icon/3.png";
@@ -17,10 +17,6 @@ class H1ChooseUsSection extends Component {
           <div className="row">
             <div className="col-xl-7 col-lg-12">
               <div className="choose-img mb-30">
-                {/* <img
-                  src={require("")}
-                  alt="picture"
-                /> */}
                 <Image src={Choose01} alt="shape" />
               </div>
             </div>
@@ -36,7 +32,6 @@ class H1ChooseUsSection extends Component {
                 </div>
                 <div className="choose-content mb-40">
                   <div className="choose-us-img">
-                    {/* <img src={require('../../../public/static/assets/img/icon/1.png')} alt="picture" /> */}
                     <Image src={Icon1} alt="Icon 1" />
                   </div>
                   <div className="choose-text">
@@ -49,7 +44,6 @@ class H1ChooseUsSection extends Component {
                 </div>
                 <div className="choose-content mb-40">
                   <div className="choose-us-img">
-                    {/* <img src={require('../../../public/static/assets/img/icon/2.png')} alt="picture" /> */}
                     <Image src={Icon2} alt="Icon 1" />
                   </div>
                   <div className="choose-text">
@@ -62,7 +56,6 @@ class H1ChooseUsSection extends Component {
                 </div>
                 <div className="choose-content">
                   <div className="choose-us-img">
-                    {/* <img src={require('../../../public/static/assets/img/icon/3.png')} alt="picture" /> */}
                     <Image src={Icon3} alt="Icon 1" />
                   </div>
                   <div className="choose-text">
