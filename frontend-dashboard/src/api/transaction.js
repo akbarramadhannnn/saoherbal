@@ -39,9 +39,9 @@ export const ApiAddTransactionTitipDetail = async payload => {
   return response;
 };
 
-export const ApiGetTransactionTotalSaleProduct = async (years, month) => {
+export const ApiGetTransactionTotalSaleProduct = async (periodType, years, month) => {
   const response = await axios.get(
-    `/transaction/total-sale-product?periodType=monthly&years=${years}&month=${month}`
+    `/transaction/total-sale-product?periodType=${periodType}&years=${years}&month=${month}`
   );
   return response;
 };

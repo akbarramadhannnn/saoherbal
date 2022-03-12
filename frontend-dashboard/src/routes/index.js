@@ -7,7 +7,8 @@ import Logout from "../pages/Authentication/Logout";
 
 // List Route
 import {
-  RouteListDashboard,
+  RouteListDashboardAdmin,
+  RouteListDashboardSales,
   RouteListProfile,
   RouteListCategory,
   RouteListVariant,
@@ -28,7 +29,7 @@ const authProtectedRoutes = selectorAuth => {
     const position = selectorAuth.user.position;
     if (position === "0") {
       result = [
-        ...RouteListDashboard(position),
+        ...RouteListDashboardAdmin(position),
         ...RouteListProfile(position),
         ...RouteListCategory(position),
         ...RouteListVariant(position),
@@ -42,7 +43,7 @@ const authProtectedRoutes = selectorAuth => {
       ];
     } else if (position === "9") {
       result = [
-        ...RouteListDashboard(position),
+        ...RouteListDashboardAdmin(position),
         ...RouteListProfile(position),
         ...RouteListCategory(position),
         ...RouteListVariant(position),
@@ -57,7 +58,7 @@ const authProtectedRoutes = selectorAuth => {
       ];
     } else if (position === "2") {
       result = [
-        ...RouteListDashboard(position),
+        ...RouteListDashboardSales(position),
         ...RouteListDistributor(position),
         ...RouteListToko(position),
         ...RouteListTransaction(position),

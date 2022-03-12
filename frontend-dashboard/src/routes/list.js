@@ -4,7 +4,8 @@ import { Redirect } from "react-router-dom";
 import UserProfile from "../pages/Authentication/UserProfile";
 
 // Dashboard
-import Dashboard from "../pages/Dashboard/index";
+import DashboardAdmin from "../pages/Dashboard/DashboardAdmin";
+import DashboardSales from "../pages/Dashboard/DashboardSales";
 
 //MASTER
 // Category
@@ -52,9 +53,21 @@ import Konfigurasi from "../pages/Konfigurasi";
 
 import { GeneratePrefixUrl } from "../utils/generate";
 
-export const RouteListDashboard = position => {
+export const RouteListDashboardAdmin = position => {
   return [
-    { path: `${GeneratePrefixUrl(position)}/dashboard`, component: Dashboard },
+    {
+      path: `${GeneratePrefixUrl(position)}/dashboard`,
+      component: DashboardAdmin,
+    },
+  ];
+};
+
+export const RouteListDashboardSales = position => {
+  return [
+    {
+      path: `${GeneratePrefixUrl(position)}/dashboard`,
+      component: DashboardSales,
+    },
   ];
 };
 

@@ -1,7 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import MetaTags from "react-meta-tags";
-import { Container, Row, Col, Card, CardBody, Label } from "reactstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  CardBody,
+  Label,
+  Nav,
+  NavItem,
+  NavLink,
+} from "reactstrap";
 import DataTransactionType from "../../data/transactionType";
 import { ListMonth } from "../../data/periodeTime";
 import { ApiGetTransactionTotalSaleProduct } from "../../api/transaction";
@@ -9,11 +19,56 @@ import { ReplaceToStartUpperCase } from "../../utils/replace";
 import classNames from "classnames";
 import ReactApexChart from "react-apexcharts";
 
+import classnames from "classnames";
+
 const Dashboard = () => {
   // const [periodData, setPeriodData] = useState([]);
+  // const [options, setOptions] = useState({
+  //   chart: {
+  //     toolbar: {
+  //       show: false,
+  //     },
+  //   },
+  //   plotOptions: {
+  //     bar: {
+  //       horizontal: false,
+  //       columnWidth: "45%",
+  //       endingShape: "rounded",
+  //     },
+  //   },
+  //   dataLabels: {
+  //     enabled: false,
+  //   },
+  //   stroke: {
+  //     show: true,
+  //     width: 2,
+  //     colors: ["transparent"],
+  //   },
+  //   colors: ["#34c38f", "#556ee6", "#f46a6a"],
+  //   xaxis: {
+  //     categories: [],
+  //   },
+  //   yaxis: {
+  //     title: {
+  //       text: "Grafik Jumlah Total Transaksi Produk",
+  //     },
+  //   },
+  //   grid: {
+  //     borderColor: "#f1f1f1",
+  //   },
+  //   fill: {
+  //     opacity: 1,
+  //   },
+  //   tooltip: {
+  //     y: {
+  //       formatter: function (val) {
+  //         return val + " Barang";
+  //       },
+  //     },
+  //   },
+  // });
   const [periodType, setPeriodType] = useState("monthly");
   const [selectedPeriodMonth, setSelectedPeriodMonth] = useState("0");
-  const [transactionType, setTransactionType] = useState("");
   const [series, setSeries] = useState([]);
   const [options, setOptions] = useState({
     chart: {
@@ -28,43 +83,29 @@ const Dashboard = () => {
         endingShape: "rounded",
       },
     },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      show: true,
-      width: 2,
-      colors: ["transparent"],
-    },
     colors: ["#34c38f", "#556ee6", "#f46a6a"],
+    dataLabels: { enabled: !0 },
+    stroke: { width: [3, 3], curve: "straight" },
+    grid: {
+      borderColor: "#f1f1f1",
+    },
+    markers: { style: "inverted", size: 6 },
     xaxis: {
       categories: [],
+      // title: { text: "Month" },
     },
     yaxis: {
       title: {
         text: "Grafik Jumlah Total Transaksi Produk",
       },
     },
-    grid: {
-      borderColor: "#f1f1f1",
-    },
-    fill: {
-      opacity: 1,
-    },
-    tooltip: {
-      y: {
-        formatter: function (val) {
-          return val + " Barang";
-        },
+    responsive: [
+      {
+        breakpoint: 600,
+        options: { chart: { toolbar: { show: !1 } }, legend: { show: !1 } },
       },
-    },
+    ],
   });
-  useEffect(() => {
-    // setTransactionType(DataTransactionType[0]);
-    if (selectedPeriodMonth) {
-      handleGetDataChart("2022", selectedPeriodMonth);
-    }
-  }, [selectedPeriodMonth]);
 
   const reports = [
     {
@@ -73,54 +114,93 @@ const Dashboard = () => {
       description: "1,235",
     },
     { title: "Total Karyawan", iconClass: "bx-user", description: "1,235" },
-    {
-      title: "Average Price",
-      iconClass: "bx-purchase-tag-alt",
-      description: "$16.2",
-    },
   ];
 
-  const onChangeChartPeriod = pType => {
-    setPeriodType(pType);
-  };
+  useEffect(() => {
+    if (selectedPeriodMonth) {
+      handleGetDataChart(periodType, "2022", selectedPeriodMonth);
+    }
+  }, [selectedPeriodMonth, periodType]);
 
   const handleChangeInput = useCallback(e => {
     let { name, value } = e.target;
 
-    if (name === "transactionType") {
-      setTransactionType(value);
-    } else if (name === "periodType") {
+    if (name === "periodType") {
       setPeriodType(value);
     } else if (name === "periodeMonth") {
       setSelectedPeriodMonth(value);
     }
   }, []);
 
-  const handleGetDataChart = useCallback((years, month) => {
-    ApiGetTransactionTotalSaleProduct(years, month).then(response => {
-      if (response) {
-        if (response.status === 200) {
-          setSeries(response.result.groups);
-          setOptions(oldState => ({
-            ...oldState,
-            xaxis: {
-              ...oldState.xaxis,
-              categories: response.result.listTime,
-            },
-          }));
-        } else {
-          setSeries([]);
-          setOptions(oldState => ({
-            ...oldState,
-            xaxis: {
-              ...oldState.xaxis,
-              categories: response.result.listTime,
-            },
-          }));
+  const handleGetDataChart = useCallback((periodType, years, month) => {
+    ApiGetTransactionTotalSaleProduct(periodType, years, month).then(
+      response => {
+        if (response) {
+          if (response.status === 200) {
+            setSeries(response.result.groups);
+            setOptions(oldState => ({
+              ...oldState,
+              xaxis: {
+                ...oldState.xaxis,
+                categories: response.result.listTime,
+              },
+            }));
+          } else {
+            setSeries([]);
+            setOptions(oldState => ({
+              ...oldState,
+              xaxis: {
+                ...oldState.xaxis,
+                categories: response.result.listTime,
+              },
+            }));
+          }
         }
       }
-    });
+    );
   }, []);
+
+  const series2 = [
+    { name: "High - 2018", data: [26, 24, 32, 36, 33, 31, 33] },
+    { name: "Low - 2018", data: [14, 11, 16, 12, 60, 13, 12] },
+  ];
+  const options2 = {
+    chart: {
+      toolbar: {
+        show: false,
+      },
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: "45%",
+        endingShape: "rounded",
+      },
+    },
+    colors: ["#556ee6", "#34c38f"],
+    dataLabels: { enabled: !0 },
+    stroke: { width: [3, 3], curve: "straight" },
+    // title: { text: "Average High & Low Temperature", align: "left" },
+    grid: {
+      borderColor: "#f1f1f1",
+    },
+    markers: { style: "inverted", size: 6 },
+    xaxis: {
+      categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      // title: { text: "Month" },
+    },
+    yaxis: {
+      title: {
+        text: "Grafik Jumlah Total Transaksi Produk",
+      },
+    },
+    responsive: [
+      {
+        breakpoint: 600,
+        options: { chart: { toolbar: { show: !1 } }, legend: { show: !1 } },
+      },
+    ],
+  };
 
   return (
     <React.Fragment>
@@ -133,7 +213,7 @@ const Dashboard = () => {
             <Col xl="12">
               <Row>
                 {reports.map((report, key) => (
-                  <Col md="4" key={"_col_" + key}>
+                  <Col md="6" key={"_col_" + key}>
                     <Card className="mini-stats-wid">
                       <CardBody>
                         <div className="d-flex">
@@ -167,35 +247,20 @@ const Dashboard = () => {
                     <h4 className="card-title mb-4">
                       Jumlah Total Transaksi Product
                     </h4>
-                    <div className="row mb-3">
-                      <div className="col-md-3">
-                        <Label>Jenis Transaksi</Label>
-                        <select
-                          name="transactionType"
-                          value={transactionType}
-                          className="form-select"
-                          onChange={handleChangeInput}
-                        >
-                          {DataTransactionType.map((d, i) => (
-                            <option key={i} value={d}>
-                              {ReplaceToStartUpperCase(d)}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="col-md-3">
+                    <div className="row">
+                      <div className="col-md-3 mb-3">
                         <Label>Tipe Periode</Label>
                         <select
                           value={periodType}
                           name="periodType"
                           className="form-select"
-                          onChange={() => {}}
+                          onChange={handleChangeInput}
                         >
                           <option value="monthly">Bulanan</option>
                           <option value="yearly">Tahunan</option>
                         </select>
                       </div>
-                      <div className="col-md-3">
+                      <div className="col-md-3 mb-3">
                         <Label>Waktu Periode</Label>
                         <select
                           value={selectedPeriodMonth}
@@ -211,48 +276,18 @@ const Dashboard = () => {
                           ))}
                         </select>
                       </div>
-                      {/* <ul className="nav nav-pills">
-                        <li className="nav-item">
-                          <Link
-                            to="#"
-                            className={classNames(
-                              { active: periodType === "monthly" },
-                              "nav-link"
-                            )}
-                            onClick={() => {
-                              onChangeChartPeriod("monthly");
-                            }}
-                            id="one_month"
-                          >
-                            Bulanan
-                          </Link>
-                        </li>
-                        <li className="nav-item">
-                          <Link
-                            to="#"
-                            className={classNames(
-                              { active: periodType === "yearly" },
-                              "nav-link"
-                            )}
-                            onClick={() => {
-                              onChangeChartPeriod("yearly");
-                            }}
-                            id="one_month"
-                          >
-                            Tahunan
-                          </Link>
-                        </li>
-                      </ul> */}
                     </div>
                   </div>
                   <div className="clearfix"></div>
-                  <ReactApexChart
-                    options={options}
-                    series={series}
-                    type="bar"
-                    height={350}
-                  />
-                  {/* <StackedColumnChart periodData={periodData} /> */}
+
+                  {series.length > 0 && (
+                    <ReactApexChart
+                      options={options}
+                      series={series}
+                      type="line"
+                      height={350}
+                    />
+                  )}
                 </CardBody>
               </Card>
             </Col>
