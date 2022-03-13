@@ -19,6 +19,7 @@ import {
   MenuDashboard,
   MenuMaster,
   MenuKonsumen,
+  MenuBiaya,
   MenuTransaction,
   MenuConfigure,
 } from "./ListMenu";
@@ -35,6 +36,7 @@ const SidebarContent = props => {
         ...MenuDashboard(position),
         ...MenuMaster(position),
         ...MenuKonsumen(position),
+        ...MenuBiaya(position),
         ...MenuTransaction(position),
       ];
     } else if (position === "2") {
@@ -48,6 +50,7 @@ const SidebarContent = props => {
         ...MenuDashboard(position),
         ...MenuMaster(position),
         ...MenuKonsumen(position),
+        ...MenuBiaya(position),
         ...MenuTransaction(position),
         ...MenuConfigure(position),
       ];
