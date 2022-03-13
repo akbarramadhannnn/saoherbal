@@ -59,11 +59,31 @@ export const MenuKonsumen = position => {
   ];
 };
 
+export const MenuBiaya = position => {
+  return [
+    {
+      name: "Biaya",
+      icon: "bx bx-money",
+      link: "",
+      sub: [
+        {
+          name: "Biaya Produksi",
+          link: `${GeneratePrefixUrl(position)}/biaya/produksi`,
+        },
+        {
+          name: "Biaya Operasional",
+          link: `${GeneratePrefixUrl(position)}/biaya/operasional`,
+        },
+      ],
+    },
+  ];
+};
+
 export const MenuTransaction = position => {
   return [
     {
       name: "Transaksi",
-      icon: "bx bx-money",
+      icon: "bx bx-cart-alt",
       link: `${GeneratePrefixUrl(position)}/transaction`,
       sub: [],
     },

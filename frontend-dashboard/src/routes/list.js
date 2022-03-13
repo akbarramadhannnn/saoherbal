@@ -39,6 +39,12 @@ import Toko from "../pages/Konsumen/Toko";
 import CreateToko from "../pages/Konsumen/Toko/create";
 import UpdateToko from "../pages/Konsumen/Toko/update";
 
+//biaya
+import BiayaProduksi from "../pages/Biaya/BiayaProduksi";
+import CreateBiayaProduksi from "../pages/Biaya/BiayaProduksi/create";
+import BiayaOperasional from "../pages/Biaya/BiayaOperasional";
+import CreateBiayaOperasional from "../pages/Biaya/BiayaOperasional/create";
+
 //transaksi
 import Transaksi from "../pages/Transaksi";
 import CreateTransaksi from "../pages/Transaksi/Create";
@@ -186,6 +192,37 @@ export const RouteListToko = position => {
     {
       path: `${GeneratePrefixUrl(position)}/konsumen/toko/update/:id`,
       component: UpdateToko,
+    },
+  ];
+};
+
+export const RouteListBiayaProduksi = position => {
+  //biaya produksi
+  return [
+    {
+      path: `${GeneratePrefixUrl(position)}/biaya/produksi`,
+      exact: true,
+      component: BiayaProduksi,
+    },
+    {
+      path: `${GeneratePrefixUrl(position)}/biaya/produksi/create`,
+      exact: true,
+      component: CreateBiayaProduksi,
+    },
+  ];
+};
+
+export const RouteListBiayaOperasional = position => {
+  return [
+    {
+      path: `${GeneratePrefixUrl(position)}/biaya/operasional`,
+      exact: true,
+      component: BiayaOperasional,
+    },
+    {
+      path: `${GeneratePrefixUrl(position)}/biaya/operasional/create`,
+      exact: true,
+      component: CreateBiayaOperasional,
     },
   ];
 };
