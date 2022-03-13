@@ -126,6 +126,13 @@ const Index = ({ history }) => {
     [history]
   );
 
+  const handleClickKinerja = useCallback(
+    id => {
+      history.push(`/admin/master/employee/kinerja/${id}`);
+    },
+    [history]
+  );
+
   const handleToogleActive = useCallback((value, id, index) => {
     let active;
     if (value === "0") {
@@ -294,6 +301,16 @@ const Index = ({ history }) => {
                         >
                           <i className="mdi mdi-account-lock font-size-16 text-info me-1" />{" "}
                           Lihat Akun Login
+                        </DropdownItem>
+                        <DropdownItem
+                          onClick={() =>
+                            handleClickKinerja(
+                              response.result.data[i].employee_id
+                            )
+                          }
+                        >
+                          <i className="mdi mdi-trending-up font-size-16 text-success me-1" />{" "}
+                          Lihat Kinerja
                         </DropdownItem>
                       </DropdownMenu>
                     </UncontrolledDropdown>

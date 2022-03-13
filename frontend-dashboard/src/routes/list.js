@@ -23,10 +23,11 @@ import Product from "../pages/Master/product";
 import CreateProduct from "../pages/Master/product/create";
 import UpdateProduct from "../pages/Master/product/update";
 
-//product
+//employee
 import Employee from "../pages/Master/employee";
 import CreateEmployee from "../pages/Master/employee/create";
 import UpdateEmployee from "../pages/Master/employee/update";
+import KinerjaEmployee from "../pages/Master/employee/kinerja";
 
 //KONSUMEN
 //Distributor
@@ -148,6 +149,10 @@ export const RouteListEmployee = position => {
     {
       path: `${GeneratePrefixUrl(position)}/master/employee/update/:id`,
       component: UpdateEmployee,
+    },
+    {
+      path: `${GeneratePrefixUrl(position)}/master/employee/kinerja/:id`,
+      component: KinerjaEmployee,
     },
   ];
 };
