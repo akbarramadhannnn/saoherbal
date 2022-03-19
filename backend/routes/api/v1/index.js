@@ -10,6 +10,8 @@ const transaction = require("./transaction");
 const bill = require("./bill");
 const employee = require("./employee");
 const configure = require("./configure");
+const prodcutioncost = require("./productioncost");
+const operasionalcost = require("./operasionalcost");
 const Response = require("../../../helpers/response");
 
 router.get("/", (req, res) => {
@@ -26,5 +28,7 @@ router.use("/transaction", transaction);
 router.use("/bill", bill);
 router.use("/employee", employee);
 router.use("/configure", configure);
+router.use("/production-cost", prodcutioncost);
+router.use("/operasional-cost", operasionalcost);
 
 module.exports = router;
