@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import feature3 from "../../../public/static/assets/img/about/2.jpg";
-import Image from "next/image";
+import Feature3 from "../../../public/static/assets/img/about/2.jpg";
 
 import {
   Accordion,
@@ -19,8 +18,7 @@ class Pertanyaan extends Component {
 					<div className="row">						
 						<div className="col-xl-6 col-lg-6">
 							<div className="about-img mb-30">
-								{/* <img src={require('../../public/assets/img/about/2.jpg')} alt='image'/> */}
-								<Image src={feature3} alt="imgs"/>
+								<img src={Feature3} alt="imgs"/>
 							</div>
 						</div>
             <div className="col-xl-6  col-lg-6  col-md-6 ">

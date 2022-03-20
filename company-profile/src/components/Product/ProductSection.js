@@ -18,23 +18,23 @@ class ProductSection extends Component {
     return (
       <div className="product-area pos-relative pt-110 pb-85 fix">
         <div className="shape spahe1 bounce-animate">
-          <Image src={shape1} alt="shape" />
+          <img src={shape1} alt="shape1" />
         </div>
         <div className="shape spahe2 bounce-animate">
-          <Image src={shape2} alt="shape" />
+          <img src={shape2} alt="shape2" />
         </div>
         <div className="shape spahe3 bounce-animate">
-          <Image src={shape3} alt="shape" />
+          <img src={shape3} alt="shape3" />
         </div>
         <div className="shape spahe4 bounce-animate">
-          <Image src={shape4} alt="shape" />
+          <img src={shape4} alt="shape4" />
         </div>
         <div className="container">
           <div className="row">
             <div className="col-xl-6 col-lg-6 offset-lg-3 offset-xl-3">
               <div className="section-title text-center section-circle mb-70">
                 <div className="section-img">
-                  <Image src={shapeimage1} alt="" />
+                  <img src={shapeimage1} alt="shapeimage1" />
                 </div>
                 <h1>Produk Kami</h1>
                 <p>
@@ -73,7 +73,7 @@ class ProductSection extends Component {
                       <div className="product-img">
                         <Link href="/shop-details" as="/shop-details">
                           <a>
-                            <Image src={product1} alt="product" />
+                            <img src={product1} alt="product" />
                           </a>
                         </Link>
                       </div>
@@ -95,7 +95,7 @@ class ProductSection extends Component {
                       <div className="product-img">
                         <Link href="/shop-details" as="/shop-details">
                           <a>
-                            <Image src={product2} alt="image" />
+                            <img src={product2} alt="image2" />
                           </a>
                         </Link>
                       </div>
@@ -117,7 +117,7 @@ class ProductSection extends Component {
                       <div className="product-img">
                         <Link href="/shop-details" as="/shop-details">
                           <a>
-                            <Image src={product3} alt="image" />
+                            <img src={product3} alt="image3" />
                           </a>
                         </Link>
                       </div>
@@ -139,7 +139,7 @@ class ProductSection extends Component {
                       <div className="product-img">
                         <Link href="/shop-details" as="/shop-details">
                           <a>
-                            <Image src={product4} alt="image" />
+                            <img src={product4} alt="image4" />
                           </a>
                         </Link>
                       </div>
@@ -165,7 +165,7 @@ class ProductSection extends Component {
                       <div className="product-img">
                         <Link href="/shop-details" as="/shop-details">
                           <a>
-                            <Image src={product1} alt="product" />
+                            <img src={product1} alt="product1" />
                           </a>
                         </Link>
                       </div>
@@ -187,7 +187,7 @@ class ProductSection extends Component {
                       <div className="product-img">
                         <Link href="/shop-details" as="/shop-details">
                           <a>
-                            <Image src={product3} alt="image" />
+                            <img src={product3} alt="image3" />
                           </a>
                         </Link>
                       </div>
@@ -209,7 +209,7 @@ class ProductSection extends Component {
                       <div className="product-img">
                         <Link href="/shop-details" as="/shop-details">
                           <a>
-                            <Image src={product4} alt="image" />
+                            <img src={product4} alt="image4" />
                           </a>
                         </Link>
                       </div>
@@ -231,7 +231,7 @@ class ProductSection extends Component {
                       <div className="product-img">
                         <Link href="/shop-details" as="/shop-details">
                           <a>
-                            <Image src={product2} alt="image" />
+                            <img src={product2} alt="image2" />
                           </a>
                         </Link>
                       </div>

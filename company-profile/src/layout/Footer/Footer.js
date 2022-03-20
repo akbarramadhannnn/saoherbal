@@ -1,7 +1,6 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Image from "next/image";
-import ShapeF from "../../../public/static/assets/img/shape/f.png";
+// import ShapeF from "../../../public/static/assets/img/shape/f.png";
 
 const Footer = () => {
   return (
@@ -41,7 +40,7 @@ const Footer = () => {
                 <div className="footer-wrapper pl-45 mb-30">
                   <div className="footer-title">
                     <h4>Kontak</h4>
-                    <Image src={ShapeF} alt="shape" />
+                    {/* <img src={ShapeF} alt="shape" /> */}
                   </div>
                   <ul className="fotter-link">
                     <li>

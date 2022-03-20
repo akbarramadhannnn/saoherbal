@@ -8,22 +8,10 @@ class HomeMain extends Component {
   render() {
     return (
       <React.Fragment>
-        {/* slider-start */}
         <SliderDefault />
-        {/* <SliderStyleThree /> */}
-       
-        {/* features-area-start */}
         <H1FeaturesSection />
-        {/* features-area-end */}
-
-        {/* product-area-start */}
         <ProductSection />
-        {/* product-area-end */}
-        
-        {/* choose-us-area-start */}
         <H1ChooseUsSection />
-        {/* choose-us-area-end */}
-
       </React.Fragment>
     );
   }

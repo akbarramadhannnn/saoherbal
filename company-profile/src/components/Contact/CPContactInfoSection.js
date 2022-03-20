@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Image from "next/image";
 import shapeC from "../../../public/static/assets/img/shape/c.png";
 
 class CPContactInfoSection extends Component {
@@ -15,9 +14,9 @@ class CPContactInfoSection extends Component {
                   {/* <div className="col-md-3"></div> */}
                   <div className="col-md-12">
                     <div className="contact-address-title text-center">
-                      <h1>Hubungi Kami</h1>
+                      <h1>Yogyakarta</h1>
                       <div className="contact-address-img">
-                        <Image src={shapeC} alt="image" />
+                        <img src={shapeC} alt="image" />
                       </div>
                     </div>
                     <ul className="contact-link">

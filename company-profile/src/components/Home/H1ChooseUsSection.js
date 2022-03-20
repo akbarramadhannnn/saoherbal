@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Image from "next/image";
 import WhyShape from "../../../public/static/assets/img/shape/why-shape.png";
 import Choose01 from "../../../public/static/assets/img/choose/01.jpg";
 import Icon1 from "../../../public/static/assets/img/icon/1.png";
@@ -11,13 +10,13 @@ class H1ChooseUsSection extends Component {
     return (
       <div className="choose-us-area pt-100 pb-70 pos-relative">
         <div className="shape spahe2 bounce-animate">
-          <Image src={WhyShape} alt="shape" />
+          <img src={WhyShape} alt="Why Shape" />
         </div>
         <div className="container">
           <div className="row">
             <div className="col-xl-7 col-lg-12">
               <div className="choose-img mb-30">
-                <Image src={Choose01} alt="shape" />
+                <img src={Choose01} alt="Choose01" />
               </div>
             </div>
             <div className="col-xl-5 col-lg-12">
@@ -32,7 +31,7 @@ class H1ChooseUsSection extends Component {
                 </div>
                 <div className="choose-content mb-40">
                   <div className="choose-us-img">
-                    <Image src={Icon1} alt="Icon 1" />
+                    <img src={Icon1} alt="Icon 1" />
                   </div>
                   <div className="choose-text">
                     <h4>Proses yang mudah</h4>
@@ -44,7 +43,7 @@ class H1ChooseUsSection extends Component {
                 </div>
                 <div className="choose-content mb-40">
                   <div className="choose-us-img">
-                    <Image src={Icon2} alt="Icon 1" />
+                    <img src={Icon2} alt="Icon 2" />
                   </div>
                   <div className="choose-text">
                     <h4>100% Terpercaya</h4>
@@ -56,7 +55,7 @@ class H1ChooseUsSection extends Component {
                 </div>
                 <div className="choose-content">
                   <div className="choose-us-img">
-                    <Image src={Icon3} alt="Icon 1" />
+                    <img src={Icon3} alt="Icon 3" />
                   </div>
                   <div className="choose-text">
                     <h4>Produk Terbaik</h4>

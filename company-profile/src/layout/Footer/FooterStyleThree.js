@@ -17,7 +17,7 @@ const FooterStyleThree = () => {
                   <div className="footer-logo">
                     <a href="index.html">
                       <img
-                        src={require("../../../../public/static/assets/img/logo/white.png")}
+                        src={require("../../../../public/assets/img/logo/white.png")}
                         alt=""
                       />
                     </a>
@@ -64,7 +64,7 @@ const FooterStyleThree = () => {
                   <div className="footer-title">
                     <h4>Customer Support</h4>
                     <img
-                      src={require("../../../../public/static/assets/img/shape/f.png")}
+                      src={require("../../../../public/assets/img/shape/f.png")}
                       alt="shape"
                     />
                   </div>
@@ -95,7 +95,7 @@ const FooterStyleThree = () => {
                   <div className="footer-title">
                     <h4>Contact Info</h4>
                     <img
-                      src={require("../../../../public/static/assets/img/shape/f.png")}
+                      src={require("../../../../public/assets/img/shape/f.png")}
                       alt="shape"
                     />
                   </div>
@@ -126,7 +126,7 @@ const FooterStyleThree = () => {
                   <div className="footer-title">
                     <h4>Newsletters</h4>
                     <img
-                      src={require("../../../../public/static/assets/img/shape/f.png")}
+                      src={require("../../../../public/assets/img/shape/f.png")}
                       alt="shape"
                     />
                   </div>

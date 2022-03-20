@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import feature3 from "../../../public/static/assets/img/about/2.jpg";
-import Image from "next/image";
+import Feature3 from "../../../public/static/assets/img/about/2.jpg";
+
 class ApAbout4Section extends Component {
   render() {
     return (
@@ -9,7 +9,7 @@ class ApAbout4Section extends Component {
           <div className="row">
             <div className="col-xl-6 col-lg-6">
               <div className="about-img mb-30">
-                <Image src={feature3} alt="imgs" />
+                <img src={Feature3} alt="imgs" />
               </div>
             </div>
 
