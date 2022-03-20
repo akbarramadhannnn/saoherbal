@@ -7,7 +7,7 @@ class AboutMain extends Component {
     return (
       <main>
         <APAbout4Section />
-        <APWhatWeDo2Section />
+        {/* <APWhatWeDo2Section /> */}
       </main>
     );
   }

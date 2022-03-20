@@ -11,7 +11,7 @@ class H1FeaturesSection extends Component {
     return (
       <div
         className="features-area pt-110 pb-90"
-        style={{ backgroundImage: `url(${"assets/img/bg/bg1.jpg"})` }}
+        style={{ backgroundImage: `url(${"static/assets/img/bg/bg1.jpg"})` }}
       >
         <div className="container">
           <div className="row">

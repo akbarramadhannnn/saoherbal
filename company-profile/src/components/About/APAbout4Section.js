@@ -8,28 +8,54 @@ class ApAbout4Section extends Component {
         <div className="container">
           <div className="row">
             <div className="col-xl-6 col-lg-6">
+              <div className="about-img mb-30">
+                <Image src={feature3} alt="imgs" />
+              </div>
+            </div>
+
+            <div className="col-xl-6 col-lg-6">
               <div className="about-info mb-30">
                 <h1>
                   Selamat Datang di
                   <br /> SAO Herbal
                 </h1>
-                <span>with love & dedication</span>
+                {/* <span>with love & dedication</span> */}
                 <p>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-                  irure dolor in reprehenderit in voluptate velit esse fugiat
-                  nulla pariatur. Excepteur sint occaecat cupidatat non proident
-                  sunt in culpa qui officia deserunt mollit anim id est laborum.
-                  Sed ut perspiciatis unde omnis iste.
+                  <b>PT Serat Alam Organik herbal</b> (SAO Herbal) merupakan
+                  sebuah produsen yang mengelola produk herbal di bidang
+                  peternakan dan pertanian yang di kelola dengan sistem serat
+                  berlapis dari berbagai macam unsur serat alam herbal yang
+                  menyatu sehingga menghasilkan sebuah produk yang berkualitas.
                 </p>
               </div>
-            </div>
-            <div className="col-xl-6 col-lg-6">
-              <div className="about-img mb-30">
-                {/* <img src={require('../../../public/assets/img/about/2.jpg')} alt='image'/> */}
-                <Image src={feature3} alt="imgs" />
+
+              <div className="about-info mb-30">
+                <h1>Tujuan</h1>
+                {/* <span>with love & dedication</span> */}
+                <p>
+                  Membantu para petani untuk menghasilkan panen yang
+                  berkualiatas, sehat alami dari alam kembali ke alam, dan
+                  meningkatkan kesejahteraan yang maksimal.
+                </p>
+              </div>
+
+              <div className="about-info mb-30">
+                <h1>Visi</h1>
+                {/* <span>with love & dedication</span> */}
+                <p>
+                  Menjadikan petani sejahtera, makmur, dan hasil panen
+                  berkualitas sehat alami dari alam kembali ke alam.
+                </p>
+              </div>
+
+              <div className="about-info mb-30">
+                <h1>Misi</h1>
+                {/* <span>with love & dedication</span> */}
+                <p>
+                  menciptakan produk herbal yang dapat di nikmati petani dengan
+                  harga terjangkau, ramah lingkungan, hasil berlimpah, dan
+                  berkualitas.
+                </p>
               </div>
             </div>
           </div>
