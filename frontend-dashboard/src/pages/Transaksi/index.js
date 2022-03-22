@@ -23,6 +23,7 @@ import ModalLoading from "../../components/Modal/ModalLoading";
 import InputSearch from "../../components/Input/InputSearch";
 import Pagination from "../../components/Pagination";
 import { ConvertToRupiah } from "./../../utils/convert";
+import DownloadFile from "../../helpers/DownloadFile";
 
 import {
   ApiGetListTransaction,
@@ -90,7 +91,7 @@ const Index = ({ history }) => {
     setSearch(value);
   }, []);
 
-  const handleClickCetakTransaction = useCallback(code => {
+  const handleClickDownloadTransaction = useCallback(code => {
     setIsModalLoading(true);
     ApiDetailListTransaction(code).then(response => {
       if (response) {
@@ -98,12 +99,13 @@ const Index = ({ history }) => {
           const payload = {
             data: response.result,
           };
-          ApiGeneratePdfInvoiceTransaction(payload).then(responseInvoice => {
-            if (responseInvoice.status === 201) {
-              let newwindow = window.open(`${responseInvoice.result.url}`);
-              if (window.focus) {
-                newwindow.focus();
-              }
+          ApiGeneratePdfInvoiceTransaction(payload).then(responseGenerate => {
+            if (responseGenerate.status === 201) {
+              DownloadFile(
+                responseGenerate.result.url,
+                "application/pdf",
+                "INVOICE TRANSACTION.pdf"
+              );
               setIsModalLoading(false);
             }
           });
@@ -222,6 +224,16 @@ const Index = ({ history }) => {
                             <i className="mdi mdi-eye font-size-16 text-info me-1" />{" "}
                             Lihat Detail
                           </DropdownItem>
+                          <DropdownItem
+                            onClick={() =>
+                              handleClickDownloadTransaction(
+                                response.result.data[i].code
+                              )
+                            }
+                          >
+                            <i className="fa fa-download text-success me-1" />{" "}
+                            Download Invoice
+                          </DropdownItem>
                         </DropdownMenu>
                       </UncontrolledDropdown>
                     ),
@@ -317,6 +329,16 @@ const Index = ({ history }) => {
                             <i className="mdi mdi-eye font-size-16 text-info me-1" />{" "}
                             Lihat Detail
                           </DropdownItem>
+                          <DropdownItem
+                            onClick={() =>
+                              handleClickDownloadTransaction(
+                                response.result.data[i].code
+                              )
+                            }
+                          >
+                            <i className="fa fa-download text-success me-1" />{" "}
+                            Download Invoice
+                          </DropdownItem>
                         </DropdownMenu>
                       </UncontrolledDropdown>
                     ),
@@ -392,6 +414,16 @@ const Index = ({ history }) => {
                           >
                             <i className="mdi mdi-eye font-size-16 text-info me-1" />{" "}
                             Lihat Detail
+                          </DropdownItem>
+                          <DropdownItem
+                            onClick={() =>
+                              handleClickDownloadTransaction(
+                                response.result.data[i].code
+                              )
+                            }
+                          >
+                            <i className="fa fa-download text-success me-1" />{" "}
+                            Download Invoice
                           </DropdownItem>
                         </DropdownMenu>
                       </UncontrolledDropdown>

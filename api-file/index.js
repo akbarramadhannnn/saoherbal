@@ -17,17 +17,25 @@ app.use(
   })
 );
 app.use(
-  "/api/v1/product/pdf-invoice",
-  express.static(path.join(__dirname, "assets/pdf/product/invoice"), {
+  "/api/v1/transaction/invoice-transaction",
+  express.static(path.join(__dirname, "assets/pdf/transaction/invoice-transaction"), {
     maxAge: "365d",
   })
 );
+// app.use(
+//   "/api/v1/transaction/invoice-tempo",
+//   // express.static(path.join(__dirname, "assets/pdf/transaction/invoice-tempo"), {
+//   //   setHeaders: (res, filepath) =>
+//   //     res.attachment(`pdf-express-${path.basename(filepath)}`),
+//   // })
+//   express.static(path.join(__dirname, "assets/pdf/transaction/invoice-tempo"), {
+//     maxAge: "365d",
+//   })
+// );
 app.use(express.static(path.join(__dirname, "public")));
 app.use(morgan("combined"));
 app.use(routes);
 
 app.listen(config.server.port, (req, res) => {
-  console.log(
-    `Server running on port ${config.server.port}`
-  );
+  console.log(`Server running on port ${config.server.port}`);
 });

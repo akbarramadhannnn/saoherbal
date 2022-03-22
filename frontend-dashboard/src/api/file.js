@@ -10,6 +10,11 @@ export const ApiUploadSingleImage = async (data) => {
 };
 
 export const ApiGeneratePdfInvoiceTransaction = async (payload) => {
-  const response = await axios.post(`/generate-pdf-invoice`, payload);
+  const response = await axios.post(`/transaction/generate-invoice-transaction`, payload);
+  return response;
+};
+
+export const ApiGenerateInvoiceTempoTransaction = async (payload) => {
+  const response = await axios.post(`/transaction/generate-invoice-tempo`, payload);
   return response;
 };

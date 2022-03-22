@@ -24,6 +24,7 @@ const {
   updateDataDueDateStatusById,
   getAllDataDueDateTransactionByStatus,
   updateMultipleDataDueDateStatusById,
+  getDataDueDateByIdAndTransactionId,
 } = require("../models/transaction_due_date");
 const {
   addDataTransactionTempoDetail,
@@ -31,12 +32,17 @@ const {
   getDataTempoDetailByTempoId,
   updateDataTransactionTempoDetail,
   getAllDataTempoDetailByTransactionId,
+  getDataTempoByTempoIdAndTransactionIdAndDueDateId,
+  getDataTempoDetailByTransactionId,
 } = require("../models/transaction_tempo_detail");
 const {
   getDataTransactionTitipDetailByTransactionIdAndDueDateId,
   addMultipleTransactionTitip,
   getDataTransactionTitipDetailByTransactionId,
 } = require("../models/transaction_titip_detail");
+const {
+  getDataTransactionProductDetailByTransactionId,
+} = require("../models/transcation_product_detail");
 const { getDataStoreById } = require("../models/store");
 const { getDataDistributorById } = require("../models/distributor");
 const { getDataProductById } = require("../models/product");
@@ -401,6 +407,16 @@ exports.getDetailTransaction = async (req, res) => {
           name: "code",
         })
       );
+    }
+
+    let resultAllTransaction = await getDataTransactionAll();
+    for (let i = 0; i < resultAllTransaction.length; i++) {
+      if (resultAllTransaction[i].code === code) {
+        resultTransactionCode[0] = {
+          ...resultTransactionCode[0],
+          transactionNumber: i + 1,
+        };
+      }
     }
 
     // Mapping Consumer
@@ -1056,6 +1072,175 @@ exports.getTotalSaleTransaction = async (req, res) => {
       Response(true, 200, `Total Sale Transaction Successfully`, {
         groups: groups,
         listTime,
+      })
+    );
+  } catch (err) {
+    console.log("err", err);
+    const error = JSON.stringify(err, undefined, 2);
+    return res.json(Response(false, 500, `Error`, JSON.parse(error)));
+  }
+};
+
+exports.getDetailTransactionTempo = async (req, res) => {
+  const { transactionId, dueDateId, tempoId } = req.query;
+  try {
+    if (!transactionId) {
+      return res.json(
+        Response(false, 400, `Params Transaction Id is Required`, {
+          name: "transactionId",
+        })
+      );
+    }
+
+    if (!dueDateId) {
+      return res.json(
+        Response(false, 400, `Params Due Date Id is Required`, {
+          name: "dueDateId",
+        })
+      );
+    }
+
+    if (!tempoId) {
+      return res.json(
+        Response(false, 400, `Params Tempo Id is Required`, {
+          name: "tempoId",
+        })
+      );
+    }
+
+    const resultTransaction = await getDataTransactionById(transactionId);
+    if (!resultTransaction.length) {
+      return res.json(
+        Response(false, 400, `Transaction Id Not Found`, {
+          name: "transactionId",
+        })
+      );
+    }
+
+    const resultDueDate = await getDataDueDateByIdAndTransactionId(
+      dueDateId,
+      transactionId
+    );
+    if (!resultDueDate.length) {
+      return res.json(
+        Response(false, 400, `Due Date Id Or Transaction Id No Match`, {
+          name: "dueDateIdOrTransactionId",
+        })
+      );
+    }
+
+    const resultTempo = await getDataTempoByTempoIdAndTransactionIdAndDueDateId(
+      tempoId,
+      transactionId,
+      dueDateId
+    );
+    if (!resultTempo.length) {
+      return res.json(
+        Response(
+          false,
+          400,
+          `Tempo Id Or Due Date Id Or Transaction Id No Match`,
+          {
+            name: "tempoIdOrdueDateIdOrTransactionId",
+          }
+        )
+      );
+    }
+
+    let dataTempo = {};
+    const resultDataTempo = await getDataTempoDetailByTransactionId(
+      transactionId
+    );
+    for (let i = 0; i < resultDataTempo.length; i++) {
+      if (Number(tempoId) === resultDataTempo[i].transaction_tempo_detail_id) {
+        dataTempo = {
+          ...dataTempo,
+          tempoNumber: i + 1,
+          ...resultDataTempo[i],
+        };
+      }
+    }
+
+    const dataProductList = [];
+    const resultTransactionProductDetail =
+      await getDataTransactionProductDetailByTransactionId(transactionId);
+    for (let i = 0; i < resultTransactionProductDetail.length; i++) {
+      const resultProduct = await getDataProductById(
+        resultTransactionProductDetail[i].product_id_transaction_product_detail
+      );
+      const resultPrice = await getDataPriceByIdAndProductId(
+        resultTransactionProductDetail[i].price_id_transaction_product_detail,
+        resultTransactionProductDetail[i].product_id_transaction_product_detail
+      );
+      dataProductList.push({
+        transactionDetailProductId:
+          resultTransactionProductDetail[i].transaction_product_detail_id,
+        transactionId:
+          resultTransactionProductDetail[i]
+            .transaction_id_transaction_product_detail,
+        discount: resultTransactionProductDetail[i].discount,
+        qty: resultTransactionProductDetail[i].qty,
+        sellPrice: resultTransactionProductDetail[i].sell_price,
+        totalPrice: resultTransactionProductDetail[i].total_price,
+        totalLeft: resultTransactionProductDetail[i].total_left,
+        productId: resultProduct[0].product_id,
+        productName: resultProduct[0].name,
+        productImage: resultProduct[0].image,
+        productDescription: resultProduct[0].description,
+        priceId: resultPrice[0].price_id,
+        weight: resultPrice[0].weight,
+        price: resultPrice[0].prices,
+        unit: resultPrice[0].unit,
+      });
+    }
+
+    let consumer = {};
+    if (resultTransaction[0].store_id_transaction) {
+      const resultStore = await getDataStoreById(
+        resultTransaction[0].store_id_transaction
+      );
+      consumer = {
+        ...consumer,
+        ...resultStore[0],
+      };
+    } else if (resultTransaction[0].distributor_id_transaction) {
+      const resultDistributor = await getDataDistributorById(
+        resultTransaction[0].distributor_id_transaction
+      );
+      consumer = {
+        ...consumer,
+        ...resultDistributor[0],
+      };
+    }
+
+    if (consumer.distributor_prov_id) {
+      const resultProvinsi = await getDataProvinsiById(
+        consumer.distributor_prov_id
+      );
+      consumer = {
+        ...consumer,
+        provinceName: resultProvinsi[0].name,
+      };
+    }
+
+    if (consumer.distributor_kab_id) {
+      const resultKabupaten = await getDataKabupatenById(
+        consumer.distributor_kab_id
+      );
+      consumer = {
+        ...consumer,
+        regencyName: resultKabupaten[0].name,
+      };
+    }
+    return res.json(
+      Response(true, 200, `Get Transaction Tempo Detail Successfully`, {
+        data: {
+          ...resultTransaction[0],
+          consumer,
+          listProductDetail: dataProductList,
+          dueDate: resultDueDate[0],
+          tempo: dataTempo,
+        },
       })
     );
   } catch (err) {

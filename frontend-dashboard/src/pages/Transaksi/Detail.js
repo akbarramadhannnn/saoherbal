@@ -26,6 +26,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 import Modal from "../../components/Modal";
 import ModalMessage from "../../components/Modal/ModalMessage";
 import Toast from "../../components/Toast";
+import ModalLoading from "../../components/Modal/ModalLoading";
 import Alert from "../../components/Alert";
 import { MetaTags } from "react-meta-tags";
 import TableComponents from "../../components/Table";
@@ -36,12 +37,16 @@ import {
   ApiAddTransactionDueDate,
   ApiUpdateStatusTransactionDueDate,
   ApiAddTransactionTitipDetail,
+  ApiGetTransactionTempoDetail,
 } from "../../api/transaction";
+
+import { ApiGenerateInvoiceTempoTransaction } from "../../api/file";
 
 import moment from "../../lib/moment";
 import { ReplaceToStartUpperCase, ReplaceDot } from "../../utils/replace";
 import { ConvertToRupiah } from "../../utils/convert";
 import { RegexAllowNumberWithDot } from "../../utils/regex";
+import DownloadFile from "../../helpers/DownloadFile";
 
 const DetailTransaction = props => {
   const transactionCode = props.match.params.code;
@@ -50,6 +55,7 @@ const DetailTransaction = props => {
   const [dataDetail, setDataDetail] = useState({});
   const [dataDueDate, setDataDueDate] = useState([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [isModalLoading, setIsModalLoading] = useState(false);
   const [isDisabledButtonModal, setIsDisabledButtonModal] = useState(false);
   const [modal, setModal] = useState({
     isOpen: false,
@@ -87,13 +93,6 @@ const DetailTransaction = props => {
     title: "",
     message: "",
     bgColor: "",
-  });
-
-  const [alert, setAlert] = useState({
-    isOpen: false,
-    title: "",
-    color: "",
-    message: "",
   });
 
   useEffect(() => {
@@ -683,7 +682,8 @@ const DetailTransaction = props => {
               .indexOf(idDueDate);
             stateDueDate[indexDataDueDate].product = arrListDueDateProduct;
             stateDueDate[indexDataDueDate].status_transaction_due_date = "2";
-            stateDueDate[indexDataDueDate].visit_date = response.result.visitDate;
+            stateDueDate[indexDataDueDate].visit_date =
+              response.result.visitDate;
             setDataDueDate(stateDueDate);
             setDataDetail(oldState => ({
               ...oldState,
@@ -704,7 +704,41 @@ const DetailTransaction = props => {
     userCoordinate,
   ]);
 
-  console.log("dueaDate", dataDueDate);
+  const handleDownloadInvoiceTempo = useCallback(
+    (dueDateId, tempoId) => {
+      setIsModalLoading(true);
+      const transactionId = dataDetail.transaction_id;
+      ApiGetTransactionTempoDetail(transactionId, dueDateId, tempoId).then(
+        response => {
+          if (response) {
+            if (response.status === 200) {
+              const payload = {
+                data: response.result.data,
+              };
+              ApiGenerateInvoiceTempoTransaction(payload).then(
+                responseGenerate => {
+                  if (responseGenerate.status === 201) {
+                    DownloadFile(
+                      responseGenerate.result.url,
+                      "application/pdf",
+                      "INVOICE TEMPO.pdf"
+                    );
+                    setIsModalLoading(false);
+                    // window.open(`${responseGenerate.result.url}`);
+                    // setIsModalLoading(false);
+                    // if (window.focus) {
+                    //   newwindow.focus();
+                    // }
+                  }
+                }
+              );
+            }
+          }
+        }
+      );
+    },
+    [dataDetail]
+  );
 
   return (
     <div className="page-content">
@@ -962,7 +996,7 @@ const DetailTransaction = props => {
                                     <th className="text-center">Deskripsi</th>
                                     <th className="text-center">Dibayar</th>
                                     <th className="text-center">Waktu Bayar</th>
-                                    <th className="text-center">Action</th>
+                                    <th className="text-center">Aksi</th>
                                     {/* <th className="text-center">Qty</th>
                                   <th className="text-center">Harga</th>
                                   <th className="text-end">Total</th> */}
@@ -1035,20 +1069,41 @@ const DetailTransaction = props => {
                                       </td>
                                       <td className="text-center">
                                         {d.status_transaction_due_date ===
-                                          "1" && d.description === null ? (
-                                          <Link
-                                            to="#"
-                                            className="text-warning"
-                                            onClick={() =>
-                                              handleShowModalEditTempo(
-                                                d.transaction_due_date_id
-                                              )
-                                            }
-                                          >
-                                            Edit
-                                          </Link>
-                                        ) : (
-                                          "-"
+                                          "0" && "-"}
+                                        {d.status_transaction_due_date ===
+                                          "1" && (
+                                          <div className="d-flex gap-3 justify-content-center">
+                                            <Link
+                                              to="#"
+                                              className="btn btn-warning btn-sm"
+                                              onClick={() =>
+                                                handleShowModalEditTempo(
+                                                  d.transaction_due_date_id
+                                                )
+                                              }
+                                            >
+                                              <i className="fas fa-pencil-alt" />{" "}
+                                              Input Tempo
+                                            </Link>
+                                          </div>
+                                        )}
+                                        {d.status_transaction_due_date ===
+                                          "2" && (
+                                          <div className="d-flex gap-3 justify-content-center">
+                                            <Link
+                                              to="#"
+                                              className="btn btn-success btn-sm"
+                                              onClick={() =>
+                                                handleDownloadInvoiceTempo(
+                                                  d.transaction_due_date_id,
+                                                  d.tempoDetailId
+                                                )
+                                              }
+                                            >
+                                              <i className="fa fa-download" />{" "}
+                                              Download Invoice
+                                            </Link>
+                                          </div>
                                         )}
                                       </td>
                                     </tr>
@@ -1558,6 +1613,8 @@ const DetailTransaction = props => {
           }}
         />
       )}
+
+      {isModalLoading && <ModalLoading isOpen={isModalLoading} />}
     </div>
   );
 };

@@ -18,6 +18,22 @@ exports.getDataTempoDetailByTempoId = async (tempoDetailId) => {
   return result[0];
 };
 
+exports.getDataTempoDetailByTransactionId = async (transactionId) => {
+  const sql = `SELECT * FROM transaction_tempo_detail WHERE id_transaction_transaction_tempo_detail = ${transactionId}`;
+  const result = await poolConnection.query(sql);
+  return result[0];
+};
+
+exports.getDataTempoByTempoIdAndTransactionIdAndDueDateId = async (
+  tempoId,
+  transactionId,
+  dueDateId
+) => {
+  const sql = `SELECT * FROM transaction_tempo_detail WHERE transaction_tempo_detail_id = ${tempoId} AND id_transaction_transaction_tempo_detail = ${transactionId} AND id_due_date_transaction_tempo_detail = ${dueDateId}`;
+  const result = await poolConnection.query(sql);
+  return result[0];
+};
+
 exports.updateDataTransactionTempoDetail = async (
   id,
   description,

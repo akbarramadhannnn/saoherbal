@@ -18,6 +18,7 @@ const {
   addTitipTransaction,
   checkDueDateStatus,
   getTotalSaleTransaction,
+  getDetailTransactionTempo,
 } = require("../../../controller/transaction");
 
 router.get("/", getToken, getTransaction);
@@ -42,6 +43,7 @@ router.put(
   RunValidation,
   updateTempoTransaction
 );
+router.get("/tempo/detail", getToken, getDetailTransactionTempo);
 router.put(
   "/update-status/:id",
   getToken,
