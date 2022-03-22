@@ -1,5 +1,11 @@
 const poolConnection = require("../connection/mysql2");
 
+exports.getDataDueDateTransactionAll = async () => {
+  const sql = `SELECT * FROM transaction_due_date`;
+  const result = await poolConnection.query(sql);
+  return result[0];
+};
+
 exports.getAllDataDueDateTransactionByStatus = async (status) => {
   const sql = `SELECT * FROM transaction_due_date WHERE status_transaction_due_date = '${status}'`;
   const result = await poolConnection.query(sql);
@@ -28,7 +34,10 @@ exports.getDataDueDateById = async (id) => {
   return result[0];
 };
 
-exports.getDataDueDateByIdAndTransactionId = async (dueDateId,transactionId) => {
+exports.getDataDueDateByIdAndTransactionId = async (
+  dueDateId,
+  transactionId
+) => {
   const sql = `SELECT * FROM transaction_due_date WHERE transaction_due_date_id = ${dueDateId} AND id_transaction_transaction_due_date = ${transactionId}`;
   const result = await poolConnection.query(sql);
   return result[0];

@@ -541,18 +541,21 @@ const DetailTransaction = props => {
 
       const arrList = [];
       for (let i = 0; i < dataProduct.length; i++) {
-        arrList.push({
-          transactionDetailProductId: dataDetail.product[i].transactionDetailId,
-          name: dataProduct[i].name,
-          qty: dataProduct[i].qty || dataProduct[i].totalLeft,
-          sellPrice: dataProduct[i].sellPrice,
-          totalSell: {
-            value: "",
-            error: "",
-          },
-          totalLeft: dataProduct[i].qty || dataProduct[i].totalLeft,
-          total: 0,
-        });
+        if (dataProduct[i].totalLeft > 0) {
+          arrList.push({
+            transactionDetailProductId:
+              dataDetail.product[i].transactionDetailId,
+            name: dataProduct[i].name,
+            qty: dataProduct[i].qty || dataProduct[i].totalLeft,
+            sellPrice: dataProduct[i].sellPrice,
+            totalSell: {
+              value: "",
+              error: "",
+            },
+            totalLeft: dataProduct[i].qty || dataProduct[i].totalLeft,
+            total: 0,
+          });
+        }
       }
       setListInputEditTitip(arrList);
     },
@@ -739,6 +742,11 @@ const DetailTransaction = props => {
     },
     [dataDetail]
   );
+
+  const handleDownloadInvoiceTitip = useCallback((transactionId, dueDateId) => {
+    console.log("transactionId", transactionId);
+    console.log("dueDateId", dueDateId);
+  }, []);
 
   return (
     <div className="page-content">
@@ -1129,15 +1137,45 @@ const DetailTransaction = props => {
                                           <div className="col-6 col-md-6 text-end">
                                             {d.status_transaction_due_date ===
                                               "1" && (
-                                              <Button
-                                                color="warning"
-                                                // className="text-warning"
+                                              <Link
+                                                to="#"
+                                                className="btn btn-warning btn-sm"
                                                 onClick={() =>
                                                   handleShowModalEditTitip(i)
                                                 }
                                               >
-                                                Edit
-                                              </Button>
+                                                <i className="fas fa-pencil-alt" />{" "}
+                                                Input Titip
+                                              </Link>
+                                              // <Button
+                                              //   color="warning"
+                                              //   size="sm"
+                                              //   onClick={() =>
+                                              //     handleShowModalEditTitip(i)
+                                              //   }
+                                              // >
+                                              //   <i className="fas fa-pencil-alt" />{" "}
+                                              //   Input Titip
+                                              // </Button>
+                                            )}
+
+                                            {d.status_transaction_due_date ===
+                                              "2" && (
+                                              <div className="d-flex gap-3 justify-content-end">
+                                                <Link
+                                                  to="#"
+                                                  className="btn btn-success btn-sm"
+                                                  onClick={() =>
+                                                    handleDownloadInvoiceTitip(
+                                                      d.id_transaction_transaction_due_date,
+                                                      d.transaction_due_date_id
+                                                    )
+                                                  }
+                                                >
+                                                  <i className="fa fa-download" />{" "}
+                                                  Download Invoice
+                                                </Link>
+                                              </div>
                                             )}
                                           </div>
                                         </Row>

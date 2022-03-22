@@ -128,9 +128,11 @@ exports.addProductionCostDetail = async (req, res) => {
       const quantity = itemList[i].quantity;
       itemList[i].total = price * quantity;
     }
-    const subtotal = itemList.reduce((a, b) => {
-      return a.total + b.total;
-    });
+
+    const subtotal = itemList.reduce((accumulator, currentValue) => {
+      return accumulator + currentValue.total;
+    }, 0);
+    
     const resultAdd = await addDataProductionCost(subtotal);
     const itemArr = [];
     for (let i = 0; i < itemList.length; i++) {
