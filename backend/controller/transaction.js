@@ -812,13 +812,13 @@ exports.addTitipTransaction = async (req, res) => {
       const resultStore = await getDataStoreById(
         resultTransaction[0].store_id_transaction
       );
-      const latitudeDistributor = resultStore[0].latitude;
-      const longitudeDistributor = resultStore[0].longitude;
+      const latitudeStore = resultStore[0].latitude;
+      const longitudeStore = resultStore[0].longitude;
       resultDistance = CalculateDistance(
         coordinate.latitude,
         coordinate.longitude,
-        latitudeDistributor,
-        longitudeDistributor
+        latitudeStore,
+        longitudeStore
       );
     }
 
@@ -876,8 +876,8 @@ exports.addTitipTransaction = async (req, res) => {
     const resultDataTitip = await getDataTransactionTitipDetailByTransactionId(
       transactionId
     );
-    const totalPaidPrice = resultDataTitip.reduce((a, b) => {
-      return a + b.total_price;
+    const totalPaidPrice = resultDataTitip.reduce((accumulator, currentValue) => {
+      return accumulator + currentValue.total_price;
     }, 0);
 
     const resultDataDueDate = await getDataDueDateById(dueDateId);
@@ -1391,7 +1391,7 @@ exports.getDetailTransactionTitip = async (req, res) => {
     }
 
     return res.json(
-      Response(true, 200, `Get Transaction Tempo Detail Successfully`, {
+      Response(true, 200, `Get Transaction Titip Detail Successfully`, {
         data: {
           ...resultTransaction[0],
           consumer,

@@ -540,22 +540,27 @@ const DetailTransaction = props => {
       }
 
       const arrList = [];
-      for (let i = 0; i < dataProduct.length; i++) {
-        if (dataProduct[i].totalLeft > 0) {
-          arrList.push({
-            transactionDetailProductId:
-              dataDetail.product[i].transactionDetailId,
-            name: dataProduct[i].name,
-            qty: dataProduct[i].qty || dataProduct[i].totalLeft,
-            sellPrice: dataProduct[i].sellPrice,
-            totalSell: {
-              value: "",
-              error: "",
-            },
-            totalLeft: dataProduct[i].qty || dataProduct[i].totalLeft,
-            total: 0,
-          });
+      const filterDataProduct = dataProduct.filter(d => {
+        if (d.totalLeft > 0) {
+          return d;
+        } else if (d.totalLeft === null) {
+          return d;
         }
+      });
+      for (let i = 0; i < filterDataProduct.length; i++) {
+        const filterProduct = dataDetail.product.filter(d => d.totalLeft !== 0);
+        arrList.push({
+          transactionDetailProductId: filterProduct[i].transactionDetailId,
+          name: filterDataProduct[i].name,
+          qty: filterDataProduct[i].qty || filterDataProduct[i].totalLeft,
+          sellPrice: filterDataProduct[i].sellPrice,
+          totalSell: {
+            value: "",
+            error: "",
+          },
+          totalLeft: filterDataProduct[i].qty || filterDataProduct[i].totalLeft,
+          total: 0,
+        });
       }
       setListInputEditTitip(arrList);
     },
