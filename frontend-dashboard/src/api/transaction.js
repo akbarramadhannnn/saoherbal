@@ -61,6 +61,16 @@ export const ApiGetTransactionTempoDetail = async (
   return response;
 };
 
+export const ApiGetTransactionTitipDetail = async (
+  transactionId,
+  dueDateId
+) => {
+  const response = await axios.get(
+    `/transaction/titip/detail?transactionId=${transactionId}&dueDateId=${dueDateId}`
+  );
+  return response;
+};
+
 // export const ApiUpdateListCategory = async (id, payload) => {
 //   const response = axios.put(`/category/${id}`, payload);
 //   return response;

@@ -22,6 +22,12 @@ app.use(
     maxAge: "365d",
   })
 );
+app.use(
+  "/api/v1/transaction/invoice-titip",
+  express.static(path.join(__dirname, "assets/pdf/transaction/invoice-titip"), {
+    maxAge: "365d",
+  })
+);
 // app.use(
 //   "/api/v1/transaction/invoice-tempo",
 //   // express.static(path.join(__dirname, "assets/pdf/transaction/invoice-tempo"), {

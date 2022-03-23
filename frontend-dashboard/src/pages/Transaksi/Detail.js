@@ -38,9 +38,13 @@ import {
   ApiUpdateStatusTransactionDueDate,
   ApiAddTransactionTitipDetail,
   ApiGetTransactionTempoDetail,
+  ApiGetTransactionTitipDetail,
 } from "../../api/transaction";
 
-import { ApiGenerateInvoiceTempoTransaction } from "../../api/file";
+import {
+  ApiGenerateInvoiceTempoTransaction,
+  ApiGenerateInvoiceTitipTransaction,
+} from "../../api/file";
 
 import moment from "../../lib/moment";
 import { ReplaceToStartUpperCase, ReplaceDot } from "../../utils/replace";
@@ -749,8 +753,26 @@ const DetailTransaction = props => {
   );
 
   const handleDownloadInvoiceTitip = useCallback((transactionId, dueDateId) => {
-    console.log("transactionId", transactionId);
-    console.log("dueDateId", dueDateId);
+    setIsModalLoading(true);
+    ApiGetTransactionTitipDetail(transactionId, dueDateId).then(response => {
+      if (response) {
+        if (response.status === 200) {
+          const payload = {
+            data: response.result.data,
+          };
+          ApiGenerateInvoiceTitipTransaction(payload).then(responseGenerate => {
+            if (responseGenerate.status === 201) {
+              DownloadFile(
+                responseGenerate.result.url,
+                "application/pdf",
+                "INVOICE TITIP.pdf"
+              );
+              setIsModalLoading(false);
+            }
+          });
+        }
+      }
+    });
   }, []);
 
   return (

@@ -1,6 +1,6 @@
 import axios from "../lib/axiosImage";
 
-export const ApiUploadSingleImage = async (data) => {
+export const ApiUploadSingleImage = async data => {
   const response = await axios.post(`/upload-single-image`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -9,12 +9,26 @@ export const ApiUploadSingleImage = async (data) => {
   return response;
 };
 
-export const ApiGeneratePdfInvoiceTransaction = async (payload) => {
-  const response = await axios.post(`/transaction/generate-invoice-transaction`, payload);
+export const ApiGeneratePdfInvoiceTransaction = async payload => {
+  const response = await axios.post(
+    `/transaction/generate-invoice-transaction`,
+    payload
+  );
   return response;
 };
 
-export const ApiGenerateInvoiceTempoTransaction = async (payload) => {
-  const response = await axios.post(`/transaction/generate-invoice-tempo`, payload);
+export const ApiGenerateInvoiceTempoTransaction = async payload => {
+  const response = await axios.post(
+    `/transaction/generate-invoice-tempo`,
+    payload
+  );
+  return response;
+};
+
+export const ApiGenerateInvoiceTitipTransaction = async payload => {
+  const response = await axios.post(
+    `/transaction/generate-invoice-titip`,
+    payload
+  );
   return response;
 };

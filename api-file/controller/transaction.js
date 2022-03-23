@@ -101,6 +101,44 @@ exports.generateInvoiceTransactionTempo = async (req, res) => {
     });
 };
 
+exports.generateInvoiceTransactionTitip = async (req, res) => {
+  const { data } = req.body;
+  const invoiceNumber = `INVCTTP${moment(data.dueDate.visit_date).format(
+    "YYYYMMDD"
+  )}${moment(data.dueDate.visit_date).format("mhhss")}${data.noTitip}`;
+  const html = fs.readFileSync(
+    path.join(__dirname, "../views/template-invoice-detail-tiitp.html"),
+    "utf-8"
+  );
+  const fileName = `${invoiceNumber}.pdf`;
+  const document = {
+    html: html,
+    data: {
+      invoiceNumber,
+      transactionType: "Tempo",
+    },
+    path: "./assets/pdf/transaction/invoice-titip/" + fileName,
+  };
+  pdf
+    .create(document, options)
+    .then((response) => {
+      let url;
+      if (NODE_ENV === "local" || NODE_ENV === "development") {
+        url = `${config.server.host}:${config.server.port}/api/v1/transaction/invoice-titip`;
+      } else {
+        url = `${config.server.host}/file/transaction/invoice-titip`;
+      }
+      return res.json(
+        Response(true, 201, `Generate Invoice Transaction Tempo Successfully`, {
+          url: `${url}/${fileName}`,
+        })
+      );
+    })
+    .catch((err) => {
+      console.log("err", err);
+    });
+};
+
 exports.downloadInvoice = (req, res) => {
   const { name } = req.params;
   const file = path.join(
