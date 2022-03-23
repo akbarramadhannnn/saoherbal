@@ -51,6 +51,7 @@ import { ReplaceToStartUpperCase, ReplaceDot } from "../../utils/replace";
 import { ConvertToRupiah } from "../../utils/convert";
 import { RegexAllowNumberWithDot } from "../../utils/regex";
 import DownloadFile from "../../helpers/DownloadFile";
+import { URL_API_IMAGES } from "../../config/url";
 
 const DetailTransaction = props => {
   const transactionCode = props.match.params.code;
@@ -148,7 +149,6 @@ const DetailTransaction = props => {
           setDataDueDate(response.result.dueDate);
         }
         setIsLoadingData(false);
-        console.log("response", response);
       }
     });
   }, [transactionCode]);
@@ -730,11 +730,8 @@ const DetailTransaction = props => {
               ApiGenerateInvoiceTempoTransaction(payload).then(
                 responseGenerate => {
                   if (responseGenerate.status === 201) {
-                    DownloadFile(
-                      responseGenerate.result.url,
-                      "application/pdf",
-                      "INVOICE TEMPO.pdf"
-                    );
+                    const url = `${URL_API_IMAGES}/${responseGenerate.result.url}`;
+                    DownloadFile(url, "application/pdf", "INVOICE TEMPO.pdf");
                     setIsModalLoading(false);
                     // window.open(`${responseGenerate.result.url}`);
                     // setIsModalLoading(false);
@@ -762,11 +759,8 @@ const DetailTransaction = props => {
           };
           ApiGenerateInvoiceTitipTransaction(payload).then(responseGenerate => {
             if (responseGenerate.status === 201) {
-              DownloadFile(
-                responseGenerate.result.url,
-                "application/pdf",
-                "INVOICE TITIP.pdf"
-              );
+              const url = `${URL_API_IMAGES}/${responseGenerate.result.url}`;
+              DownloadFile(url, "application/pdf", "INVOICE TITIP.pdf");
               setIsModalLoading(false);
             }
           });

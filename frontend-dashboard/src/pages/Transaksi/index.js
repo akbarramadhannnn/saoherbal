@@ -32,6 +32,8 @@ import {
 
 import { ApiGeneratePdfInvoiceTransaction } from "../../api/file";
 
+import { URL_API_IMAGES } from "../../config/url";
+
 import moment from "../../lib/moment";
 
 import classnames from "classnames";
@@ -101,11 +103,8 @@ const Index = ({ history }) => {
           };
           ApiGeneratePdfInvoiceTransaction(payload).then(responseGenerate => {
             if (responseGenerate.status === 201) {
-              DownloadFile(
-                responseGenerate.result.url,
-                "application/pdf",
-                "INVOICE TRANSACTION.pdf"
-              );
+              const url = `${URL_API_IMAGES}/${responseGenerate.result.url}`;
+              DownloadFile(url, "application/pdf", "INVOICE TRANSACTION.pdf");
               setIsModalLoading(false);
             }
           });

@@ -46,15 +46,9 @@ exports.generateInvoiceTransaction = async (req, res) => {
   pdf
     .create(document, options)
     .then((response) => {
-      let url;
-      if (NODE_ENV === "local" || NODE_ENV === "development") {
-        url = `${config.server.host}:${config.server.port}/api/v1/transaction/invoice-transaction`;
-      } else {
-        url = `${config.server.host}/file/transaction/invoice-transaction`;
-      }
       return res.json(
         Response(true, 201, `Generate PDF Product Successfully`, {
-          url: `${url}/${filename}`,
+          url: `transaction/invoice-transaction/${filename}`,
         })
       );
     })
@@ -84,15 +78,9 @@ exports.generateInvoiceTransactionTempo = async (req, res) => {
   pdf
     .create(document, options)
     .then((response) => {
-      let url;
-      if (NODE_ENV === "local" || NODE_ENV === "development") {
-        url = `${config.server.host}:${config.server.port}/api/v1/transaction/invoice-tempo`;
-      } else {
-        url = `${config.server.host}/file/transaction/invoice-tempo`;
-      }
       return res.json(
         Response(true, 201, `Generate Invoice Transaction Tempo Successfully`, {
-          url: `${url}/${fileName}`,
+          url: `transaction/invoice-tempo/${fileName}`,
         })
       );
     })
@@ -122,15 +110,9 @@ exports.generateInvoiceTransactionTitip = async (req, res) => {
   pdf
     .create(document, options)
     .then((response) => {
-      let url;
-      if (NODE_ENV === "local" || NODE_ENV === "development") {
-        url = `${config.server.host}:${config.server.port}/api/v1/transaction/invoice-titip`;
-      } else {
-        url = `${config.server.host}/file/transaction/invoice-titip`;
-      }
       return res.json(
-        Response(true, 201, `Generate Invoice Transaction Tempo Successfully`, {
-          url: `${url}/${fileName}`,
+        Response(true, 201, `Generate Invoice Transaction Titip Successfully`, {
+          url: `transaction/invoice-titip/${fileName}`,
         })
       );
     })
