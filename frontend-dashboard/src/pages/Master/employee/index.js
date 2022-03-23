@@ -289,8 +289,8 @@ const Index = ({ history }) => {
                             )
                           }
                         >
-                          <i className="mdi mdi-pencil font-size-16 text-warning me-1" />{" "}
-                          Edit Data
+                          <i className="mdi mdi-pencil text-secondary me-1" />{" "}
+                          <span className="text-secondary">Edit Data</span>
                         </DropdownItem>
                         <DropdownItem
                           onClick={() =>
@@ -299,8 +299,10 @@ const Index = ({ history }) => {
                             )
                           }
                         >
-                          <i className="mdi mdi-account-lock font-size-16 text-info me-1" />{" "}
-                          Lihat Akun Login
+                          <i className="mdi mdi-account-lock text-secondary me-1" />{" "}
+                          <span className="text-secondary">
+                            Lihat Akun Login
+                          </span>
                         </DropdownItem>
                         <DropdownItem
                           onClick={() =>
@@ -309,8 +311,8 @@ const Index = ({ history }) => {
                             )
                           }
                         >
-                          <i className="mdi mdi-trending-up font-size-16 text-success me-1" />{" "}
-                          Lihat Kinerja
+                          <i className="mdi mdi-trending-up text-secondary me-1" />{" "}
+                          <span className="text-secondary">Lihat Kinerja</span>
                         </DropdownItem>
                       </DropdownMenu>
                     </UncontrolledDropdown>

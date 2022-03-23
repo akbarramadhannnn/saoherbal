@@ -125,8 +125,8 @@ const Index = ({ history }) => {
                             )
                           }
                         >
-                          <i className="mdi mdi-pencil font-size-16 text-warning me-1" />{" "}
-                          Edit Data
+                          <i className="mdi mdi-pencil text-secondary me-1" />{" "}
+                          <span className="text-secondary">Edit Data</span>
                         </DropdownItem>
                         <DropdownItem
                           onClick={() =>
@@ -135,8 +135,8 @@ const Index = ({ history }) => {
                             )
                           }
                         >
-                          <i className="mdi mdi-trash-can font-size-16 text-danger me-1" />{" "}
-                          Hapus Data
+                          <i className="mdi mdi-trash-can text-secondary me-1" />{" "}
+                          <span className="text-secondary">Hapus Data</span>
                         </DropdownItem>
                       </DropdownMenu>
                     </UncontrolledDropdown>

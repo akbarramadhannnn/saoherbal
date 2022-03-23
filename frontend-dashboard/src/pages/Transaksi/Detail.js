@@ -1104,14 +1104,14 @@ const DetailTransaction = props => {
                                           <div className="d-flex gap-3 justify-content-center">
                                             <Link
                                               to="#"
-                                              className="btn btn-warning btn-sm"
+                                              className="btn btn-outline-primary btn-sm"
                                               onClick={() =>
                                                 handleShowModalEditTempo(
                                                   d.transaction_due_date_id
                                                 )
                                               }
                                             >
-                                              <i className="fas fa-pencil-alt" />{" "}
+                                              <i className="mdi mdi-pencil" />{" "}
                                               Input Tempo
                                             </Link>
                                           </div>
@@ -1121,7 +1121,7 @@ const DetailTransaction = props => {
                                           <div className="d-flex gap-3 justify-content-center">
                                             <Link
                                               to="#"
-                                              className="btn btn-success btn-sm"
+                                              className="btn btn-outline-primary btn-sm"
                                               onClick={() =>
                                                 handleDownloadInvoiceTempo(
                                                   d.transaction_due_date_id,
@@ -1129,7 +1129,7 @@ const DetailTransaction = props => {
                                                 )
                                               }
                                             >
-                                              <i className="fa fa-download" />{" "}
+                                              <i className="mdi mdi-download" />{" "}
                                               Download Invoice
                                             </Link>
                                           </div>
@@ -1160,12 +1160,12 @@ const DetailTransaction = props => {
                                               "1" && (
                                               <Link
                                                 to="#"
-                                                className="btn btn-warning btn-sm"
+                                                className="btn btn-outline-primary btn-sm"
                                                 onClick={() =>
                                                   handleShowModalEditTitip(i)
                                                 }
                                               >
-                                                <i className="fas fa-pencil-alt" />{" "}
+                                                <i className="mdi mdi-pencil" />{" "}
                                                 Input Titip
                                               </Link>
                                               // <Button
@@ -1185,7 +1185,7 @@ const DetailTransaction = props => {
                                               <div className="d-flex gap-3 justify-content-end">
                                                 <Link
                                                   to="#"
-                                                  className="btn btn-success btn-sm"
+                                                  className="btn btn-outline-primary btn-sm"
                                                   onClick={() =>
                                                     handleDownloadInvoiceTitip(
                                                       d.id_transaction_transaction_due_date,
@@ -1193,7 +1193,7 @@ const DetailTransaction = props => {
                                                     )
                                                   }
                                                 >
-                                                  <i className="fa fa-download" />{" "}
+                                                  <i className="mdi mdi-download" />{" "}
                                                   Download Invoice
                                                 </Link>
                                               </div>

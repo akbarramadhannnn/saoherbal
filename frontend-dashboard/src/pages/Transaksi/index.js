@@ -220,8 +220,8 @@ const Index = ({ history }) => {
                               )
                             }
                           >
-                            <i className="mdi mdi-eye font-size-16 text-info me-1" />{" "}
-                            Lihat Detail
+                            <i className="mdi mdi-eye text-secondary me-1" />{" "}
+                            <span className="text-secondary">Lihat Detail</span>
                           </DropdownItem>
                           <DropdownItem
                             onClick={() =>
@@ -230,8 +230,8 @@ const Index = ({ history }) => {
                               )
                             }
                           >
-                            <i className="fa fa-download text-success me-1" />{" "}
-                            Download Invoice
+                            <i className="mdi mdi-download text-secondary me-1" />{" "}
+                            <span className="text-secondary">Download Invoice</span>
                           </DropdownItem>
                         </DropdownMenu>
                       </UncontrolledDropdown>
@@ -325,8 +325,8 @@ const Index = ({ history }) => {
                               )
                             }
                           >
-                            <i className="mdi mdi-eye font-size-16 text-info me-1" />{" "}
-                            Lihat Detail
+                            <i className="mdi mdi-eye text-secondary me-1" />{" "}
+                            <span className="text-secondary">Lihat Detail</span>
                           </DropdownItem>
                           <DropdownItem
                             onClick={() =>
@@ -335,8 +335,8 @@ const Index = ({ history }) => {
                               )
                             }
                           >
-                            <i className="fa fa-download text-success me-1" />{" "}
-                            Download Invoice
+                            <i className="mdi mdi-download text-secondary me-1" />{" "}
+                            <span className="text-secondary">Download Invoice</span>
                           </DropdownItem>
                         </DropdownMenu>
                       </UncontrolledDropdown>
@@ -411,8 +411,8 @@ const Index = ({ history }) => {
                               )
                             }
                           >
-                            <i className="mdi mdi-eye font-size-16 text-info me-1" />{" "}
-                            Lihat Detail
+                            <i className="mdi mdi-eye text-secondary me-1" />{" "}
+                            <span className="text-secondary">Lihat Detail</span>
                           </DropdownItem>
                           <DropdownItem
                             onClick={() =>
@@ -421,8 +421,8 @@ const Index = ({ history }) => {
                               )
                             }
                           >
-                            <i className="fa fa-download text-success me-1" />{" "}
-                            Download Invoice
+                            <i className="mdi mdi-download text-secondary me-1" />{" "}
+                            <span className="text-secondary">Download Invoice</span>
                           </DropdownItem>
                         </DropdownMenu>
                       </UncontrolledDropdown>
