@@ -11,7 +11,7 @@ import { withRouter, Link } from "react-router-dom";
 
 import { withTranslation } from "react-i18next";
 
-import user1 from "../../../assets/images/users/avatar-1.jpg";
+import user1 from "../../../assets/images/users/avatar-9.png";
 import { LOAD_USER } from "../../../store/auth/actionsTypes";
 
 const ProfileMenu = props => {
@@ -46,6 +46,8 @@ const ProfileMenu = props => {
             className="rounded-circle header-profile-user"
             src={user1}
             alt="Header Avatar"
+            width="100%"
+            height="100%"
           />{" "}
           <span className="d-none d-xl-inline-block ms-1">
             {/* {this.state.name} */}
